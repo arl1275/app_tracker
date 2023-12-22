@@ -19,7 +19,7 @@ const useGuardList: any = create<FacturaState>((set) => ({
         for(let i = 0; values.length > i ; i++){
             const dat = data.some((item: Facturas) => item.id === values[i].id);
             if(dat){
-                console.log('existe: ', values[i]);
+                //console.log('existe: ', values[i]);
             }else{
                 console.log('no existe', values[i]);
                 alterData.push(values[i]);
@@ -40,7 +40,7 @@ const useGuardList: any = create<FacturaState>((set) => ({
     },
 
     UpdateIsChecked: async (id) => {
-        const {data} =  useGuardList.getState();
+        const {data} =  await useGuardList.getState();
         const facturaIndex = data.findIndex((item : Facturas) => item.id === id);
         if (facturaIndex !== -1) {
             data[facturaIndex] = {

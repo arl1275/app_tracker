@@ -69,7 +69,7 @@ export function VistadeSync() {
     return (
 
         <View>{
-            dataEntregas.length >= 0 ?
+            dataEntregas.length > 0 ?
                 (<View >
                     <LoadingModal visible={loading} message="SINCRONIZANDO FACTURAS"/>
                     <View >
@@ -119,7 +119,8 @@ export function VistadeSync() {
                 </View>) : (
                     <View>
                         <Text style={{ color: 'black' }}>NO SE OBTENIDO LOS DATOS</Text>
-                    </View>)
+                    </View>
+                    )
         }</View>
     )
 

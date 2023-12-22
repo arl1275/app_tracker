@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Button, Text, View, TextInput, FlatList, StyleSheet, ScrollView } from "react-native";
+import { Button, Text, View, TextInput, FlatList, StyleSheet, ScrollView, Alert } from "react-native";
 import { Facturas } from "../../interfaces/facturas";
 import { DataTable, IconButton } from 'react-native-paper';
 import useGuardList from "../../storage/gaurdMemory";
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E77F7F'
     },
     ConCkeck: {
-        backgroundColor: '#BDEF74'
+        backgroundColor: '#2E86C1'
     },
     title: {
         color: 'white', // Set your text color here
@@ -29,11 +29,16 @@ const styles = StyleSheet.create({
 const ListComponentModal: React.FC = ({}) => {
     const [see, setSee] = useState(false);
     const [dat, setDat] = useState<Facturas>()
-    const {data} = useGuardList();
+    const {data, IsCheckVal} = useGuardList();
     
-    const Visible = (data : Facturas) =>{
-        setSee(true);
-        setDat(data)
+    const checkIsCheck = (data : Facturas) =>{
+        if(data.is_check){
+            Alert.alert('ERROR', 'factura ya validada');
+        }else{
+            setSee(true);
+            setDat(data);
+        }
+        
     }
     const close = () =>{
         setSee(false);
@@ -62,10 +67,10 @@ const ListComponentModal: React.FC = ({}) => {
                         <Text style={{ color: 'white' }}>UNIDADES</Text>
                     </DataTable.Title>
                 </DataTable.Header>{
-                    data.map((item : any) => {
+                    data.map((item : Facturas) => {
                         const valor = item.is_check != true ? styles.SinCheck : styles.ConCkeck;
                         return (
-                            <DataTable.Row key={item.id} style={[valor]} onPress={()=>{Visible(item)}}>
+                            <DataTable.Row key={item.id} style={[valor]} onPress={()=>{checkIsCheck(item)}}>
                                 <DataTable.Cell>{item.cliente}</DataTable.Cell>
                                 <DataTable.Cell>{item.ref_factura}</DataTable.Cell>
                                 <DataTable.Cell>{item.lista_empaque}</DataTable.Cell>

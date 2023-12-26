@@ -95,14 +95,14 @@ function EntregadorListView<props>() {
                 <LoadingModal visible={loading} message="ESPERANDO FACTURAS" />
                 <ScrollView>
 
-                    <View style={styles.buttonContainer}>
+                    {/* <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.button} onPress={() => { getEnTransitoFacts() }}>
                             <Text style={styles.buttonText}>SINCRONIZAR DATOS</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
 
                     <DataTable>
-                        <DataTable.Header style={{ width: 'auto', backgroundColor: "#063970" }}>
+                        <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
                             <DataTable.Title>
                                 <Text style={{ color: 'white' }}> CLIENTE</Text>
                             </DataTable.Title>

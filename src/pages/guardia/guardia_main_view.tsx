@@ -8,6 +8,8 @@ import { ListUnitModal } from "../../components/modals/guardiaModals/guardModal.
 import LoadingModal from "../../components/Activity/activity.component";
 import useGuardList from "../../storage/gaurdMemory";
 import { IconButton } from "react-native-paper";
+//import { OtrosMenu } from "../../components/GuardComponents/Historico.components";
+import { Picker } from '@react-native-picker/picker';
 
 function ShowIndexView() {
     const [facts, setFacts] = useState<Facturas[]>([]);
@@ -15,6 +17,10 @@ function ShowIndexView() {
     const [Deleting, setIsDeleting] = useState(false);
     const { data, CargaData, GetIsCheckedFacts } = useGuardList();
     const [modalVisible, setModalVisible] = useState(false);
+    const [st, setSt] = useState(false);
+
+    //test
+    const [selectedValue, setSelectedValue] = useState<string>('OTROS');
 
     const checkData = () => {
         if (GetIsCheckedFacts().length > 0) {
@@ -38,7 +44,7 @@ function ShowIndexView() {
 
     const getFacturas = async () => {
         try {
-            setIsLoagin(true); 
+            setIsLoagin(true);
             const data = await axios.get(db_dir + '/fact/factEnPreparacion');
             //console.log("Data from api: ", data.data.data);
             setFacts(data.data.data);
@@ -55,25 +61,23 @@ function ShowIndexView() {
         <View style={{ flex: 1 }}>
             <LoadingModal visible={isLoading} message="ACTUALIZANDO DATOS" />
             <LoadingModal visible={Deleting} message="ESPERE" />
+
             <View style={{ flex: 1 }}>
                 <View style={styles.navbar}>
-                    <View style={{ flexDirection: 'row'}}>
+                    <View style={{ flexDirection: 'row' }}>
                         <IconButton icon={'account-circle'} size={25} iconColor="white" />
-                        <View style={{alignSelf : 'center'}}>
+                        <View style={{ alignSelf: 'center' }}>
                             <Text>ADMIN</Text>
                         </View>
-                        
                     </View>
+
                     <View style={{ alignItems: 'flex-end' }}>
-                        <View style={{ flexDirection: 'row'}}>
+                        <View style={{ display: 'flex', flexDirection: 'row' }}>
                             <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: '10%' }} onPress={() => { }}>
                                 <Text style={{ color: 'white' }}>HISTORICOS</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: '10%'}} onPress={() => { getFacturas() }} >
+                            <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: 'auto' }} onPress={() => { getFacturas() }} >
                                 <Text style={{ color: 'white' }}>ACTUALIZAR LISTA</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: '5%'}} onPress={() => { getFacturas() }} >
-                                <Text style={{ color: 'white' }}>OTROS</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -82,6 +86,7 @@ function ShowIndexView() {
                     data.length > 0 ? <ListComponentModal /> : <Text>SIN FACTURAS PARA MOSTRAR</Text>
                 }
             </View>
+
             <View style={{ height: 50, backgroundColor: '#063970', justifyContent: 'center', alignItems: 'flex-end' }}>
                 <Button color={'#063970'} onPress={() => { checkData(); }} title="ENVIAR A TRANSITO" />
             </View>
@@ -138,6 +143,7 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     navbar: {
+        display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

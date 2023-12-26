@@ -50,7 +50,7 @@ const ListComponentModal: React.FC = ({}) => {
             <DataTable>
                 <BoxChecker fact={dat} visible={see} close={close} />
                 {/* */}
-                <DataTable.Header style={{ width: 'auto', backgroundColor: "#063970" }}>
+                <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
                     <DataTable.Title>
                         <Text style={{ color: 'white' }}> CLIENTE</Text>
                     </DataTable.Title>

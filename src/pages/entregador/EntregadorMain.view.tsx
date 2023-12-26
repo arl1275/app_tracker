@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#063970',
         padding: 10,
-        width : 'auto'
+        width: 'auto'
     },
     button: {
         padding: 10,
@@ -31,17 +31,33 @@ export function EntregadorIndexView() {
 
     return (
         <View>
+            
             <View style={styles.navbar}>
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText} onPress={()=>{setPage('lista')}}>FACTURAS A ENTREGAR</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={()=>{setPage('sync')}}>
-                    <Text style={styles.buttonText}>SINCRONIZACION</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row' }}>
+                    <IconButton icon={'account-circle'} size={25} iconColor="white" />
+                    <View style={{ alignSelf: 'center'}}>
+                        <Text>ADMIN</Text>
+                    </View>
+                </View>
+                <View>
+                    <View style={{ display: 'flex', flexDirection : 'row'}}>
+                        <TouchableOpacity style={{marginRight : '10%'}}>
+                            <Text style={styles.buttonText} onPress={() => {setPage('lista')}}>
+                                FACTURAS
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => { setPage('sync') }}>
+                            <Text style={styles.buttonText}>
+                                SINCRONIZACION
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
+
             <View>
-                { page === 'lista' ? <EntregadorListView /> : null}
-                { page === 'sync' ? <VistadeSync /> : null}
+                {page === 'lista' ? <EntregadorListView /> : null}
+                {page === 'sync' ? <VistadeSync /> : null}
             </View>
 
 

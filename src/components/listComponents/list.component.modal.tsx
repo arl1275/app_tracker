@@ -48,8 +48,9 @@ const ListComponentModal: React.FC = ({}) => {
     if (data) {
         return (
             <DataTable>
-                <BoxChecker fact={dat} visible={see} close={close} />
-                {/* */}
+
+                <BoxChecker fact={dat} visible={see} close={close} tipe={0}/>
+
                 <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
                     <DataTable.Title>
                         <Text style={{ color: 'white' }}> CLIENTE</Text>
@@ -68,14 +69,14 @@ const ListComponentModal: React.FC = ({}) => {
                     </DataTable.Title>
                 </DataTable.Header>{
                     data.map((item : Facturas) => {
-                        const valor = item.is_check != true ? styles.SinCheck : styles.ConCkeck;
+                        let valor = item.is_check != true ? styles.SinCheck : styles.ConCkeck;
                         return (
                             <DataTable.Row key={item.id} style={[valor]} onPress={()=>{checkIsCheck(item)}}>
-                                <DataTable.Cell>{item.cliente}</DataTable.Cell>
-                                <DataTable.Cell>{item.ref_factura}</DataTable.Cell>
-                                <DataTable.Cell>{item.lista_empaque}</DataTable.Cell>
-                                <DataTable.Cell>{item.cant_cajas}</DataTable.Cell>
-                                <DataTable.Cell>{item.cant_unidades}</DataTable.Cell>
+                                <DataTable.Cell><Text>{item.cliente}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text>{item.ref_factura}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text>{item.lista_empaque}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text>{item.cant_cajas}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text>{item.cant_unidades}</Text></DataTable.Cell>
                             </DataTable.Row>
                         )
                     })

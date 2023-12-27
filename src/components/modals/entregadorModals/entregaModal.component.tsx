@@ -15,64 +15,6 @@ interface FactsComponentProps {
     factura: Facturas; // Array of Factura objects
 }
 
-const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    button: {
-        padding: 10,
-        borderRadius: 5,
-        backgroundColor: '#063970',
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    modalOverlay: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        width: 'auto',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
-    },
-    modalContent: {
-        zIndex: 1, // Ensure the content is above the overlay
-        padding: 20,
-        backgroundColor: 'white',
-        borderRadius: 5,
-        elevation: 5, // For Android shadow
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between', // Adjust as needed
-        marginVertical: 10,
-        width: "60%",
-        backgroundColor: '#063970',
-    },
-    container: {
-        backgroundColor: 'white',
-        width: 'auto', // Adjust this width as needed  
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        alignSelf: 'center',
-        color: 'black',
-    },
-    resumen: {
-        fontSize: 15,
-        fontWeight: 'normal',
-        color: 'black',
-    }
-
-});
-
-
 export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: boolean, closeModal: () => void }> = ({ factura, modalVisible, closeModal }) => {
     const fact: Facturas | null = factura;
     const { data, fetchData, updateFactura, getFacturaById, updateStateAndHasSing } = useFacturaStore();
@@ -195,3 +137,60 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
 
     );
 };
+
+const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    button: {
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: '#063970',
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    modalOverlay: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        width: 'auto',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
+    },
+    modalContent: {
+        zIndex: 1, // Ensure the content is above the overlay
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 5,
+        elevation: 5, // For Android shadow
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between', // Adjust as needed
+        marginVertical: 10,
+        width: "60%",
+        backgroundColor: '#063970',
+    },
+    container: {
+        backgroundColor: 'white',
+        width: 'auto', // Adjust this width as needed  
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        alignSelf: 'center',
+        color: 'black',
+    },
+    resumen: {
+        fontSize: 15,
+        fontWeight: 'normal',
+        color: 'black',
+    }
+
+});

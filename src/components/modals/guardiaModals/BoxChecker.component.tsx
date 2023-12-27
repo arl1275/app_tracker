@@ -2,38 +2,36 @@ import React, { useState, useRef } from "react";
 import { Button, Text, View, TextInput, FlatList, StyleSheet, ScrollView, Modal, Alert } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
 import { DataTable, IconButton, Card } from 'react-native-paper';
-import QRScanner from "../../camara/camScam.component";
-import ScanMe from "./ScannerMethod.component";
+import QRScanner, { QRScannerDL } from "../../camara/camScam.component";                                 // this is the camera itself
+import ScanMe from "./ScannerMethod.component";                                         // this is the item box
 
 interface props {
     fact: Facturas | undefined;
     visible: boolean;
     close: () => void;
+    tipe : number; // 0 for Guard, 1 for Deliver
 }
 
-const BoxChecker: React.FC<props> = ({ fact, visible, close }) => {
+const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe}) => {
     const [counter, setCounter] = useState<number>(0); // this is to count how many fact has been scanned by the Guard.
-    const [ScanMethod, setScanMethod] = useState('');
     const [see, setSee] = useState(false);
     const [see2, setSee2] = useState(false);
+
+    const CounterBoxes = (num: number) => {
+        setCounter(prevCounter => prevCounter + num);
+        return counter;
+    }
 
     const Visible = () => {
         setSee(true);
     }
     const Toclose = () => {
         setSee(false);
-        setScanMethod('')
-    }
-
-    const showBarcode = () => {
-        setSee2(true);
     }
 
     const CloseBarcode = () => {
         setSee2(false);
-        setScanMethod('');
     }
-
 
     return (
         <Modal
@@ -41,55 +39,41 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close }) => {
             transparent={true}
             visible={visible}
             onRequestClose={() => { close }}>
+
             <View style={styles.modalOverlay}>
                 <View style={styles.centeredView}>
-                    <Card style={{ width: 'auto', height: 'auto', borderRadius : 0}}>
-                        {ScanMethod === '' ? (
-                            <><View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                            
-                                <View>
-                                    <Text style={styles.title}>FACTURA : {fact?.ref_factura}</Text>
-                                    <Text style={styles.textbody}>CAJAS CONTADAS: {counter}/{fact?.cant_cajas}</Text>
-                                </View>
-                                <View style={{alignItems : 'flex-end'}}>
-                                    <IconButton 
-                                        icon={'file-excel-box-outline'} 
-                                        onPress={() => { close(); setScanMethod(''); Toclose() }} 
-                                        iconColor="red" size={40}
-                                        style={{alignItems : 'flex-end', marginRight: 10}} />
-                                </View>
+                    <Card style={{ width: '80%', height: '50%', borderRadius: 3 }}>
+
+                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <View>
+                                <Text style={styles.title}>FACTURA : {fact?.ref_factura}</Text>
                             </View>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-around',
-                                    alignItems: 'center',
-                                }}>
-                                    <Card
-                                        style={{ width: '40%', height: 'auto', margin: 20 }}
-                                        onPress={() => { setScanMethod('QR'); Visible(); }}>
-                                        <IconButton icon={'camera'} size={120} style={{ alignSelf: 'center' }} />
-                                        <Text style={{ color: 'black', alignSelf: "center", fontSize: 25 }}>CAMARA</Text>
-                                    </Card>
-
-                                    <Card
-                                        style={{ width: '40%', height: 'auto', margin: 20 }}
-                                        onPress={() => { setScanMethod('barCode'); showBarcode(); }}>
-                                        <IconButton icon={'barcode'} size={120} style={{ alignSelf: 'center' }} />
-                                        <Text style={{ color: 'black', alignSelf: "center", fontSize: 25 }}>ESCANER</Text>
-                                    </Card>
-
-                                </View>
-                                <View>
-                                </View>
-                            </>) : null
-
-                        }
-
-                        <QRScanner fact={fact} visible={see} close={Toclose} />
-                        <ScanMe cantCajas={fact?.cant_cajas} visible={see2} CloseBarcode={CloseBarcode} />
-
-
-
+                            <View style={{ alignItems: 'flex-end' }}>
+                                <IconButton
+                                    icon={'file-excel-box-outline'}
+                                    onPress={() => { close(); Toclose() }}
+                                    iconColor="red" size={40}
+                                    style={{ alignItems: 'flex-end', marginRight: 10 }} />
+                            </View>
+                        </View>
+                        <View style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                            <Card
+                                style={{ width: '30%', height: 'auto', margin: 'auto', backgroundColor: '#2855F6', borderRadius: 0 }}
+                                onPress={() => { Visible();}}>
+                                <IconButton icon={'camera'} size={30} style={{ alignSelf: 'center' }} iconColor="white" />
+                            </Card>
+                            
+                            <ScanMe cantCajas={fact?.cant_cajas} CloseBarcode={CloseBarcode} counterBoxes={CounterBoxes} /> 
+                            
+                        </View>
+                        <View>
+                        </View>
+                        { tipe === 0 && <QRScanner fact={fact} visible={see} close={Toclose} counterBoxes={CounterBoxes} /> }
+                        { tipe === 1 && <QRScannerDL fact={fact} visible={see} close={Toclose} counterBoxes={CounterBoxes} />}
+                        
                     </Card>
                 </View>
             </View>

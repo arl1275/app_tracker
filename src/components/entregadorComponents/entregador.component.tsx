@@ -7,6 +7,7 @@ import axios from "axios";
 import { EntregaModal } from "../modals/entregadorModals/entregaModal.component";
 import useFacturaStore from "../../storage/storage";
 import LoadingModal from "../Activity/activity.component";
+import BoxChecker from "../modals/guardiaModals/BoxChecker.component";
 
 const styles = StyleSheet.create({
     container: {
@@ -35,7 +36,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#E77F7F'
     },
     ConCkeck: {
-        backgroundColor: '#BDEF74'
+        backgroundColor: '#F7DC6F'
+    },
+    IsSynchro : {
+        backgroundColor : '#F7DC6F'
+    },
+    floatingButton: {
+        backgroundColor: '#063970',
+        width: 50,
+        height: 50,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        bottom: 0,
+        right: 10,
+        elevation: 3, // Add shadow for Android
     },
 });
 
@@ -43,25 +59,24 @@ const styles = StyleSheet.create({
 function EntregadorListView<props>() {
     const [facturas, setFacturas] = useState<Facturas[]>([]);
     const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [SyncroFlag, setSyncroFlag] = useState<boolean>(false);
+    const [modalVisible, setModalVisible] = useState(false);     
     const { data, fetchData, updateFactura, updateSingFields, getAllEnTransitoFacts } = useFacturaStore();
-    const test = useFacturaStore((e: any) => e.data);
     const [loading, setLoading] = useState(false);
+    const [see, setSee] = useState(false);
+    const [fact, setfact] = useState<Facturas>();
 
     const getEnTransitoFacts = async () => {
         try {
-            if (data.length === 0) { // verifica si los datos ya están sincronizados
-                setLoading(true);
+            setLoading(true);
+                console.log('LLEUGE');
                 const data2 = await axios.get(db_dir + '/fact/getFacturasEnTransito');
                 setFacturas(data2.data.data);
-                updateFactura(facturas);
-                setSyncroFlag(true);
-                setLoading(false);
-            } else {
-                getAllEnTransitoFacts();
-            }
-
+                if(facturas.length === data.length){
+                    Alert.alert('SINCRONIZACION', 'La lista de facturas esta actualizada');
+                }else{
+                    updateFactura(facturas);
+                }
+            setLoading(false);
         } catch (err) {
             Alert.alert('ERROR AL SINCRONIZAR', 'Es posible que no tenga conexion a internet, favor revisar la conexion en los ajustes del telefono.');
         }
@@ -75,32 +90,36 @@ function EntregadorListView<props>() {
         setModalVisible(false);
     };
 
+    const close = () =>{
+        setSee(false);
+    }
+
+    const BoxOrSing = (item : Facturas) => {
+        if(item.hasSing){
+            Alert.alert('ERR', 'Factura ya validada')
+        }else{
+            if(item.is_check === undefined){
+                setSee(true);
+            }else{     
+             dataToSend(item);
+            }
+        }
+    }
+
     const dataToSend = (fact: Facturas) => {
-        if (fact.state_name === 'ENTREGADO') {
-            Alert.alert('ERROR DE VALIDACION', 'No se puede abrir facturas ya entregadas')
-        } else {
             serEntregarFact(fact);
             openModal();
-        }
     }
 
     useEffect(() => {
         fetchData();
     }, [])
 
-
     return (
         data.length > 0 ? (
-            < View >
+            < View style={{height : '100%'}}>
                 <LoadingModal visible={loading} message="ESPERANDO FACTURAS" />
                 <ScrollView>
-
-                    {/* <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={() => { getEnTransitoFacts() }}>
-                            <Text style={styles.buttonText}>SINCRONIZAR DATOS</Text>
-                        </TouchableOpacity>
-                    </View> */}
-
                     <DataTable>
                         <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
                             <DataTable.Title>
@@ -121,9 +140,16 @@ function EntregadorListView<props>() {
                         </DataTable.Header>
                         {
                             data.map((item: Facturas) => {
-                                const valor = item.state_name === 'EN TRANSITO' ? styles.SinCheck : styles.ConCkeck;
+                                let valor;
+                                if(item.is_check === undefined){
+                                    valor = styles.SinCheck;
+                                }else if(item.is_check === true){
+                                    valor = styles.ConCkeck
+                                }else if(item.hasSing === true){
+                                    valor = styles.IsSynchro;
+                                }
                                 return (
-                                    <DataTable.Row key={item.id} onPress={() => dataToSend(item)} style={[valor]}>
+                                    <DataTable.Row key={item.id} onPress={() => {setfact(item); BoxOrSing(item);}} style={[valor]}>
                                         <DataTable.Cell>{item.cliente}</DataTable.Cell>
                                         <DataTable.Cell>{item.ref_factura}</DataTable.Cell>
                                         <DataTable.Cell>{item.lista_empaque}</DataTable.Cell>
@@ -134,10 +160,13 @@ function EntregadorListView<props>() {
                             })
                         }
                     </DataTable>
+                    <TouchableOpacity style={styles.floatingButton} onPress={() =>getEnTransitoFacts()}>
+                        <Text>+</Text>
+                    </TouchableOpacity>
                 </ScrollView>
 
                 <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
-
+                <BoxChecker fact={fact} visible={see} close ={close} tipe={1}/>
             </View >)
             :
             (

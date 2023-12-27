@@ -8,23 +8,13 @@ import axios from "axios";
 import LoadingModal from "../Activity/activity.component";
 
 export function VistadeSync() {
-    const {getStorageEntregado, updateSynchro } = useFacturaStore();
+    const {getStorageEntregado, updateSynchro, getAllNOTsynchroFacts } = useFacturaStore();
     const [dataEntregas, setDataEntregas] = useState<Facturas[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         getData();
     }, []);
-
-    const filterSynchro = () =>{
-        const dataToSend : Facturas[] = [];
-        for(let i = 0; dataEntregas.length > i; i++){
-            if(dataEntregas[i].is_Sinchro != true){
-                dataToSend.push(dataEntregas[i])
-            }
-        }
-        return dataToSend;
-    }
 
     const setSynchro = (arreglo :  Facturas[]) =>{
         for(let i = 0; arreglo.length > i; i++){
@@ -36,7 +26,7 @@ export function VistadeSync() {
         if (dataEntregas) {
           try {
             setLoading(true);
-            const data = filterSynchro();
+            const data: Facturas[] = getAllNOTsynchroFacts();
             const response = await axios.put(db_dir + '/entregas/toSincronizar', data).then(()=>{
             setSynchro(data)
             setLoading(false);

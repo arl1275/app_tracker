@@ -8,19 +8,17 @@ import { ListUnitModal } from "../../components/modals/guardiaModals/guardModal.
 import LoadingModal from "../../components/Activity/activity.component";
 import useGuardList from "../../storage/gaurdMemory";
 import { IconButton } from "react-native-paper";
-//import { OtrosMenu } from "../../components/GuardComponents/Historico.components";
 import { Picker } from '@react-native-picker/picker';
 
 function ShowIndexView() {
     const [facts, setFacts] = useState<Facturas[]>([]);
     const [isLoading, setIsLoagin] = useState(false);
-    const [Deleting, setIsDeleting] = useState(false);
     const { data, CargaData, GetIsCheckedFacts } = useGuardList();
     const [modalVisible, setModalVisible] = useState(false);
-    const [st, setSt] = useState(false);
+    //const [st, setSt] = useState(false);
 
     //test
-    const [selectedValue, setSelectedValue] = useState<string>('OTROS');
+    const [selectedValue, setSelectedValue] = useState<string>('');
 
     const checkData = () => {
         if (GetIsCheckedFacts().length > 0) {
@@ -60,15 +58,20 @@ function ShowIndexView() {
     return (
         <View style={{ flex: 1 }}>
             <LoadingModal visible={isLoading} message="ACTUALIZANDO DATOS" />
-            <LoadingModal visible={Deleting} message="ESPERE" />
 
             <View style={{ flex: 1 }}>
                 <View style={styles.navbar}>
                     <View style={{ flexDirection: 'row' }}>
                         <IconButton icon={'account-circle'} size={25} iconColor="white" />
-                        <View style={{ alignSelf: 'center' }}>
-                            <Text>ADMIN</Text>
-                        </View>
+                       
+                        <Picker
+                            selectedValue={selectedValue}
+                            style={{ height: 50, width: 150, color: 'white' }}
+                            onValueChange={(itemValue) => setSelectedValue(itemValue)}>
+                            <Picker.Item label="INICIO" value="admin" />
+                            <Picker.Item label="OTROS" value="option1" />
+                            <Picker.Item label="SALIR" value="option2" />
+                        </Picker> 
                     </View>
 
                     <View style={{ alignItems: 'flex-end' }}>
@@ -81,7 +84,7 @@ function ShowIndexView() {
                             </TouchableOpacity>
                         </View>
                     </View>
-                </View>
+                </View>   
                 {
                     data.length > 0 ? <ListComponentModal /> : <Text>SIN FACTURAS PARA MOSTRAR</Text>
                 }

@@ -6,16 +6,16 @@ import { EntregadorIndexView } from './pages/entregador/EntregadorMain.view';
 
 //test
 function IndexPage() {
-  const [page, setPage] = useState('ENTREGADOR¿');
+  const [page, setPage] = useState("");
   return (
     <View style={{ display : 'flex', backgroundColor: 'white' }}>
       <View style={{ width: '100%', height: '100%', alignSelf: 'center' }}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', margin : 10}}>
-          <Text onPress={() => setPage('GUARDIA')} style={{color : 'black'}}> GUARDIA</Text>
-          <Text onPress={() => setPage('ENTREGADOR')} style={{color : 'black'}}> ENTREGADOR</Text>
+          <Text onPress={() => setPage('GUARDIA')} style={{color : 'black'}}>GUARDIA</Text>
+          <Text onPress={() => setPage('ENTREGADOR')} style={{color : 'black'}}>ENTREGADOR</Text>
         </View>
         {page === "GUARDIA" ? <ShowIndexView /> : null}
-        {page === "ENTREGADOR" ? <EntregadorIndexView /> : null}
+        {page === "ENTREGADOR" ? <EntregadorIndexView /> : null }
       </View>
     </View>
   );

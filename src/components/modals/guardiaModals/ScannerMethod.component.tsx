@@ -5,14 +5,15 @@ import { DataTable, IconButton, Card } from 'react-native-paper';
 
 interface props {
     cantCajas: number | undefined;
-    visible: boolean;
     CloseBarcode: () => void;
+    counterBoxes : (num : number) => number;
 }
 
-const ScanMe: React.FC<props> = ({ cantCajas, visible, CloseBarcode }) => {
+const ScanMe: React.FC<props> = ({ cantCajas, CloseBarcode, counterBoxes}) => {
     const BarCodeInput = useRef<TextInput | null>(null);
-    const [counter, setCounter] = useState<number>(0);
+    const [counter, setCounter] = useState<number>(counterBoxes(0));
     const [data, setData] = useState<string[]>([]);
+
 
     const handleBarcodeScan = (scannedText: string) => {
         let values = '';
@@ -25,6 +26,7 @@ const ScanMe: React.FC<props> = ({ cantCajas, visible, CloseBarcode }) => {
             } else {
                 setCounter(counter + 1);
                 data?.push(scannedText);
+                counterBoxes(1);
             }
         }
 
@@ -46,55 +48,27 @@ const ScanMe: React.FC<props> = ({ cantCajas, visible, CloseBarcode }) => {
     };
 
     return (
-        <Modal
-            animationType="fade"
-            transparent={true}
-            visible={visible}
-            onRequestClose={() => { CloseBarcode }}
-        >
-            <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <View style={styles.cardContainer}>
-                        <Card style={{ width: '80%', height: 'auto', borderRadius: 0 }}>
-                            <View style={styles.contet}>
-                                <IconButton icon={'inbox'} size={120} style={{ alignSelf: 'flex-start' }} />
-                                <View>
-                                    <Text style={styles.textResume}>Cajas</Text>
-                                    <Text style={styles.textTitle}>{counter}/{cantCajas}</Text>
-                                    <TextInput
-                                        ref={BarCodeInput}
-                                        style={{ display: 'none' }} // Hide the input field
-                                        onChangeText={handleBar}
-                                        autoFocus
-                                    />
-                                </View>
-                            </View>
-                            <Button title={'SALIR'} onPress={() => { setCounter(0); CloseBarcode(); }} />
-                        </Card>
+        
+        <View style={styles.cardContainer}>
+                <View style={styles.contet}>
+                    <IconButton icon={'inbox'} size={120} />
+                    <View>
+                        <Text style={styles.textTitle}> {counter}/{cantCajas} </Text>
+                        <TextInput
+                            ref={BarCodeInput}
+                            style={{ display: 'none' }} // Hide the input field
+                            onChangeText={handleBar}
+                            autoFocus/>
                     </View>
                 </View>
-            </View>
-        </Modal>
-
+        </View>
     )
 
 }
 
 const styles = StyleSheet.create({
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        width: '70%',
-        height: '30%',
-        backgroundColor: 'white',
-        borderRadius: 0,
-    },
     cardContainer: {
-        flex: 1,
+        display :'flex',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -106,8 +80,8 @@ const styles = StyleSheet.create({
         fontSize: 70
     },
     contet: {
+        display : 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-around',
         alignItems: 'center',
     }
 });

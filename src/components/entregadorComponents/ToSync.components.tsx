@@ -8,7 +8,7 @@ import axios from "axios";
 import LoadingModal from "../Activity/activity.component";
 
 export function VistadeSync() {
-    const {getStorageEntregado, updateSynchro, getAllNOTsynchroFacts } = useFacturaStore();
+    const { getStorageEntregado, updateSynchro, getAllNOTsynchroFacts } = useFacturaStore();
     const [dataEntregas, setDataEntregas] = useState<Facturas[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -16,31 +16,42 @@ export function VistadeSync() {
         getData();
     }, []);
 
-    const setSynchro = (arreglo :  Facturas[]) =>{
-        for(let i = 0; arreglo.length > i; i++){
+    const setSynchro = (arreglo: Facturas[]) => {
+        for (let i = 0; arreglo.length > i; i++) {
             updateSynchro(arreglo[i].id);
         }
     }
-      
+
     const SentToValidate = async () => {
         if (dataEntregas) {
-          try {
-            setLoading(true);
-            const data: Facturas[] = getAllNOTsynchroFacts();
-            const response = await axios.put(db_dir + '/entregas/toSincronizar', data).then(()=>{
-            setSynchro(data)
-            setLoading(false);
-            Alert.alert('SINCRONIZADO', 'Se ha sincronizado correctamente.')
-            });
-          } catch (error) {
-            setLoading(false);
-            console.error('Error sending data:', error);
-            Alert.alert('ERROR', 'No se pudo enviar los datos');
-          }
+            try {
+                //console.log('adata', await getAllNOTsynchroFacts());
+                setLoading(true);
+                const data = await getAllNOTsynchroFacts();
+                console.log('fact to validate: ', data);
+                if (data.length > 0) {
+                    const response = await axios.put(db_dir + '/entregas/toSincronizar', data)
+                    if (response.status === 200) {
+                        setSynchro(data)
+                        setLoading(false);
+                        Alert.alert('SINCRONIZADO', 'Se ha sincronizado correctamente.')
+                    } else {
+                        Alert.alert('error', 'no se pudo sincronizar');
+                    }
+
+                }else{
+                    setLoading(false);
+                    Alert.alert('NO SE OBTUBIERON DATOS')
+                }
+            } catch (error) {
+                setLoading(false);
+                console.error('Error sending data:', error);
+                Alert.alert('ERROR', 'No se pudo enviar los datos');
+            }
         } else {
-          Alert.alert('ERROR', 'NO HAY VALORES PARA ENVIAR');
+            Alert.alert('ERROR', 'NO HAY VALORES PARA ENVIAR');
         }
-      };
+    };
 
     const getData = async () => {
         setLoading(true);
@@ -61,7 +72,7 @@ export function VistadeSync() {
         <View>{
             dataEntregas.length > 0 ?
                 (<View >
-                    <LoadingModal visible={loading} message="SINCRONIZANDO FACTURAS"/>
+                    <LoadingModal visible={loading} message="SINCRONIZANDO FACTURAS" />
                     <View >
                         <ScrollView>
                             <DataTable>
@@ -103,14 +114,14 @@ export function VistadeSync() {
                     </View >
 
                     <View style={{ height: 50, backgroundColor: '#063970', justifyContent: 'center', alignItems: 'flex-end' }}>
-                        <Button color={'#063970'} title="SINCRONIZAR" onPress={()=>{SentToValidate();}}/>
+                        <Button color={'#063970'} title="SINCRONIZAR" onPress={() => { SentToValidate(); }} />
                     </View>
 
                 </View>) : (
                     <View>
                         <Text style={{ color: 'black' }}>NO SE OBTENIDO LOS DATOS</Text>
                     </View>
-                    )
+                )
         }</View>
     )
 

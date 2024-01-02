@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     ConCkeck: {
         backgroundColor: '#F7DC6F'
     },
-    IsSynchro : {
-        backgroundColor : '#F7DC6F'
+    IsSynchro: {
+        backgroundColor: '#F7DC6F'
     },
     floatingButton: {
         backgroundColor: '#063970',
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
 function EntregadorListView<props>() {
     const [facturas, setFacturas] = useState<Facturas[]>([]);
     const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);
-    const [modalVisible, setModalVisible] = useState(false);     
+    const [modalVisible, setModalVisible] = useState(false);
     const { data, fetchData, updateFactura, updateSingFields, getAllEnTransitoFacts } = useFacturaStore();
     const [loading, setLoading] = useState(false);
     const [see, setSee] = useState(false);
@@ -68,14 +68,14 @@ function EntregadorListView<props>() {
     const getEnTransitoFacts = async () => {
         try {
             setLoading(true);
-                console.log('LLEUGE');
-                const data2 = await axios.get(db_dir + '/fact/getFacturasEnTransito');
-                setFacturas(data2.data.data);
-                if(facturas.length === data.length){
-                    Alert.alert('SINCRONIZACION', 'La lista de facturas esta actualizada');
-                }else{
-                    updateFactura(facturas);
-                }
+            console.log('LLEUGE');
+            const data2 = await axios.get(db_dir + '/fact/getFacturasEnTransito');
+            setFacturas(data2.data.data);
+            if (facturas.length === data.length) {
+                Alert.alert('SINCRONIZACION', 'La lista de facturas esta actualizada');
+            } else {
+                updateFactura(facturas);
+            }
             setLoading(false);
         } catch (err) {
             Alert.alert('ERROR AL SINCRONIZAR', 'Es posible que no tenga conexion a internet, favor revisar la conexion en los ajustes del telefono.');
@@ -90,25 +90,25 @@ function EntregadorListView<props>() {
         setModalVisible(false);
     };
 
-    const close = () =>{
+    const close = () => {
         setSee(false);
     }
 
-    const BoxOrSing = (item : Facturas) => {
-        if(item.hasSing){
+    const BoxOrSing = (item: Facturas) => {
+        if (item.hasSing) {
             Alert.alert('ERR', 'Factura ya validada')
-        }else{
-            if(item.is_check === undefined){
+        } else {
+            if (item.is_check === undefined) {
                 setSee(true);
-            }else{     
-             dataToSend(item);
+            } else {
+                dataToSend(item);
             }
         }
     }
 
     const dataToSend = (fact: Facturas) => {
-            serEntregarFact(fact);
-            openModal();
+        serEntregarFact(fact);
+        openModal();
     }
 
     useEffect(() => {
@@ -117,7 +117,7 @@ function EntregadorListView<props>() {
 
     return (
         data.length > 0 ? (
-            < View style={{height : '100%'}}>
+            < View style={{ height: '100%' }}>
                 <LoadingModal visible={loading} message="ESPERANDO FACTURAS" />
                 <ScrollView>
                     <DataTable>
@@ -141,15 +141,15 @@ function EntregadorListView<props>() {
                         {
                             data.map((item: Facturas) => {
                                 let valor;
-                                if(item.is_check === undefined){
-                                    valor = styles.SinCheck;
-                                }else if(item.is_check === true){
-                                    valor = styles.ConCkeck
-                                }else if(item.hasSing === true){
+                                if (item.hasSing === true) {
                                     valor = styles.IsSynchro;
+                                } else if (item.is_check === true) {
+                                    valor = styles.ConCkeck
+                                } else if(item.is_check === undefined){
+                                    valor = styles.SinCheck
                                 }
                                 return (
-                                    <DataTable.Row key={item.id} onPress={() => {setfact(item); BoxOrSing(item);}} style={[valor]}>
+                                    <DataTable.Row key={item.id} onPress={() => { setfact(item); BoxOrSing(item); }} style={[valor]}>
                                         <DataTable.Cell>{item.cliente}</DataTable.Cell>
                                         <DataTable.Cell>{item.ref_factura}</DataTable.Cell>
                                         <DataTable.Cell>{item.lista_empaque}</DataTable.Cell>
@@ -160,13 +160,13 @@ function EntregadorListView<props>() {
                             })
                         }
                     </DataTable>
-                    <TouchableOpacity style={styles.floatingButton} onPress={() =>getEnTransitoFacts()}>
+                    <TouchableOpacity style={styles.floatingButton} onPress={() => getEnTransitoFacts()}>
                         <Text>+</Text>
                     </TouchableOpacity>
                 </ScrollView>
 
                 <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
-                <BoxChecker fact={fact} visible={see} close ={close} tipe={1}/>
+                <BoxChecker fact={fact} visible={see} close={close} tipe={1} />
             </View >)
             :
             (

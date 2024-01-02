@@ -46,7 +46,7 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext}) => {
       //console.log('Image renamed');
 
       // change the State in the local file
-      updateSing(id, result);
+      updateSing(id, result.encoded);
       isnext(true);
     } catch (err) {
       console.log('Error renaming image:', err);

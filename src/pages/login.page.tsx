@@ -1,12 +1,8 @@
 import React from 'react';
-import type { PropsWithChildren } from 'react';
 import {
     SafeAreaView,
-    ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
-    useColorScheme,
     View,
     Button, 
     TextInput
@@ -17,7 +13,6 @@ function LoginPage() {
         <SafeAreaView>
             <View style={styles.card}>
                 <Text style={styles.title}>LOG IN</Text>
-
 
                 <TextInput placeholder="USUARIO"/>
                 <TextInput placeholder="CONTRASENIA"/>

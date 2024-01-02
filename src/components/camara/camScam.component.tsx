@@ -144,7 +144,7 @@ export const QRScannerDL: React.FC<props> = ({ fact, visible, close, counterBoxe
       />
 
       <View>
-        <Button title={'CERRAR'} onPress={() => { setCounter(0); close(); }} />
+        <Button title={'CERRAR'} onPress={() => { close(); }} />
       </View>
 
     </Modal>

@@ -5,15 +5,11 @@ import { Facturas } from "../../../interfaces/facturas";
 import axios from "axios";
 import db_dir from "../../../config/db";
 //test-imports
-import { DataTable, Icon, IconButton } from 'react-native-paper';
 import RNSignatureExample from '../../sing/Sing.component';
 import CameraScreen from "../../camara/cam.component";
 import useFacturaStore from "../../../storage/storage";
 
 
-interface FactsComponentProps {
-    factura: Facturas; // Array of Factura objects
-}
 
 export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: boolean, closeModal: () => void }> = ({ factura, modalVisible, closeModal }) => {
     const fact: Facturas | null = factura;
@@ -88,7 +84,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                     </View>
 
                                     <View style={{width : 'auto'}}>
-                                        <TouchableOpacity style={styles.button} onPress={ValSing}>
+                                        <TouchableOpacity style={styles.button} onPress={()=>{ValSing()}}>
                                             <View style={{justifyContent : 'flex-end'}}>
                                                 <Text style={styles.buttonText}>FINALIZAR</Text>
                                             </View>                                           

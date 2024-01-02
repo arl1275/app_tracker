@@ -17,12 +17,9 @@ const CameraScreen: React.FC<props> = ({fact, setIsPic}) => {
   const cameraRef = useRef<RNCamera>(null);
   const [tempUri, setTempUri] = useState<string>();
   const { height } = useWindowDimensions();
-  const [imageResponse, setImageResponse] = useState<ImagePickerResponse>();
   const { data, fetchData, updateFactura, getFacturaById, updateStateAndHasSing } = useFacturaStore();
 
   const takePicture = async () => {
-    console.log('entro a la pantalla');
-    
     if (cameraRef.current) {
       console.log('llego adentro de la camara del if')
       try {
@@ -42,13 +39,13 @@ const CameraScreen: React.FC<props> = ({fact, setIsPic}) => {
   };
 
   const tomarFotografia = () => {
-    launchCamera({ mediaType: 'photo', quality: 0.5 }, (resp: ImagePickerResponse) => {
-      console.log('res', resp);
+    launchCamera({ mediaType: 'photo', quality: 0.2, includeBase64 : true }, (resp: ImagePickerResponse) => {
       if (resp.didCancel) return;
       if (!resp.assets) return;
       setTempUri(resp.assets[0].uri);
-      updateStateAndHasSing(fact?.id, 'ENTREGADO', resp.assets[0]);
+      updateStateAndHasSing(fact?.id, 'ENTREGADO', resp.assets[0].base64);
       setIsPic(true);
+     
     });
   };
 
@@ -68,7 +65,7 @@ const CameraScreen: React.FC<props> = ({fact, setIsPic}) => {
               style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
               resizeMode="cover"
             >
-              <IconButton icon="camera" size={30} onPress={() => {}} />
+              <IconButton icon="camera" size={30} onPress={() =>{}} />
               <Text style={{ color: 'white', fontWeight: 'bold' }}>Editar fotografia</Text>
             </ImageBackground>
           </TouchableOpacity>

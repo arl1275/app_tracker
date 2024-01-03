@@ -1,32 +1,68 @@
-import React from 'react';
-import {
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    View,
-    Button, 
-    TextInput
-} from 'react-native';
+import React, { useState } from 'react';
+import axios from 'axios';
+import db_dir from '../config/db';
+import {SafeAreaView, StyleSheet, Text, View, Button, TextInput, Alert} from 'react-native';
 
 function LoginPage() {
+    const [Data, setData] = useState({
+        user : '',
+        _Password : ''
+    });
+
+    const handleUserChange = (text : string) => {
+        setData({ ...Data, user: text }); // Update _user in the state with input text
+      };
+    
+      const handlePasswordChange = (text : string) => {
+        setData({ ...Data, _Password: text }); // Update _password in the state with input text
+      };
+    
+      const handleSubmit = () => {
+        console.log('Submitted User:', Data.user);
+        console.log('Submitted Password:', Data._Password);
+        try {
+            const res = axios.get(db_dir + '/user/auth/app', {params : {
+                user : Data.user,
+                _Password : Data._Password
+            }});
+            console.log('valores de res : ', res);
+        } catch (err) {
+            Alert.alert('ERROR', 'Problemas para enviar usuario, favor revisar su conexion a internet');
+            console.log('problema al enviar usuario : ', err)
+        }
+      };
+
+
     return (
-        <SafeAreaView>
-            <View style={styles.card}>
-                <Text style={styles.title}>LOG IN</Text>
+        <View style={{width : '100%', height : '100%', backgroundColor : '#3B59CC'}}>
+            <View>
 
-                <TextInput placeholder="USUARIO"/>
-                <TextInput placeholder="CONTRASENIA"/>
+                <Text style={styles.title}>ARBAITER APP</Text>
 
-                <Button title="Submit" />
+                <TextInput 
+                placeholder="USUARIO"
+                onChangeText={handleUserChange}
+                value={Data.user}
+                placeholderTextColor={'black'}
+                />
+
+                <TextInput 
+                placeholder="CONTRASENIA"  
+                onChangeText={handlePasswordChange}
+                value={Data._Password}
+                secureTextEntry
+                placeholderTextColor={'black'}
+                />
+
+                <Button title="Submit" onPress={handleSubmit}/>
             </View>
-
-        </SafeAreaView >
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: 'white',
+        backgroundColor: '#3B59CC',
         borderRadius: 8,
         padding: 16,
         margin: 8,
@@ -40,6 +76,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
+        color : 'white',
+        alignSelf : 'center'
     },
     content: {
         fontSize: 16,

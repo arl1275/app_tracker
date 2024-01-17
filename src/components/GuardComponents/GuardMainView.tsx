@@ -18,26 +18,29 @@ interface dec_envio {
 }
 
 export const MainGuardView = () => {
-    const [data, setData] = useState<dec_envio[]>([]);
-    const [selectedValue, setSelectedValue] = useState<string>('');
-    const [selectedDecla, setSelectDeclar] = useState<string>('');
-    const [showResumenChecked_List, setShowResumenChecked_List] = useState<boolean>(false);
+    const [data, setData] = useState<dec_envio[]>([]);                                          // data to show in list
+    const [selectedValue, setSelectedValue] = useState<string>('');                             // THIS IS NOT WORKING
+    const [selectedDecla, setSelectDeclar] = useState<string>('');                              // this is to get the declaration in specific
+    const [showResumenChecked_List, setShowResumenChecked_List] = useState<boolean>(false);     // data to show the checked list
+    const [loading, setLoading] = useState(false);                                              // this is to update facturas data
 
     useEffect(() => {
         get_data();
     }, [])
 
     const get_data = async () => {
+        setLoading(true);
         try {
             const valores = await axios.get(db_dir + '/cons/decEnv');
             setData(valores.data.data);
         } catch (err) {
             console.log('error para obtener data: ', err);
-        }
+        };
+        setLoading(false);
     }
 
     // this is to Close the list of the checked
-    const to_Close = () =>{
+    const to_Close = () => {
         setShowResumenChecked_List(false);
     }
 
@@ -46,8 +49,9 @@ export const MainGuardView = () => {
     }
 
     return (
-        <View style={{flex : 1}}>
+        <View style={{ flex: 1 }}>
             <ListToTransito modalVisible={showResumenChecked_List} closeModal={to_Close} />
+            <LoadingModal visible={loading} message="ACTUALIZANDO FACTURAS" />
 
             <View>
                 <View style={styles.navbar}>
@@ -82,10 +86,10 @@ export const MainGuardView = () => {
                 data.length > 0 ?
                     <View>
                         <View style={{ display: 'flex', flexDirection: 'row' }}>
-                            <TouchableOpacity 
-                            style={{ backgroundColor: '#063970', marginRight: 'auto' , width : '20%'}} 
-                            onPress={() => { to_Open()}}>
-                                <Text style={{ color: 'white', marginTop : '10%', alignSelf : 'center'}}>A TRANSITO</Text>
+                            <TouchableOpacity
+                                style={{ backgroundColor: '#1F618D', marginRight: 'auto', width: '20%' }}
+                                onPress={() => { to_Open() }}>
+                                <Text style={{ color: 'white', marginTop: '10%', alignSelf: 'center' }}>A TRANSITO</Text>
                             </TouchableOpacity>
                             <Picker
                                 selectedValue={selectedDecla}
@@ -93,7 +97,7 @@ export const MainGuardView = () => {
                                 onValueChange={(itemValue) => setSelectDeclar(itemValue)} >
                                 <Picker.Item label="SELECCIONAR DECLARACION DE ENVIO" value='0' />
                                 {data.map((item: dec_envio) => {
-                                    return (<Picker.Item label={` DECLARACION DE ENVIO: ${item.ref_declaracion_envio}`} value={item.ref_declaracion_envio} style={{ backgroundColor: '#34495E' }} />)
+                                    return (<Picker.Item label={` DECLARACION DE ENVIO: ${item.ref_declaracion_envio}`} value={item.ref_declaracion_envio} style={{ backgroundColor: '#063970' }} />)
                                 })}
                             </Picker>
                         </View>

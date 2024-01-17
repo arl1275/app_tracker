@@ -27,7 +27,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
     const [see2, setSee2] = useState(false);
     const inputRef = useRef<TextInput>(null);               // ref para el input text of the scanner
     const { UpdateIsChecked } = useGuardList();             // to save the info fact in the memory
-    const { updateIsCheck } = useFacturaStore();
+    const { updateIsCheck } = useFacturaStore();            
     const [data, setData] = useState<string[]>([]);         // to access the data save in momery
     const [Value_, setValue_] = useState('');
     const [Boxes, setBoxes] = useState<boxes[]>([]);        // is to check the boxes in memory
@@ -52,11 +52,6 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
         getBoxes();
     }, [fact]);
 
-    useEffect(() => {
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
-      }, []);
 
     const CounterBoxes = (num: number) => {
         setCounter(prevCounter => prevCounter + num);
@@ -68,7 +63,6 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
     }
     const handleBarcodeScan = () => {
         let t = Value_;
-        console.log('valor : ', t);
         if (t.length > 0) {
             if (t.length === 13) {                        // that 13 means the lengt of the barcode
                 if (data?.includes(t)) {

@@ -73,7 +73,6 @@ const ListComponentModal: React.FC<props> = (props) => {
             return filteredFacturas.reduce((total: any, factura: Facturas) => total + factura.cant_cajas, 0);
         }
     }
-
     const get_total_unidades = () => {
         if (data) {
             const filteredFacturas = data.filter((factura: Facturas) => factura.ref_declaracion_envio === parseIntProps);
@@ -110,7 +109,7 @@ const ListComponentModal: React.FC<props> = (props) => {
                      
                         {
                          FilterArr.filter((item: Facturas)=> item.ref_declaracion_envio === parseIntProps).map((item : Facturas) =>{
-                            let valor = item.is_check == null ? '#CC0033' : '#00FF33';
+                            let valor = item.is_check == null ? 'white' : '#D5F5E3';
                             return (
                                           <DataTable.Row key={item.id} onPress={()=>{checkIsCheck(item)}} style={{backgroundColor : valor}}>
                                               <DataTable.Cell><Text style={{color : 'black'}}>{item.ref_factura}</Text></DataTable.Cell>

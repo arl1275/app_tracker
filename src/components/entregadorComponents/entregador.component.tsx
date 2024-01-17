@@ -55,10 +55,9 @@ const styles = StyleSheet.create({
     },
 });
 
-
 function EntregadorListView<props>() {
-    const [facturas, setFacturas] = useState<Facturas[]>([]);
-    const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);
+    const [facturas, setFacturas] = useState<Facturas[]>([]);                                                   // set the facturas in the local array
+    const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);                                    //
     const [modalVisible, setModalVisible] = useState(false);
     const { data, fetchData, updateFactura, updateSingFields, getAllEnTransitoFacts } = useFacturaStore();
     const [loading, setLoading] = useState(false);
@@ -68,7 +67,6 @@ function EntregadorListView<props>() {
     const getEnTransitoFacts = async () => {
         try {
             setLoading(true);
-            console.log('LLEUGE');
             const data2 = await axios.get(db_dir + '/fact/getFacturasEnTransito');
             setFacturas(data2.data.data);
             if (facturas.length === data.length) {

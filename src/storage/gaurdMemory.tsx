@@ -21,7 +21,7 @@ const useGuardList: any = create<FacturaState>((set) => ({
             if(dat){
                 //console.log('existe: ', values[i]);
             }else{
-                console.log('no existe', values[i]);
+                //console.log('no existe', values[i]);
                 alterData.push(values[i]);
             }
         }

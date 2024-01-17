@@ -1,7 +1,8 @@
 export interface Facturas{
+    ref_declaracion_envio : number;
     id: number,
     ref_factura: string,
-    cliente: string,
+    cliente_nombre: string,
     cant_cajas: number,
     cant_unidades: number,
     lista_empaque: string,

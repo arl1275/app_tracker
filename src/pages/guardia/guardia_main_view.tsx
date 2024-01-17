@@ -4,7 +4,7 @@ import axios from "axios";
 import { Facturas } from "../../interfaces/facturas";
 import db_dir from "../../config/db";
 import ListComponentModal from "../../components/listComponents/list.component.modal";
-import { ListUnitModal } from "../../components/modals/guardiaModals/guardModal.component";
+import { ListUnitModal } from "../../components/modals/guardiaModals/LisToTransit.component";
 import LoadingModal from "../../components/Activity/activity.component";
 import useGuardList from "../../storage/gaurdMemory";
 import { IconButton } from "react-native-paper";
@@ -15,9 +15,6 @@ function ShowIndexView() {
     const [isLoading, setIsLoagin] = useState(false);
     const { data, CargaData, GetIsCheckedFacts } = useGuardList();
     const [modalVisible, setModalVisible] = useState(false);
-    //const [st, setSt] = useState(false);
-
-    //test
     const [selectedValue, setSelectedValue] = useState<string>('');
 
     const checkData = () => {
@@ -44,7 +41,6 @@ function ShowIndexView() {
         try {
             setIsLoagin(true);
             const data = await axios.get(db_dir + '/fact/factEnPreparacion');
-            //console.log("Data from api: ", data.data.data);
             setFacts(data.data.data);
             CargaData(facts);
             setIsLoagin(false);
@@ -60,31 +56,6 @@ function ShowIndexView() {
             <LoadingModal visible={isLoading} message="ACTUALIZANDO DATOS" />
 
             <View style={{ flex: 1 }}>
-                <View style={styles.navbar}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <IconButton icon={'account-circle'} size={25} iconColor="white" />
-                       
-                        <Picker
-                            selectedValue={selectedValue}
-                            style={{ height: 50, width: 150, color: 'white' }}
-                            onValueChange={(itemValue) => setSelectedValue(itemValue)}>
-                            <Picker.Item label="INICIO" value="admin" />
-                            <Picker.Item label="OTROS" value="option1" />
-                            <Picker.Item label="SALIR" value="option2" />
-                        </Picker> 
-                    </View>
-
-                    <View style={{ alignItems: 'flex-end' }}>
-                        <View style={{ display: 'flex', flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: '10%' }} onPress={() => { }}>
-                                <Text style={{ color: 'white' }}>HISTORICOS</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: 'auto' }} onPress={() => { getFacturas() }} >
-                                <Text style={{ color: 'white' }}>ACTUALIZAR LISTA</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>   
                 {
                     data.length > 0 ? <ListComponentModal /> : <Text>SIN FACTURAS PARA MOSTRAR</Text>
                 }

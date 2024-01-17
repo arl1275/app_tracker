@@ -38,7 +38,7 @@ function App()/*JSX.Element*/ {
         backgroundColor={backgroundStyle.backgroundColor}
       />
         <View style={{backgroundColor: isDarkMode ? Colors.black : Colors.white,}}>
-            <LoginPage/>
+            <IndexPage />
         </View>
     
     </SafeAreaView>

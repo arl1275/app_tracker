@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import db_dir from '../config/db';
 import {SafeAreaView, StyleSheet, Text, View, Button, TextInput, Alert} from 'react-native';
+import { Card } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function LoginPage() {
     const [Data, setData] = useState({
@@ -34,27 +36,37 @@ function LoginPage() {
 
 
     return (
-        <View style={{width : '100%', height : '100%', backgroundColor : '#3B59CC'}}>
+        <View style={{width : '100%', height : '100%', backgroundColor : 'white', flex : 1}}>
             <View>
-
-                <Text style={styles.title}>ARBAITER APP</Text>
-
+                <Card style={styles.card}>
+                    <View style={{alignSelf : 'center'}}><Icon name={'truck'} size={190} color={'white'}/></View>
+                    <Text style={styles.title}>KELLER-CHECK</Text>
+                </Card>
+                
+                <View style={{marginTop : 40 , width : '80%', alignSelf : 'center'}}>
                 <TextInput 
                 placeholder="USUARIO"
                 onChangeText={handleUserChange}
                 value={Data.user}
-                placeholderTextColor={'black'}
+                placeholderTextColor={'grey'}
+                style={{color : 'black'}}
                 />
 
                 <TextInput 
-                placeholder="CONTRASENIA"  
+                placeholder="CONTRASEÑA"  
                 onChangeText={handlePasswordChange}
                 value={Data._Password}
                 secureTextEntry
-                placeholderTextColor={'black'}
+                placeholderTextColor={'grey'}
+                style={{color : 'black'}}
                 />
-
-                <Button title="Submit" onPress={handleSubmit}/>
+                
+                <View style={styles.button}>
+                    <Button title="INGRESAR" onPress={handleSubmit} color={'#063970'}/>
+                </View>
+                
+                </View>
+                
             </View>
         </View>
     )
@@ -62,25 +74,20 @@ function LoginPage() {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#3B59CC',
-        borderRadius: 8,
-        padding: 16,
-        margin: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
+        borderTopLeftRadius : 0,
+        borderTopRightRadius : 0, 
+        height : '50%',
+        backgroundColor : '#063970'
     },
     title: {
-        fontSize: 18,
+        fontSize: 25,
         fontWeight: 'bold',
-        marginBottom: 8,
+        marginTop: 20,
         color : 'white',
         alignSelf : 'center'
     },
-    content: {
-        fontSize: 16,
+    button: {
+        backgroundColor : '#063970'
     },
 });
 

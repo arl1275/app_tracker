@@ -16,24 +16,20 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext}) => {
   const defRoute = '/storage/emulated/0/Android/data/com.app_despacho/files/saved_signature/'; // route where files will be saved.
   const { data, fetchData, updateFactura, getFacturaById, updateSing} = useFacturaStore();
  
-
   const saveNameFileSing = () =>{
     const dataFact = getFacturaById(id);
-    return defRoute + dataFact.id.toString() + '.png';
+    return defRoute + dataFact.factura_id.toString() + '.png';
   }
 
   const saveSign = () => {
-   
     try {
       if (signatureRef.current) {
-        signatureRef.current.saveImage();
-        
+        signatureRef.current.saveImage();        
         return false
       }
     } catch (err) {
       console.log('Error saving image:', err);
     }
-    
   };
 
   const _onSaveEvent = async (result: SaveEventParams) => {
@@ -43,11 +39,12 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext}) => {
       const newPath = saveNameFileSing();
       
       await RNFS.moveFile(oldPath, newPath);
-      //console.log('Image renamed');
+      console.log('Image renamed :', newPath);
 
-      // change the State in the local file
-      updateSing(id, result.encoded);
-      isnext(true);
+   
+        updateSing( id , result.encoded);
+        isnext(true);
+        Alert.alert('FINALIZADO', 'Se guardo la firma')
     } catch (err) {
       console.log('Error renaming image:', err);
     }
@@ -57,21 +54,6 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext}) => {
     setIsEmpty(false);
     console.log('Dragged');
   };
-
-  // useImperativeHandle(ref, () => ({
-  //   saveSign: () => {
-  //     // Call saveSign function
-  //     return saveSign();
-  //   }
-  //   // Add other functions you want to expose here...
-  // }));
-
-  // useEffect(()=>{
-  //   if(isnext){
-  //    saveSign();
-  //   }
-  // }, [isnext === true])
-
 
   return (
     <View style={{ flex: 1, flexDirection: 'column' }}>

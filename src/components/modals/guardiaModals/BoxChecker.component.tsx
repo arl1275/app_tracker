@@ -1,46 +1,48 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Button, Text, View, TextInput, FlatList, StyleSheet, ScrollView, Modal, Alert, Keyboard } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
-import { DataTable, IconButton, Card } from 'react-native-paper';
-import QRScanner, { QRScannerDL } from "../../camara/camScam.component";                                 // this is the camera itself
+import { Card } from 'react-native-paper';
+// import QRScanner, { QRScannerDL } from "../../camara/camScam.component";                                 // this is the camera itself
 import Icon from 'react-native-vector-icons/FontAwesome';
 import useGuardList from "../../../storage/gaurdMemory";
-import useFacturaStore from "../../../storage/storage";
+// import useFacturaStore from "../../../storage/storage";
 import db_dir from "../../../config/db";
 import axios from "axios";
 
 
 interface props {
-    fact: Facturas | undefined;
+    fact: Facturas | null;
     visible: boolean;
     close: () => void;
     tipe: number; // 0 for Guard, 1 for Deliver
 }
 
 interface boxes {
+    facturas : string,
+    lista_empaque : string,
     caja: string,
-    check: boolean
+    unidades : number,
+    cajas : string,
+    check : boolean
 }
 
 const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
-    const [counter, setCounter] = useState<number>(0); // this is to count how many fact has been scanned by the Guard.
+    const [counter, setCounter] = useState<number>(0);      // this is to count how many fact has been scanned by the Guard.
     const [see2, setSee2] = useState(false);
     const inputRef = useRef<TextInput>(null);               // ref para el input text of the scanner
-    const { UpdateIsChecked } = useGuardList();             // to save the info fact in the memory
-    const { updateIsCheck } = useFacturaStore();            
+    const { UpdateIsChecked } = useGuardList();             // to save the info fact in the memory        
     const [data, setData] = useState<string[]>([]);         // to access the data save in momery
     const [Value_, setValue_] = useState('');
     const [Boxes, setBoxes] = useState<boxes[]>([]);        // is to check the boxes in memory
-
+    
+    
     useEffect(() => {
-        if (fact?.cant_cajas === counter) {
-            if (tipe == 1) {
-                updateIsCheck(fact?.id);
-                Alert.alert('FINALIZADO');
-                CloseBarcode();
-                close();
-            } else {
-                UpdateIsChecked(fact?.id);
+        if(typeof fact?.cant_cajas === 'string'){
+            let dat = 0;
+            dat = parseInt(fact.cant_cajas);
+            //console.log('CANTIDAD CAJAS A VALIDAR : ', dat);
+            if ( dat === counter && dat != 0) {
+                UpdateIsChecked(fact?.factura);
                 Alert.alert('FINALIZADO');
                 CloseBarcode();
                 close();
@@ -49,8 +51,8 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
     }, [counter]);
 
     useEffect(()=>{
-        getBoxes();
-    }, [fact]);
+        getBoxes(); // to sync the boxes
+    }, [fact])
 
 
     const CounterBoxes = (num: number) => {
@@ -61,10 +63,11 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
     const CloseBarcode = () => {
         setSee2(false);
     }
+
     const handleBarcodeScan = () => {
         let t = Value_;
         if (t.length > 0) {
-            if (t.length === 13) {                        // that 13 means the lengt of the barcode
+            if (t.length === 13) {                                      // that 13 means the lengt of the barcode
                 if (data?.includes(t)) {
                     Alert.alert("CAJA YA ESCANEADA");
                     setValue_('');
@@ -72,7 +75,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                     for (let i = 0; i < Boxes.length; i++) {
                         if (t === Boxes[i].caja) {
                             Boxes[i].check = true;
-                            console.log('valor guardado : ', t);
+                            //console.log('valor guardado : ', t);
                             CounterBoxes(1);
                             data?.push(t);
                             setValue_('');
@@ -88,12 +91,11 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
     const getBoxes = async () => {
         try {
-            if (typeof fact?.id === 'number') {
-                let valores = await axios.get(db_dir + '/fact/getBoxesFact', { params: { id_fact: fact.id } });
-                setBoxes(valores.data.data);
-            }
+            let valores = await axios.get(db_dir + '/facturas/getCajas', { params: { factura: fact?.factura} });
+            //console.log('dat cajas : ', valores)
+            setBoxes(valores.data.data);
         } catch (err) {
-
+            console.log('NO SE PUDO OBTENER LAS CAJAS : ', err)
         }
     };
 
@@ -111,9 +113,9 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#CFD8DC' }}>
 
                                 <View>
-                                    <Text style={styles.title}>CLIENTE : {fact?.cliente_nombre}</Text>
+                                    <Text style={styles.title}>CLIENTE : {fact?.clientenombre}</Text>
                                     <Text style={styles.title}>RUTA : {fact?.lista_empaque}</Text>
-                                    <Text style={styles.title}>FACTURA : {fact?.ref_factura}</Text>
+                                    <Text style={styles.title}>FACTURA : {fact?.factura}</Text>
                                 </View>
                                 <View style={{ alignItems: 'flex-end' }}>
                                     <Icon
@@ -154,12 +156,11 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                             </View>
 
                             <Card style={{ height: 'auto' }}>
-                                {Boxes.map((item: boxes) => {
-                                    //console.log('esta: ', item.check);
+                                {Boxes.filter((item : boxes)=> item.lista_empaque === fact?.lista_empaque).map((item: boxes) => {
                                     let is_check = item.check === true ? 'green' : 'black';
                                     return (
                                         <Text style={{ backgroundColor: is_check }}>{item.caja}</Text>
-                                    )
+                                    );
                                 })}
                             </Card>
                         </View>

@@ -43,9 +43,8 @@ const CameraScreen: React.FC<props> = ({fact, setIsPic}) => {
       if (resp.didCancel) return;
       if (!resp.assets) return;
       setTempUri(resp.assets[0].uri);
-      updateStateAndHasSing(fact?.id, 'ENTREGADO', resp.assets[0].base64);
+      updateStateAndHasSing(fact?.factura_id, 'ENTREGADO', resp.assets[0].base64);
       setIsPic(true);
-     
     });
   };
 

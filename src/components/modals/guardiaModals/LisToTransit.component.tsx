@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Button, Text, View, TextInput, FlatList, StyleSheet, Modal, Alert, TouchableOpacity } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
-import axios from "axios";
+import axios, { all } from "axios";
 import db_dir from "../../../config/db";
 import { QRUScaner } from "../../camara/camScam.component";
 import { DataTable, Icon, IconButton } from 'react-native-paper';
@@ -12,26 +12,41 @@ interface FactsComponentProps {
     factura: Facturas[]; // Array of Factura objects
 }
 
-export const ListToTransito: React.FC<{ /*factura: Facturas[] | null,*/ modalVisible: boolean, closeModal: () => void }> = ({ modalVisible, closeModal }) => {
+export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () => void }> = ({ modalVisible, closeModal }) => {
     const [transportista, setTransportista] = useState<string | null>(null);        // save the data of the Entregador
     const [camion, setCamion] = useState<string | null>(null);                      // save the data of the Camion
     const [visble, setModalVisibleCam] = useState(false);                           // to open modal to scam truck
     const [visbleU, setModalVisibleUser] = useState(false);                         // to open moadal of the camera to scam user
     const [listFact, setListFact] = useState<Facturas[]>([]);                       // this is to show locally
-    const {  GetIsCheckedFacts } = useGuardList();                                  // this is to get the checked facts
+    const { GetIsCheckedFacts, updateIsInTransit } = useGuardList();                                   // this is to get the checked facts
 
-    useEffect(()=>{
+    useEffect(() => {
         setListFact(GetIsCheckedFacts());
+        if(listFact.length <= 0){
+            Alert.alert('ENVIO A TRANSITO',' No tiene facturas revisadas o ya envio las facturas a transito');
+        }
     }, [modalVisible]);
-    
+
     const FacturasToTransito = async () => {
         try {
             if (camion === null || camion === '' || transportista === null || transportista === '') {
                 Alert.alert('ERRO DATOS', 'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.')
             } else {
-                let values = listFact.map((item)=> item.id);
-                console.log(values);
-                const response = await axios.put(db_dir + '/entregas/toTransito', values);
+
+                let body : Facturas[]= listFact.filter((item) => item.factura);
+                let req_body = body.map((item) => item.factura)
+
+                const response = await axios.put(db_dir + '/facturas/toTransito', req_body);
+
+                 if (response.status === 200) {
+                    for (let i = 0; i < listFact.length; i++) {
+                        updateIsInTransit(listFact[i].factura_id);
+                    }
+                     Alert.alert('SE ENVIO A TRANSITO', 'Se enviaron las facturas a transito');
+                 } else if (response.status != 200) {
+                     Alert.alert('ERROR', 'No se pudo enviar las facturas a transito');
+                 }
+
             }
         } catch (error) {
             console.error("Error:", error); // Log the error if the request fails
@@ -55,16 +70,16 @@ export const ListToTransito: React.FC<{ /*factura: Facturas[] | null,*/ modalVis
     }
 
     const sum_cajas = () => {
-        return listFact.reduce((total, factura)=> total + factura.cant_cajas, 0);
+        return listFact.reduce((total, factura) => total + factura.cant_cajas, 0);
     }
 
     const sum_unidades = () => {
-        return listFact.reduce((total, factura)=> total + factura.cant_unidades, 0);
+        return listFact.reduce((total, factura) => total + factura.cant_unidades, 0);
     }
 
     if (listFact.length === 0) {
         closeModal();
-    }else{
+    } else {
         return (
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
                 <View style={styles.modalOverlay}>
@@ -72,75 +87,74 @@ export const ListToTransito: React.FC<{ /*factura: Facturas[] | null,*/ modalVis
                         <View style={styles.centeredView}>
                             <View></View>
                             <View style={styles.modalContent}>
-    
-                                <View>
-                                    <Text style={{color: 'black', textAlign: 'center', fontSize: 25, marginBottom : 8}}>DESPACHO DE BODEGA</Text>
-                                    
+
+                                <View style={{ backgroundColor: '#063970' }}>
+                                    <Text style={{ color: 'white', textAlign: 'center', fontSize: 25, margin: 10 }}>ENVIO A TRANSITO</Text>
+
                                     <View style={styles.Textplaces}>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <IconButton icon={'camera'} size={20} iconColor="black" onPress={() => { onVisibleU() }} />
-                                            <TextInput placeholder={transportista != null  ? listFact[0].nombre : 'INGRESE USUARIO'}
+                                        <View style={{ flexDirection: 'row', margin: 5 }}>
+                                            <IconButton icon={'camera'} size={20} iconColor="white" onPress={() => { onVisibleU() }} />
+                                            <TextInput placeholder={transportista != null ? listFact[0].nombre : 'USUARIO'}
                                                 placeholderTextColor="#9C9C9C"
                                                 onChange={() => setTransportista}
-                                                style={{ color: 'black' }} />
+                                                style={{ color: 'white' }} />
                                         </View>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <IconButton icon={'camera'} size={20} iconColor="black" onPress={() => { onVisibleCam() }} />
-                                            <TextInput placeholder={camion != null ? listFact[0].placa : 'INGRESE CAMION'}
+                                        <View style={{ flexDirection: 'row', margin: 5 }}>
+                                            <IconButton icon={'camera'} size={20} iconColor="white" onPress={() => { onVisibleCam() }} />
+                                            <TextInput placeholder={camion != null ? listFact[0].placa : 'CAMION'}
                                                 placeholderTextColor="#9C9C9C"
                                                 onChange={() => setCamion}
-                                                style={{ color: 'black' }} />
+                                                style={{ color: 'white' }} />
                                         </View>
                                     </View>
                                 </View>
-    
+
                                 <DataTable>
-                                    <DataTable.Header style={{ width: '90%' , backgroundColor : '#2E4053'}}>
-                                        <DataTable.Title><Text style={{color : 'white'}}>FACTURA</Text></DataTable.Title>
-                                        <DataTable.Title><Text style={{color : 'white'}}>CLIENTE</Text></DataTable.Title>
-                                        <DataTable.Title><Text style={{color : 'white'}}>CAJAS</Text></DataTable.Title>
-                                        <DataTable.Title><Text style={{color : 'white'}}>UNIDADES</Text></DataTable.Title>
+                                    <DataTable.Header style={{ width: '95%', backgroundColor: 'white' }}>
+                                        <DataTable.Title><Text style={{ color: 'black' }}>FACTURA</Text></DataTable.Title>
+                                        <DataTable.Title><Text style={{ color: 'black' }}>CLIENTE</Text></DataTable.Title>
+                                        <DataTable.Title><Text style={{ color: 'black' }}>CAJAS</Text></DataTable.Title>
+                                        <DataTable.Title><Text style={{ color: 'black' }}>UNIDADES</Text></DataTable.Title>
                                     </DataTable.Header>
                                     {
                                         listFact.map((item) => (
                                             <DataTable.Row>
-                                                <DataTable.Cell>{item.ref_factura}</DataTable.Cell>
-                                                <DataTable.Cell>{item.cliente_nombre}</DataTable.Cell>
+                                                <DataTable.Cell>{item.factura}</DataTable.Cell>
+                                                <DataTable.Cell>{item.clientenombre}</DataTable.Cell>
                                                 <DataTable.Cell>{item.cant_cajas}</DataTable.Cell>
                                                 <DataTable.Cell>{item.cant_unidades}</DataTable.Cell>
                                             </DataTable.Row>
                                         ))
                                     }
 
-                                            <DataTable.Row style={{backgroundColor : '#2E4053'}}>
-                                                <DataTable.Cell><Text style={{color : 'white'}}>TOTALES</Text></DataTable.Cell>
-                                                <DataTable.Cell>-</DataTable.Cell>
-                                                <DataTable.Cell><Text style={{color : 'white'}}>{sum_cajas()}</Text></DataTable.Cell>
-                                                <DataTable.Cell><Text style={{color : 'white'}}>{sum_unidades()}</Text></DataTable.Cell>
-                                            </DataTable.Row>
-    
+                                    <DataTable.Row style={{ backgroundColor: '#5499C7' }}>
+                                        <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
+                                        <DataTable.Cell>-</DataTable.Cell>
+                                        <DataTable.Cell><Text style={{ color: 'white' }}>{sum_cajas()}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={{ color: 'white' }}>{sum_unidades()}</Text></DataTable.Cell>
+                                    </DataTable.Row>
+
                                 </DataTable>
-    
+
                                 <View style={styles.buttonContainer}>
-                                    <TouchableOpacity style={styles.button} onPress={() => {setCamion(null); setTransportista(null); closeModal();}}>
+                                    <TouchableOpacity style={styles.button} onPress={() => { setCamion(null); setTransportista(null); closeModal(); }}>
                                         <Text style={styles.buttonText}>CERRAR</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.button} onPress={() => { FacturasToTransito(); closeModal() }}>
                                         <Text style={styles.buttonText}>FINALIZAR</Text>
                                     </TouchableOpacity>
-    
                                 </View>
-    
+
                             </View >
                         </View>
                     </View>
-    
-    
+
+
                     <QRUScaner close={toCloseCam} visible={visble} ReturnText={setCamion} />
                     <QRUScaner close={toCloseU} visible={visbleU} ReturnText={setTransportista} />
                 </View >
             </Modal >
-    
+
         );
     }
 };
@@ -159,11 +173,11 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         width: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
+        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black
     },
     modalContent: {
         zIndex: 1, // Ensure the content is above the overlay
-        padding: 20,
+        padding: 0,
         backgroundColor: 'white',
         borderRadius: 0,
         elevation: 5, // For Android shadow
@@ -172,7 +186,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between', // Adjust as needed
-        marginVertical: 10,
+        //marginVertical: 10,
         width: "auto",
         backgroundColor: '#063970',
     },
@@ -186,7 +200,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     Textplaces: {
-        backgroundColor: 'white',
+        backgroundColor: '#063970',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',

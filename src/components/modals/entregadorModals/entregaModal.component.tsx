@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import styles_made from "../../../assets/stylescss";
 import { Button, Text, View, TextInput, FlatList, StyleSheet, Modal, Alert, TouchableOpacity } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
-import axios from "axios";
-import db_dir from "../../../config/db";
 //test-imports
 import RNSignatureExample from '../../sing/Sing.component';
 import CameraScreen from "../../camara/cam.component";
@@ -24,7 +21,9 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
     const signatureRef = useRef<any>(null);
 
     const ValSing = () => {
-        if (isEmpty === true) {
+        if(isPic == false){
+            Alert.alert('SIN FOTO');
+        }else if (isEmpty === true) {
             Alert.alert("ERROR FALTA DE FIRMA", 'Se necesita ingresar la firma del receptor de la factura para continuar con el proceso de entrega.')
         }else if (saveSing === false){
             Alert.alert("ERROR GUARDADO DE FIRMA", 'Se necesita guardar la firma para validar la factura.')
@@ -75,11 +74,11 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                         <View style={{ margin: 2 }}>
                                             <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
                                             {/* <Text style={styles.resumen}>CAMION : {fact?.placa}</Text> */}
-                                            <Text style={styles.resumen}>FACTURA : {fact?.ref_factura}</Text>
+                                            <Text style={styles.resumen}>FACTURA : {fact?.factura}</Text>
                                             <Text style={styles.resumen}>CAJAS : {fact?.cant_cajas}</Text>
                                         </View>
                                         <View style={{ height: 450, width : 450}}>
-                                            <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.id} isnext={setSaveSing} />
+                                            <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.factura_id} isnext={setSaveSing} />
                                         </View>
                                     </View>
 
@@ -100,7 +99,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                         <View style={{ borderColor: 'black' }}>
                                             <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
                                             <Text style={styles.resumen}>CAMION : {fact?.placa}</Text>
-                                            <Text style={styles.resumen}>FACTURA : {fact?.ref_factura}</Text>
+                                            <Text style={styles.resumen}>FACTURA : {fact?.factura}</Text>
                                             <Text style={styles.resumen}>CAJAS : {fact?.cant_cajas}</Text>
                                             <TextInput
                                                 style={{ height: 40, backgroundColor: '#063970' }}

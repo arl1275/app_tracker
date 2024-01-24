@@ -8,7 +8,7 @@ interface FacturaState {
   updateFactura: (updatedFactura: Facturas[]) => void;                                                      // guarda los datos si no hay facturas 
   getFacturaById: (id: number) => Facturas | undefined;                                                     // Selector function
   updateStateAndHasSing: (idToUpdate: number, newState: string, pathPic: string) => void;                   // set the sing in a Local_file related to one Factura
-  updateSing: (idToUpdate: number, singPath: string) => void;                                               // solo marca la factura como que tiene firma.
+  updateSing: (idToUpdate: number , singPath: string) => void;                                               // solo marca la factura como que tiene firma.
   updateSynchro: (id: number) => void;                                                                      // solo verifica que una factura ya fue sincronizada
   getStorageEntregado: () => void;                                                                          // solo obtiene las facturas que fueron entregadas.
   getAllEnTransitoFacts: () => void;                                                                        // solo sirve para obtener los datos de las facturas en transito
@@ -56,7 +56,7 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
 
         for (let i = 0; i < data.length; i++) {
           for (let j = 0; j < facturas.length; j++) {
-            if (data[i].id === facturas[j].id) {
+            if (data[i].id === facturas[j].factura_id) {
               newData.push(facturas[j]);
             }
           }
@@ -82,7 +82,7 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
   // return all the data of one specific fact
   getFacturaById: (id: number) => {
     const { data } = useFacturaStore.getState();
-    const factura = data.find((factura: Facturas) => factura.id === id);
+    const factura = data.find((factura: Facturas) => factura.factura_id === id);
 
     if (factura) {
       console.log('INFO DE LA FACTURA:', factura);
@@ -96,14 +96,14 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
   //works for update the element if the fact has sing or not
   updateStateAndHasSing: async (idToUpdate: number, newState: string, pathPic: string) => {
     try {
-      console.log('base : ', pathPic);
-      
+      console.log('base de foto: ', pathPic.length);
+
       const storedData = await AsyncStorage.getItem('facturaData');
       if (storedData !== null) {
         let data: Facturas[] = JSON.parse(storedData);
 
         // Find the index of the factura to update
-        const facturaIndex = data.findIndex((factura) => factura.id === idToUpdate);
+        const facturaIndex = data.findIndex((factura) => factura.factura_id === idToUpdate);
 
         if (facturaIndex !== -1) {
           // Update state and hasSing for the found factura
@@ -116,7 +116,7 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
 
           // Save the updated data back to AsyncStorage
           await AsyncStorage.setItem('facturaData', JSON.stringify(data));
-          //console.log('State and hasSing updated successfully:', data[facturaIndex]);
+          console.log('State and hasSing updated successfully:', data[facturaIndex]);
         } else {
           console.error('Factura not found with the given ID:', idToUpdate);
         }
@@ -132,13 +132,14 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
       const storedData = await AsyncStorage.getItem('facturaData');
       if (storedData !== null) {
         let data: Facturas[] = JSON.parse(storedData);
-        const facturaIndex = data.findIndex((factura) => factura.id === id);
+        const facturaIndex = data.findIndex((factura) => factura.factura_id === id);
         if (facturaIndex !== -1) {
           data[facturaIndex] = {
             ...data[facturaIndex],
             is_Sinchro: true,
           }
         }
+        console.log('se valido a sincronizado')
       } else {
         console.log('erro para obtener el storage');
       }
@@ -149,15 +150,14 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
 
   updateSing: async (idToUpdate: number, singPath: string) => {
     try {
+      console.log('=D== > ', idToUpdate, singPath);
       const storedData = await AsyncStorage.getItem('facturaData');
       if (storedData !== null) {
+        console.log(await AsyncStorage.getItem('facturaData'));
         let data: Facturas[] = JSON.parse(storedData);
-        //let hora_entrega: string = formatDate();
-        // Find the index of the factura to update
-        const facturaIndex = data.findIndex((factura) => factura.id === idToUpdate);
+        const facturaIndex = data.findIndex((factura) => factura.factura_id === idToUpdate);
 
         if (facturaIndex !== -1) {
-          // Update state and hasSing for the found factura
           data[facturaIndex] = {
             ...data[facturaIndex],
             hasSing: true,
@@ -165,10 +165,8 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
             fech_hora_entrega: formatDate(),
             state_name: 'ENTREGADO',
           };
-
-          // Save the updated data back to AsyncStorage
           await AsyncStorage.setItem('facturaData', JSON.stringify(data));
-          //console.log('State and hasSing updated successfully:', data[facturaIndex]);
+          
         } else {
           console.error('Factura not found with the given ID:', idToUpdate);
         }
@@ -176,7 +174,6 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
     } catch (error) {
       console.error('Error updating state and hasSing:', error);
     }
-
   },
 
   getStorageEntregado: async () => {
@@ -205,7 +202,7 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
     const val = await AsyncStorage.getItem('facturaData');
     if (val !== null) {
       let data: Facturas[] = JSON.parse(val);
-      const factData: Facturas[] = data.filter((factura) => factura.is_check === true);
+      const factData: Facturas[] = data.filter((factura) => factura.hasSing === true);
       if (factData) {
         console.log('data from app : ', factData);
         return factData;
@@ -220,7 +217,7 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
       const storedData = await AsyncStorage.getItem('facturaData');
       if (storedData !== null) {
         let data: Facturas[] = JSON.parse(storedData);
-        const facturaIndex = data.findIndex((factura) => factura.id === id);
+        const facturaIndex = data.findIndex((factura) => factura.factura_id === id);
 
         if (facturaIndex !== -1) {
           data[facturaIndex] = {

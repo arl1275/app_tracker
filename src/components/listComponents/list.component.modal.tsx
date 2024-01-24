@@ -26,114 +26,118 @@ const styles = StyleSheet.create({
     },
 });
 
-interface props{
-    ref_declaracion_envio : string
+interface props {
+    dec_envio: number
 }
 
 const ListComponentModal: React.FC<props> = (props) => {
-    let parseIntProps = parseInt(props.ref_declaracion_envio);
-    //console.log('valores id : ', parseIntProps)
+    let parseIntProps = props.dec_envio;
+    console.log('dec_env => ', parseIntProps, props.dec_envio);
     const [see, setSee] = useState(false);
     const [FilterArr, setFilterArr] = useState<Facturas[]>([]);
-    const [selectFact, setSelectFact] = useState<Facturas>();
-    const { data, IsCheckVal, CargaData, UpdateIsChecked} = useGuardList();
+    const [selectFact, setSelectFact] = useState<Facturas | null>(null);
+    const { data, CargaData } = useGuardList();
 
-    useEffect(()=>{
-        setFilterArr([]);
+    useEffect(() => {
         get_facts();
-        data
-    },[props.ref_declaracion_envio]);
+    }, [parseIntProps]);
 
     const get_facts = async () => {
         try {
-           let valores_ = (await axios.get(db_dir + '/fact/factEnPreparacion'));
-           let valores = valores_.data.data
-           CargaData(valores);
-           setFilterArr(data.filter((item : Facturas)=> item.ref_declaracion_envio === parseIntProps)); 
+    
+            let valores_ = await axios.get(db_dir + '/decEnv/FactsDecEnv', { params: { dec_envio: props.dec_envio } });
+            let valores: Facturas[] = valores_.data.data;
+    
+            setFilterArr(valores);
+            CargaData(valores);
         } catch (err) {
             console.log('error al obtener facturas');
         }
-    }
+    };
 
-    const checkIsCheck = (data: Facturas) => {
-        if (data.is_check) {
+    const checkIsCheck = (it: Facturas) => {
+        if (it.is_check) {
             Alert.alert('ERROR', 'factura ya validada');
         } else {
             setSee(true);
-            setSelectFact(data);
+            setSelectFact(it);
         }
     }
 
     const close = () => {
         setSee(false);
     }
+
     const get_total_cajas = () => {
         if (data) {
-            const filteredFacturas = data.filter((factura: Facturas) => factura.ref_declaracion_envio === parseIntProps);
+            const filteredFacturas = data.filter((factura: Facturas) => factura.declaracionenvio === parseIntProps);
             return filteredFacturas.reduce((total: any, factura: Facturas) => total + factura.cant_cajas, 0);
         }
     }
+
     const get_total_unidades = () => {
         if (data) {
-            const filteredFacturas = data.filter((factura: Facturas) => factura.ref_declaracion_envio === parseIntProps);
+            const filteredFacturas = data.filter((factura: Facturas) => factura.declaracionenvio === parseIntProps);
             return filteredFacturas.reduce((total: any, factura: Facturas) => total + factura.cant_unidades, 0);
         }
     }
 
 
-     if (FilterArr.length > 0) {
-         return (
-             <View>
+    if (FilterArr.length > 0) {
+        return (
+            <View>
                 <ScrollView>
-                 <DataTable>
+                    <DataTable>
 
-                     <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
+                        <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
 
-                     <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
-                         <DataTable.Title>
-                             <Text style={{ color: 'white' }}>FACTURA</Text>
-                         </DataTable.Title>
-                         <DataTable.Title>
-                             <Text style={{ color: 'white' }}>LISTA EMPAQUE</Text>
-                         </DataTable.Title>
-                         <DataTable.Title>
-                             <Text style={{ color: 'white' }}>CLIENTE</Text>
-                         </DataTable.Title>
-                         <DataTable.Title>
-                             <Text style={{ color: 'white' }}>CAJAS</Text>
-                         </DataTable.Title>
-                         <DataTable.Title>
-                             <Text style={{ color: 'white' }}>UNIDADES</Text>
-                         </DataTable.Title>
-                     </DataTable.Header>
-                     
-                        {
-                         FilterArr.filter((item: Facturas)=> item.ref_declaracion_envio === parseIntProps).map((item : Facturas) =>{
-                            let valor = item.is_check == null ? 'white' : '#D5F5E3';
-                            return (
-                                          <DataTable.Row key={item.id} onPress={()=>{checkIsCheck(item)}} style={{backgroundColor : valor}}>
-                                              <DataTable.Cell><Text style={{color : 'black'}}>{item.ref_factura}</Text></DataTable.Cell>
-                                              <DataTable.Cell><Text style={{color : 'black'}}>{item.lista_empaque}</Text></DataTable.Cell>
-                                              <DataTable.Cell><Text style={{color : 'black'}}>{item.cliente_nombre}</Text></DataTable.Cell>
-                                              <DataTable.Cell><Text style={{color : 'black'}}>{item.cant_cajas}</Text></DataTable.Cell>
-                                              <DataTable.Cell><Text style={{color : 'black'}}>{item.cant_unidades}</Text></DataTable.Cell>
-                                          </DataTable.Row>
-                                      )
-                         })
-                        }
-                        <DataTable.Row  style={{ backgroundColor: "#0C4C7A" }}>
-                            <DataTable.Cell><Text style={{color : 'white'}}>totales</Text></DataTable.Cell>
+                        <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
+                            <DataTable.Title>
+                                <Text style={{ color: 'white' }}>FACTURA</Text>
+                            </DataTable.Title>
+                            <DataTable.Title>
+                                <Text style={{ color: 'white' }}>RUTA</Text>
+                            </DataTable.Title>
+                            <DataTable.Title>
+                                <Text style={{ color: 'white' }}>CLIENTE</Text>
+                            </DataTable.Title>
+                            <DataTable.Title>
+                                <Text style={{ color: 'white' }}>CAJAS</Text>
+                            </DataTable.Title>
+                            <DataTable.Title>
+                                <Text style={{ color: 'white' }}>UNIDADES</Text>
+                            </DataTable.Title>
+                        </DataTable.Header>
+                        <ScrollView>
+                            {
+                                data.filter((ite : Facturas)=> ite.id_dec_env === parseIntProps).map((item: Facturas) => {
+                                    let valor = item.is_check != true ? '#F5B7B1': item.is_Sinchro === true ? '#A9DFBF': '#F9E79F' ;
+                                    return (
+                                        <DataTable.Row key={item.factura_id} onPress={() => { checkIsCheck(item) }} style={{ backgroundColor: valor }}>
+                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.factura}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.lista_empaque}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.clientenombre}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.cant_cajas}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.cant_unidades}</Text></DataTable.Cell>
+                                        </DataTable.Row>
+                                    )
+                                })
+                            }
+                        
+                        <DataTable.Row style={{ backgroundColor: "#0C4C7A" }}>
+                            <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
                             <DataTable.Cell><Text></Text></DataTable.Cell>
                             <DataTable.Cell><Text></Text></DataTable.Cell>
-                            <DataTable.Cell><Text style={{color : 'white'}}>{get_total_cajas()}</Text></DataTable.Cell>
-                            <DataTable.Cell><Text style={{color : 'white'}}>{get_total_unidades()}</Text></DataTable.Cell>
+                            <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_cajas()}</Text></DataTable.Cell>
+                            <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_unidades()}</Text></DataTable.Cell>
                         </DataTable.Row>
-                 </DataTable>
-                 </ScrollView>
-             </View>
-         )
-     }
-    
+                        </ScrollView>
+                    </DataTable>
+                </ScrollView>
+            </View>
+        )
+    }
+
 };
 
 export default ListComponentModal;

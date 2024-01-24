@@ -3,6 +3,7 @@ import { Text, View, StyleSheet } from 'react-native';
 import ShowIndexView from './pages/guardia/guardia_main_view';
 import { EntregadorIndexView } from './pages/entregador/EntregadorMain.view';
 import { MainGuardView } from './components/GuardComponents/GuardMainView';
+import LoginPage from './pages/login.page';
 //test
 
 //test
@@ -20,6 +21,7 @@ function IndexPage() {
         </View>
         {page === "GUARDIA" ? <MainGuardView /> : null}
         {page === "ENTREGADOR" ? <EntregadorIndexView /> : null}
+        {page === "" && <LoginPage/>}
       </View>
     </View>
   );

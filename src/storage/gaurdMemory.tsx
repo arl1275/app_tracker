@@ -6,8 +6,9 @@ interface FacturaState {
     data: Facturas[];
     CargaData: (values: Facturas[]) => void; // guarda todas las facturas
     GetFactbyID: (id: number) => void;
-    UpdateIsChecked: (id: number) => void;
-    GetIsCheckedFacts : () => void;
+    UpdateIsChecked: (id: string) => void;
+    GetIsCheckedFacts : () => void;             
+    updateIsInTransit : ( id : number) => void; // this is to save that the fact is in transit
 }
 
 const useGuardList: any = create<FacturaState>((set) => ({
@@ -17,11 +18,11 @@ const useGuardList: any = create<FacturaState>((set) => ({
         const {data} = useGuardList.getState();
         let alterData : Facturas[] = [];
         for(let i = 0; values.length > i ; i++){
-            const dat = data.some((item: Facturas) => item.id === values[i].id);
+            const dat = data.some((item: Facturas) => item.factura_id === values[i].factura_id);
             if(dat){
                 //console.log('existe: ', values[i]);
             }else{
-                //console.log('no existe', values[i]);
+                //console.log('GUARDADO : ', values[i])
                 alterData.push(values[i]);
             }
         }
@@ -31,23 +32,39 @@ const useGuardList: any = create<FacturaState>((set) => ({
 
     GetFactbyID: (id) => {
         const {data} = useGuardList.getState();
-        return data.find((fact: Facturas) => fact.id === id);
+        return data.find((fact: Facturas) => fact.factura_id === id);
     },
 
     GetIsCheckedFacts : () => {
         const {data} = useGuardList.getState();
-        return data.filter((item : Facturas)=> item.is_check === true);
+        const checked : Facturas[] = data.filter((item : Facturas)=> item.is_check === true);
+        const filtered = checked.filter((item : Facturas) => item.is_Sinchro != true);
+        return filtered;
     },
 
     UpdateIsChecked: async (id) => {
         const {data} =  await useGuardList.getState();
-        const facturaIndex = data.findIndex((item : Facturas) => item.id === id);
+        const facturaIndex = data.findIndex((item : Facturas) => item.factura === id);
         if (facturaIndex !== -1) {
+            console.log('DATA CHECK para chequear_lista => ', data[facturaIndex])
             data[facturaIndex] = {
                 ...data[facturaIndex],
                 is_check: true,
             };
+
         }
+        
+    },
+
+    updateIsInTransit : async ( id ) => {
+        const {data} =  await useGuardList.getState();
+        const facturaIndex = data.findIndex((item : Facturas) => item.factura_id === id);
+        if (facturaIndex !== -1) {
+            data[facturaIndex] = {
+                ...data[facturaIndex],
+                is_Sinchro: true,
+            };
+        }   
     }
 
 }));

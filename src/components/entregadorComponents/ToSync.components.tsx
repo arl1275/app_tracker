@@ -18,19 +18,20 @@ export function VistadeSync() {
 
     const setSynchro = (arreglo: Facturas[]) => {
         for (let i = 0; arreglo.length > i; i++) {
-            updateSynchro(arreglo[i].id);
+            updateSynchro(arreglo[i].factura_id);
         }
     }
 
     const SentToValidate = async () => {
         if (dataEntregas) {
             try {
-                //console.log('adata', await getAllNOTsynchroFacts());
                 setLoading(true);
                 const data = await getAllNOTsynchroFacts();
                 console.log('fact to validate: ', data);
                 if (data.length > 0) {
-                    const response = await axios.put(db_dir + '/entregas/toSincronizar', data)
+
+                    const response = await axios.put(db_dir + '/facturas/SubirFotosFact', data);
+
                     if (response.status === 200) {
                         setSynchro(data)
                         setLoading(false);
@@ -41,8 +42,9 @@ export function VistadeSync() {
 
                 }else{
                     setLoading(false);
-                    Alert.alert('NO SE OBTUBIERON DATOS')
+                    Alert.alert('NO SE OBTUBIERON DATOS');
                 }
+
             } catch (error) {
                 setLoading(false);
                 console.error('Error sending data:', error);
@@ -76,26 +78,26 @@ export function VistadeSync() {
                     <View >
                         <ScrollView>
                             <DataTable>
-                                <DataTable.Header style={{ width: 'auto' }}>
-                                    <DataTable.Title>CLIENTE</DataTable.Title>
-                                    <DataTable.Title>FACTURA</DataTable.Title>
-                                    <DataTable.Title>EMPAQUE</DataTable.Title>
-                                    <DataTable.Title>CAJAS</DataTable.Title>
-                                    <DataTable.Title>FIRMADO</DataTable.Title>
+                                <DataTable.Header style={{ width: 'auto' , backgroundColor : '#1E8449'}}>
+                                    <DataTable.Title><Text style={{color : 'white'}}>CLIENTE</Text></DataTable.Title>
+                                    <DataTable.Title><Text style={{color : 'white'}}>FACTURA</Text></DataTable.Title>
+                                    <DataTable.Title><Text style={{color : 'white'}}>CAJAS</Text></DataTable.Title>
+                                    <DataTable.Title><Text style={{color : 'white'}}>UNIDADES</Text></DataTable.Title>
+                                    {/* <DataTable.Title>FIRMADO</DataTable.Title>
                                     <DataTable.Title>FOTO</DataTable.Title>
-                                    <DataTable.Title>ID_ENT</DataTable.Title>
+                                    <DataTable.Title>ID_ENT</DataTable.Title> */}
                                 </DataTable.Header>
                                 {
                                     dataEntregas.map((item: Facturas) => {
                                         //console.log('ESTE ES EL ESTADO: ', item.state_name);
                                         return (
                                             // <DataTable.Row onPress={()=> openModal(item)} key={item.id}>
-                                            <DataTable.Row key={item.id}>
-                                                <DataTable.Cell>{item.cliente}</DataTable.Cell>
-                                                <DataTable.Cell>{item.ref_factura}</DataTable.Cell>
-                                                <DataTable.Cell>{item.lista_empaque}</DataTable.Cell>
+                                            <DataTable.Row key={item.factura_id}>
+                                                <DataTable.Cell>{item.clientenombre}</DataTable.Cell>
+                                                <DataTable.Cell>{item.factura}</DataTable.Cell>
                                                 <DataTable.Cell>{item.cant_cajas}</DataTable.Cell>
-                                                <DataTable.Cell>{
+                                                <DataTable.Cell>{item.cant_unidades}</DataTable.Cell>
+                                                {/* <DataTable.Cell>{
                                                     item.hasSing === true ? 'SI' : 'NO'
                                                 }</DataTable.Cell>
                                                 <DataTable.Cell>{
@@ -103,7 +105,7 @@ export function VistadeSync() {
                                                 }</DataTable.Cell>
                                                 <DataTable.Cell>{
                                                     item.hasId !== null ? 'SI' : 'NO'
-                                                }</DataTable.Cell>
+                                                }</DataTable.Cell> */}
                                             </DataTable.Row>
                                         )
                                     })

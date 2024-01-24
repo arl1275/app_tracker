@@ -1,13 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "../../../../ft_tracker_truck"
-		},
-		{
 			"path": "../../../../bk_tracker"
-		},
-		{
-			"path": "../../.."
 		}
 	],
 	"settings": {}

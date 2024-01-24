@@ -4,23 +4,25 @@ import { Facturas } from "../../interfaces/facturas";
 import axios from "axios";
 import db_dir from "../../config/db";
 import LoadingModal from "../Activity/activity.component";
-import { IconButton } from "react-native-paper";
+import { Card, IconButton } from "react-native-paper";
 import { Picker } from '@react-native-picker/picker';
-import ListComponentModal from "../listComponents/list.component.modal";
+import ListComponentModal from "../listComponents/list.component.modal";                        // this is the component to show table of the declaraciones_env
 import { ListToTransito } from "../modals/guardiaModals/LisToTransit.component";
+
+//-------------     ESTE SOLO OBTIENE TODAS LAS DECLARACIONES DE ENVIO      -------------//
 
 
 interface dec_envio {
-    ref_declaracion_envio: string,
-    cant_facturas: string,
-    cant_cajas: string,
-    cant_unidades: string
+    id: number,
+    declaracion_env: string,
+    camion: string,
+    usuario: string
 }
 
 export const MainGuardView = () => {
     const [data, setData] = useState<dec_envio[]>([]);                                          // data to show in list
     const [selectedValue, setSelectedValue] = useState<string>('');                             // THIS IS NOT WORKING
-    const [selectedDecla, setSelectDeclar] = useState<string>('');                              // this is to get the declaration in specific
+    const [selectedDecla, setSelectDeclar] = useState<number>(0);                               // this is to get the declaration in specific
     const [showResumenChecked_List, setShowResumenChecked_List] = useState<boolean>(false);     // data to show the checked list
     const [loading, setLoading] = useState(false);                                              // this is to update facturas data
 
@@ -31,7 +33,7 @@ export const MainGuardView = () => {
     const get_data = async () => {
         setLoading(true);
         try {
-            const valores = await axios.get(db_dir + '/cons/decEnv');
+            const valores = await axios.get(db_dir + '/decEnv/getDecEnv');
             setData(valores.data.data);
         } catch (err) {
             console.log('error para obtener data: ', err);
@@ -39,7 +41,6 @@ export const MainGuardView = () => {
         setLoading(false);
     }
 
-    // this is to Close the list of the checked
     const to_Close = () => {
         setShowResumenChecked_List(false);
     }
@@ -74,7 +75,7 @@ export const MainGuardView = () => {
                                 <Text style={{ color: 'white' }}>HISTORICOS</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: 'auto' }} onPress={() => { get_data() }} >
-                                <Text style={{ color: 'white' }}>ACTUALIZAR LISTA</Text>
+                                <Text style={{ color: 'white' }}>ACTUALIZAR DECLARACIONES DE ENVIO</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -87,31 +88,32 @@ export const MainGuardView = () => {
                     <View>
                         <View style={{ display: 'flex', flexDirection: 'row' }}>
                             <TouchableOpacity
-                                style={{ backgroundColor: '#1F618D', marginRight: 'auto', width: '20%' }}
+                                style={{ backgroundColor: '#28B463', marginRight: 'auto', width: '20%' }}
                                 onPress={() => { to_Open() }}>
-                                <Text style={{ color: 'white', marginTop: '10%', alignSelf: 'center' }}>A TRANSITO</Text>
+                                <Text style={{ color: 'white', marginTop: '20%', alignSelf: 'center' }}>TRANSITO</Text>
                             </TouchableOpacity>
+
                             <Picker
                                 selectedValue={selectedDecla}
                                 style={{ height: 50, width: '80%', backgroundColor: '#1A5276' }}
                                 onValueChange={(itemValue) => setSelectDeclar(itemValue)} >
+
                                 <Picker.Item label="SELECCIONAR DECLARACION DE ENVIO" value='0' />
                                 {data.map((item: dec_envio) => {
-                                    return (<Picker.Item label={` DECLARACION DE ENVIO: ${item.ref_declaracion_envio}`} value={item.ref_declaracion_envio} style={{ backgroundColor: '#063970' }} />)
+                                    return (<Picker.Item label={` DECLARACION DE ENVIO: ${item.declaracion_env}`} value={item.id} style={{ backgroundColor: '#063970' }} />)
                                 })}
                             </Picker>
                         </View>
 
                         {
-                            selectedDecla == '0' ?
+                            selectedDecla == 0 ?
                                 <View>
-                                    <Text style={{ color: 'black' }}>FAVOR SELECCIONE UNA DECLARACION DE ENVIO</Text>
+                                    <Card style={{backgroundColor : '#F9E79F'}}><Text>ES TE COLOR, ES PARA FACTURAS SIN REVISAR</Text></Card>
+                                    
                                 </View>
                                 :
-                                <ListComponentModal ref_declaracion_envio={selectedDecla} />
+                                <ListComponentModal dec_envio={selectedDecla} />
                         }
-
-
                     </View>
                     :
                     null

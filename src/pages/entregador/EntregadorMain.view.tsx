@@ -54,7 +54,7 @@ export function EntregadorIndexView() {
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { setPage('sync') }}>
                                 <Text style={styles.buttonText}>
-                                    SINCRONIZACION FACTURAS
+                                    ACTUALIZAR
                                 </Text>
                             </TouchableOpacity>
                         </View>

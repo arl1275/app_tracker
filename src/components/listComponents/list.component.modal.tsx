@@ -32,7 +32,7 @@ interface props {
 
 const ListComponentModal: React.FC<props> = (props) => {
     let parseIntProps = props.dec_envio;
-    console.log('dec_env => ', parseIntProps, props.dec_envio);
+    //console.log('dec_env => ', parseIntProps, props.dec_envio);
     const [see, setSee] = useState(false);
     const [FilterArr, setFilterArr] = useState<Facturas[]>([]);
     const [selectFact, setSelectFact] = useState<Facturas | null>(null);
@@ -40,14 +40,13 @@ const ListComponentModal: React.FC<props> = (props) => {
 
     useEffect(() => {
         get_facts();
-    }, [parseIntProps]);
+    }, [parseIntProps, see]);
 
     const get_facts = async () => {
         try {
-    
             let valores_ = await axios.get(db_dir + '/decEnv/FactsDecEnv', { params: { dec_envio: props.dec_envio } });
             let valores: Facturas[] = valores_.data.data;
-    
+            //console.log('FACTURAS DE DECLARACION DE ENVIO : ', valores)
             setFilterArr(valores);
             CargaData(valores);
         } catch (err) {
@@ -70,15 +69,18 @@ const ListComponentModal: React.FC<props> = (props) => {
 
     const get_total_cajas = () => {
         if (data) {
-            const filteredFacturas = data.filter((factura: Facturas) => factura.declaracionenvio === parseIntProps);
-            return filteredFacturas.reduce((total: any, factura: Facturas) => total + factura.cant_cajas, 0);
+            const filteredFacturas = FilterArr.filter((factura: Facturas) => factura.declaracionenvio === parseIntProps);
+            //console.log('total_cajas : ',  filteredFacturas)
+            return filteredFacturas.reduce((total, factura) => total + factura.cant_cajas, 0);
+        }else{
+            console.log('data vacia')
         }
     }
 
     const get_total_unidades = () => {
         if (data) {
-            const filteredFacturas = data.filter((factura: Facturas) => factura.declaracionenvio === parseIntProps);
-            return filteredFacturas.reduce((total: any, factura: Facturas) => total + factura.cant_unidades, 0);
+            const filteredFacturas = FilterArr.filter((factura: Facturas) => factura.declaracionenvio === parseIntProps);
+            return filteredFacturas.reduce((total, factura) => total + factura.cant_unidades, 0);
         }
     }
 

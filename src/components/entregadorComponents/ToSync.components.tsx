@@ -10,6 +10,7 @@ import LoadingModal from "../Activity/activity.component";
 export function VistadeSync() {
     const { getStorageEntregado, updateSynchro, getAllNOTsynchroFacts } = useFacturaStore();
     const [dataEntregas, setDataEntregas] = useState<Facturas[]>([]);
+    const [loadinglist, setLoadingList ] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -17,7 +18,7 @@ export function VistadeSync() {
     }, []);
 
     const setSynchro = (arreglo: Facturas[]) => {
-        for (let i = 0; arreglo.length > i; i++) {
+        for (let i = 0; i < arreglo.length ; i++) {
             updateSynchro(arreglo[i].factura_id);
         }
     }
@@ -33,7 +34,7 @@ export function VistadeSync() {
                     const response = await axios.put(db_dir + '/facturas/SubirFotosFact', data);
 
                     if (response.status === 200) {
-                        setSynchro(data)
+                        setSynchro(data);
                         setLoading(false);
                         Alert.alert('SINCRONIZADO', 'Se ha sincronizado correctamente.')
                     } else {
@@ -57,8 +58,8 @@ export function VistadeSync() {
 
     const getData = async () => {
         setLoading(true);
-        if (getStorageEntregado) {
-            const data = await getStorageEntregado();
+        if (await getStorageEntregado) {
+            const data = await getAllNOTsynchroFacts();
             setDataEntregas(data);
             //console.log('LOCAL element : ', dataEntregas);
             //console.log('FROM STORAGE : ', await getStorageEntregado());
@@ -74,7 +75,6 @@ export function VistadeSync() {
         <View>{
             dataEntregas.length > 0 ?
                 (<View >
-                    <LoadingModal visible={loading} message="SINCRONIZANDO FACTURAS" />
                     <View >
                         <ScrollView>
                             <DataTable>
@@ -118,10 +118,10 @@ export function VistadeSync() {
                     <View style={{ height: 50, backgroundColor: '#063970', justifyContent: 'center', alignItems: 'flex-end' }}>
                         <Button color={'#063970'} title="SINCRONIZAR" onPress={() => { SentToValidate(); }} />
                     </View>
-
+                    <LoadingModal visible={loading} message="SINCRONIZANDO FACTURAS" />
                 </View>) : (
                     <View>
-                        <Text style={{ color: 'black' }}>NO SE OBTENIDO LOS DATOS</Text>
+                        <LoadingModal message="CAGANDO FACTURAS" visible={loadinglist}/>
                     </View>
                 )
         }</View>

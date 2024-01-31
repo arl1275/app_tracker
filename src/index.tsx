@@ -1,27 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import ShowIndexView from './pages/guardia/guardia_main_view';
 import { EntregadorIndexView } from './pages/entregador/EntregadorMain.view';
 import { MainGuardView } from './components/GuardComponents/GuardMainView';
-import LoginPage from './pages/login.page';
-//test
+import { LoginPage } from './pages/login.page';
 
-//test
 
 function IndexPage() {
   const [page, setPage] = useState("");
+  const [user, setUser] = useState({
+    nombre : '',
+    cod_empleado : '',
+    type_ : 0
+});
 
+  const handleUser = (prop : any) => {
+    setUser(prop);
+  }
+
+  // useEffect(()=>{
+  //   console.log('entro :', user);
+  //     if(user.type_=== 3){
+  //       setPage( "ENTREGADOR");
+  //     }else if(user.type_=== 2){
+  //       setPage("GUARDIA");
+  //   }else{
+  //     setPage("");
+  //   }
+  // }, [user, page])
 
   return (
     <View style={{ display: 'flex', backgroundColor: 'white' }}>
       <View style={{ width: '100%', height: '100%', alignSelf: 'center' }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10}}>
           <Text onPress={() => setPage('GUARDIA')} style={{ color: 'black' }}>GUARDIA</Text>
           <Text onPress={() => setPage('ENTREGADOR')} style={{ color: 'black' }}>ENTREGADOR</Text>
         </View>
         {page === "GUARDIA" ? <MainGuardView /> : null}
         {page === "ENTREGADOR" ? <EntregadorIndexView /> : null}
-        {page === "" && <LoginPage/>}
+        {page === "" && <LoginPage props={handleUser} />}
       </View>
     </View>
   );

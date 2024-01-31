@@ -7,7 +7,9 @@ import axios from "axios";
 import { EntregaModal } from "../modals/entregadorModals/entregaModal.component";
 import useFacturaStore from "../../storage/storage";
 import LoadingModal from "../Activity/activity.component";
-import BoxChecker from "../modals/guardiaModals/BoxChecker.component";
+import boxChequerStorage from "../../storage/checkBoxes";
+import { box_to_check } from "../../interfaces/box";
+import BoxChecker_ent from "../modals/entregadorModals/BoxChequerEnt.component";
 
 const styles = StyleSheet.create({
     container: {
@@ -26,9 +28,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     buttonContainer: {
-        display : "flex",
+        display: "flex",
         marginVertical: 'auto',
-        alignSelf : 'flex-end',
+        alignSelf: 'flex-end',
         width: "100%",
         backgroundColor: '#063970',
     },
@@ -55,21 +57,29 @@ const styles = StyleSheet.create({
     },
 });
 
-function EntregadorListView<props>() {
+interface FacturaProps {
+    id_fact: number;
+    fact: string;
+  }
+
+function EntregadorListView() {
     const [facturas, setFacturas] = useState<Facturas[]>([]);                                                   // set the facturas in the local array
     const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);                                    //
     const [modalVisible, setModalVisible] = useState(false);
     const { data, fetchData, updateFactura, updateSingFields, getAllEnTransitoFacts } = useFacturaStore();
     const [loading, setLoading] = useState(false);
     const [see, setSee] = useState(false);
-    const [fact, setfact] = useState<Facturas>();
+    const [fact_, setfact] = useState<Facturas>();
+    const { fetchData_ } = boxChequerStorage();
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchData();
-    },[see])
+    }, [])
 
+    //THIS FUNCTION IS TO SYNCRO THE FACTURAS;
     const getEnTransitoFacts = async () => {
         try {
+            
             setLoading(true);
             const data2 = await axios.get(db_dir + '/facturas/getEnTransFact');
             setFacturas(data2.data.data);
@@ -78,12 +88,43 @@ function EntregadorListView<props>() {
             } else {
                 updateFactura(facturas);
             }
+            if(facturas.length > 0){
+                syncroBoxes();
+            }
+            //console.log('facturas obtenidas : ', facturas)
             setLoading(false);
         } catch (err) {
             Alert.alert('ERROR AL SINCRONIZAR', 'Es posible que no tenga conexion a internet, favor revisar la conexion en los ajustes del telefono.');
         }
     }
 
+    //THIS FUNCTION IS TO SYNCRO THE BOXES THAT ARE PART OF THE FACTURAS;
+    const syncroBoxes = async () => {
+        try {       
+         let props_cajas_facturas: FacturaProps[] = [];
+
+          if (facturas.length > 0) {
+            if (facturas.length > 0) {
+                
+                for (let i = 0; i < facturas.length; i++) {
+                  const element: Facturas = facturas[i];
+                  let val = {
+                    id_fact: element.factura_id,
+                    fact: element.factura
+                  }
+                  props_cajas_facturas.push(val);
+                }
+              }
+          }
+
+          const val = await axios.get(db_dir + '/facturas/app/getCajasOneFact', {params : {data : props_cajas_facturas}}).then(e => e.data);
+          const valores : box_to_check[] = val.data;
+          fetchData_(valores);
+        } catch (err) {
+          console.log('Error fetching data:', err);
+        }
+      };
+      
     const openModal = () => {
         setModalVisible(true);
     };
@@ -96,83 +137,100 @@ function EntregadorListView<props>() {
         setSee(false);
     }
 
+    //THIS IS TO OPEN THE BOXCHER OR THE FACTURA VALIDATOR
     const BoxOrSing = (item: Facturas) => {
-        if (item.hasSing) {
-            Alert.alert('ERR', 'Factura ya validada')
-        } else {
-            // if (item.is_check === undefined) {
-            //     setSee(true);
-            // } else {
-                dataToSend(item);
-            
-        }
+            if (item.is_check != true && fact_ !== null) {
+                setSee(true);
+            } else {
+                if(item.hasSing === true){
+                    Alert.alert('FACTURA YA FIRMADA');
+                    
+                }else if(item.is_Sinchro){
+                    Alert.alert('FACTURA YA SINCRONIZADA');
+                } else {
+                    dataToSend(item);
+                } 
+            }
     }
 
+    //THIS IS TO SAVE THE FACTURAS THAT WERE VALIDADED
     const dataToSend = (fact: Facturas) => {
         serEntregarFact(fact);
         openModal();
     }
 
-    useEffect(() => {
-        fetchData();
-    }, [])
+    const color_choose = (item : Facturas) => {
+        if(item.state_name === 'FIRMADO'){
+            return 'yellow';
+        }else if(item.is_Sinchro === true){
+            return 'green';
+        }else if(item.state_name === 'ENTREGADO'){
+            return 'white';
+        }else{
+            return 'red';
+        }
+    }
 
     return (
         <View>{
-        data.length > 0 ? (
-            < View style={{ height: '100%' }}>
-                <LoadingModal visible={loading} message="ESPERANDO FACTURAS" />
-                <ScrollView>
-                    <DataTable>
-                        <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}> CLIENTE</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>FACTURA</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>EMPAQUE</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>CAJAS</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>ESTADO</Text>
-                            </DataTable.Title>
-                        </DataTable.Header>
-                        {
-                            data.map((item: Facturas) => {
-                                let valor = item.is_check != true ? '#F5B7B1': item.is_Sinchro === true ? '#A9DFBF': '#F9E79F' ;
-                                return (
-                                    <DataTable.Row key={item.factura_id} onPress={() => { setfact(item); BoxOrSing(item); }} style={{ backgroundColor: valor }}>
-                                        <DataTable.Cell>{item.clientenombre}</DataTable.Cell>
-                                        <DataTable.Cell>{item.factura}</DataTable.Cell>
-                                        <DataTable.Cell>{item.lista_empaque}</DataTable.Cell>
-                                        <DataTable.Cell>{item.cant_cajas}</DataTable.Cell>
-                                        <DataTable.Cell>{item.state === null ? 'data' : 'PENDIENTE'}</DataTable.Cell>
-                                    </DataTable.Row>
-                                )
-                            })
-                        }
-                    </DataTable>
-                    <TouchableOpacity style={styles.floatingButton} onPress={() => getEnTransitoFacts()}>
-                        <Text>+</Text>
-                    </TouchableOpacity>
-                </ScrollView>
+            data.length > 0 ? (
+                < View style={{ height: '100%' }}>
+                    <LoadingModal visible={loading} message="ESPERANDO FACTURAS" />
+                    <ScrollView>
+                        <DataTable>
+                            <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}> CLIENTE</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>FACTURA</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>EMPAQUE</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>CAJAS</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>UNIDADES</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>ESTADO</Text>
+                                </DataTable.Title>
+                            </DataTable.Header>
+                            {
+                                data.map((item: Facturas) => {
+                                    let valor = color_choose(item);
+                                    return (
+                                        <DataTable.Row key={item.factura_id} onPress={() => { setfact(item); BoxOrSing(item); }} style={{ backgroundColor: valor }}>
+                                            <DataTable.Cell>{item.clientenombre}</DataTable.Cell>
+                                            <DataTable.Cell>{item.factura}</DataTable.Cell>
+                                            <DataTable.Cell>{item.lista_empaque}</DataTable.Cell>
+                                            <DataTable.Cell style={{ alignSelf : 'center'}}>{item.cant_cajas}</DataTable.Cell>
+                                            <DataTable.Cell style={{ alignSelf : 'center'}}>{item.cant_unidades}</DataTable.Cell>
+                                            <DataTable.Cell>{item.state_name === undefined ? 'PENDIENTE' : item.state_name}</DataTable.Cell>
+                                        </DataTable.Row>
+                                    )
+                                })
+                            }
+                        </DataTable>
+                        <TouchableOpacity style={styles.floatingButton} onPress={() => { getEnTransitoFacts(); }}>
+                            <Text>+</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
 
-                <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
-                {/* <BoxChecker fact={fact} visible={see} close={close} tipe={1} /> */}
-            </View >)
-            :
-            (
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={() => { getEnTransitoFacts() }}>
-                        <Text style={styles.buttonText}>SINCRONIZAR DATOS</Text>
-                    </TouchableOpacity>
-                </View>
-            )
-            }</View>
+                    <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
+                    <BoxChecker_ent visible={see} close={close} tipe={1} fact={fact_} />
+                </View >)
+                :
+                (
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={() => { getEnTransitoFacts();}}>
+                            <Text style={styles.buttonText}>SINCRONIZAR DATOS</Text>
+                        </TouchableOpacity>
+                    </View>
+                )
+        }</View>
     );
 
 }

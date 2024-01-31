@@ -5,7 +5,11 @@ import {SafeAreaView, StyleSheet, Text, View, Button, TextInput, Alert} from 're
 import { Card } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-function LoginPage() {
+interface LoginPageProps {
+    props: ({}) => void;
+  }
+
+  export const LoginPage: React.FC<LoginPageProps> = ({ props }) => {
     const [Data, setData] = useState({
         user : '',
         _Password : ''
@@ -19,15 +23,28 @@ function LoginPage() {
         setData({ ...Data, _Password: text }); // Update _password in the state with input text
       };
     
-      const handleSubmit = () => {
-        console.log('Submitted User:', Data.user);
-        console.log('Submitted Password:', Data._Password);
+      const handleSubmit = async () => {
         try {
-            const res = axios.get(db_dir + '/user/auth/app', {params : {
-                user : Data.user,
-                _Password : Data._Password
-            }});
-            console.log('valores de res : ', res);
+
+            if(Data._Password !== '' && Data._Password !== ''){
+
+                const result = await axios.get(db_dir + '/usuarios/auth/app', {params : {
+                    user : Data.user,
+                    _password : Data._Password
+                }});
+    
+                if(result.status === 200){
+                    console.log('resulta do in : ', result.data);
+                    props(result.data);
+                }else{
+                    Alert.alert('ERROR', 'usuario no valido para esta app');
+                }
+
+            }else{
+                Alert.alert('ERROR', 'Favor llene todo los campos');
+            }
+            
+
         } catch (err) {
             Alert.alert('ERROR', 'Problemas para enviar usuario, favor revisar su conexion a internet');
             console.log('problema al enviar usuario : ', err)
@@ -90,5 +107,3 @@ const styles = StyleSheet.create({
         backgroundColor : '#063970'
     },
 });
-
-export default LoginPage;

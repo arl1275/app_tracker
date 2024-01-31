@@ -18,12 +18,12 @@ interface props {
 }
 
 interface boxes {
-    facturas : string,
-    lista_empaque : string,
+    facturas: string,
+    lista_empaque: string,
     caja: string,
-    unidades : number,
-    cajas : string,
-    check : boolean
+    unidades: number,
+    cajas: string,
+    check: boolean
 }
 
 const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
@@ -34,23 +34,26 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
     const [data, setData] = useState<string[]>([]);         // to access the data save in momery
     const [Value_, setValue_] = useState('');
     const [Boxes, setBoxes] = useState<boxes[]>([]);        // is to check the boxes in memory
-    
-    
+
+
     useEffect(() => {
-        if(typeof fact?.cant_cajas === 'string'){
+        //console.log('<---------- se entro--------------------->')
+        if (typeof fact?.cant_cajas === 'number') {
             let dat = 0;
-            dat = parseInt(fact.cant_cajas);
-            //console.log('CANTIDAD CAJAS A VALIDAR : ', dat);
-            if ( dat === counter && dat != 0) {
+            dat = fact.cant_cajas;
+            console.log('CANTIDAD CAJAS A VALIDAR : ', dat);
+            if (dat === counter && dat != 0) {
                 UpdateIsChecked(fact?.factura);
                 Alert.alert('FINALIZADO');
+                setCounter(0);
+                setData([]);
                 CloseBarcode();
                 close();
             }
         }
     }, [counter]);
 
-    useEffect(()=>{
+    useEffect(() => {
         getBoxes(); // to sync the boxes
     }, [fact])
 
@@ -71,7 +74,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                 if (data?.includes(t)) {
                     Alert.alert("CAJA YA ESCANEADA");
                     setValue_('');
-                }else {
+                } else {
                     for (let i = 0; i < Boxes.length; i++) {
                         if (t === Boxes[i].caja) {
                             Boxes[i].check = true;
@@ -91,7 +94,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
     const getBoxes = async () => {
         try {
-            let valores = await axios.get(db_dir + '/facturas/getCajas', { params: { factura: fact?.factura} });
+            let valores = await axios.get(db_dir + '/facturas/getCajas', { params: { factura: fact?.factura } });
             //console.log('dat cajas : ', valores)
             setBoxes(valores.data.data);
         } catch (err) {
@@ -107,7 +110,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
             onRequestClose={() => { close }}>
             <View style={styles.modalOverlay}>
                 <View style={styles.centeredView}>
-                    <Card style={{ width: '80%', height: 'auto', borderRadius: 3 }}>
+                    <Card style={{ width: '90%', height: 'auto', borderRadius: 3 }}>
 
                         <Card>
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#CFD8DC' }}>
@@ -120,8 +123,8 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                 <View style={{ alignItems: 'flex-end' }}>
                                     <Icon
                                         name={'close'}
-                                        onPress={() => { setCounter(0), setData([]), close();}} // this cleal all my variables with the close button
-                                        color="red" size={40}
+                                        onPress={() => { setCounter(0); setData([]); close(); }} // this cleal all my variables with the close button
+                                        color="red" size={25}
                                         style={{ alignItems: 'flex-end', marginRight: 10 }}
                                     />
                                 </View>
@@ -141,22 +144,22 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                         <View style={{ display: 'flex', flexDirection: 'row' }}>
                                             <TextInput
                                                 ref={inputRef}
-                                                style={{ color: 'black', borderColor: 'grey' }}
+                                                style={{ color: 'black', borderColor: 'grey'}}
                                                 value={Value_}
                                                 onChangeText={(text) => setValue_(text)}
                                                 onSubmitEditing={handleBarcodeScan}
                                                 placeholderTextColor={'black'}
                                                 placeholder="BARCODE"
-                                                autoFocus 
+                                                autoFocus
                                                 onBlur={()=>inputRef.current?.focus()}
-                                                />
+                                            />
                                         </View>
                                     </View>
                                 </View>
                             </View>
 
                             <Card style={{ height: 'auto' }}>
-                                {Boxes.filter((item : boxes)=> item.lista_empaque === fact?.lista_empaque).map((item: boxes) => {
+                                {Boxes.filter((item: boxes) => item.lista_empaque === fact?.lista_empaque).map((item: boxes) => {
                                     let is_check = item.check === true ? 'green' : 'black';
                                     return (
                                         <Text style={{ backgroundColor: is_check }}>{item.caja}</Text>
@@ -195,7 +198,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         width: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
+        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black
     },
     modalContent: {
         zIndex: 1, // Ensure the content is above the overlay
@@ -228,7 +231,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     title: {
-        margin: 2,
+        margin: 4,
+        marginLeft: 10,
         fontSize: 15,
         color: 'black'
     },

@@ -33,8 +33,9 @@ export const MainGuardView = () => {
     const get_data = async () => {
         setLoading(true);
         try {
-            const valores = await axios.get(db_dir + '/decEnv/getDecEnv');
+            const valores = await axios.get(db_dir + '/decEnv/app/getDec_env');
             setData(valores.data.data);
+            //console.log('DEC-ENVIO.APP : ', data)
         } catch (err) {
             console.log('error para obtener data: ', err);
         };
@@ -75,7 +76,7 @@ export const MainGuardView = () => {
                                 <Text style={{ color: 'white' }}>HISTORICOS</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: 'auto' }} onPress={() => { get_data() }} >
-                                <Text style={{ color: 'white' }}>ACTUALIZAR DECLARACIONES DE ENVIO</Text>
+                                <Text style={{ color: 'white' }}>ACTUALIZAR</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -88,7 +89,7 @@ export const MainGuardView = () => {
                     <View>
                         <View style={{ display: 'flex', flexDirection: 'row' }}>
                             <TouchableOpacity
-                                style={{ backgroundColor: '#28B463', marginRight: 'auto', width: '20%' }}
+                                style={{ backgroundColor: '#0E6655', marginRight: 'auto', width: '20%' }}
                                 onPress={() => { to_Open() }}>
                                 <Text style={{ color: 'white', marginTop: '20%', alignSelf: 'center' }}>TRANSITO</Text>
                             </TouchableOpacity>
@@ -108,8 +109,8 @@ export const MainGuardView = () => {
                         {
                             selectedDecla == 0 ?
                                 <View>
-                                    <Card style={{backgroundColor : '#F9E79F'}}><Text>ES TE COLOR, ES PARA FACTURAS SIN REVISAR</Text></Card>
                                     
+
                                 </View>
                                 :
                                 <ListComponentModal dec_envio={selectedDecla} />

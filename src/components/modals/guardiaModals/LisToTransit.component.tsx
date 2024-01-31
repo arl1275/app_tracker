@@ -22,7 +22,7 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
 
     useEffect(() => {
         setListFact(GetIsCheckedFacts());
-        if(listFact.length <= 0){
+        if(listFact.length <= 0 && modalVisible === true){
             Alert.alert('ENVIO A TRANSITO',' No tiene facturas revisadas o ya envio las facturas a transito');
         }
     }, [modalVisible]);

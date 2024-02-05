@@ -36,6 +36,7 @@ const UserStorage: any = create<UserProps>((set) =>({
         try {
             set({ data: users_ });
             await AsyncStorage.setItem('user', JSON.stringify(users_));
+            //console.log('USUARIO GUARDADO : ', UserStorage.getState());
         } catch (error) {
             console.log('NO FUE POSIBLE GUARDAR EL USUARIO');
         }

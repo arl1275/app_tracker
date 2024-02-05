@@ -87,10 +87,11 @@ const ListComponentModal: React.FC<props> = (props) => {
     if (FilterArr.length > 0) {
         return (
             <View>
+                <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
                 <ScrollView>
                     <DataTable>
 
-                        <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
+                        
                         <ScrollView>
                             <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
                                 <DataTable.Title>

@@ -4,7 +4,7 @@ import { DataTable, IconButton } from 'react-native-paper';
 import EntregadorListView from "../../components/entregadorComponents/entregador.component";
 import { VistadeSync } from "../../components/entregadorComponents/ToSync.components";
 import { Picker } from "@react-native-picker/picker";
-import checkInternetConnection from "../../utils/network_conn";
+import isConnectedToInternet from "../../utils/network_conn";
 import UserStorage from "../../storage/user";
 
 const styles = StyleSheet.create({
@@ -35,12 +35,27 @@ export const EntregadorIndexView : React.FC<props> = ({closeSession}) => {
     const [page, setPage] = useState('lista');
     const { data } = UserStorage();
     const [selectedValue, setSelectedValue] = useState('1');
-    const [ isOffline, setIsconn] = useState<boolean | null>(true);
+    const [ isOffline, setIsconn] = useState<boolean>();
+
+    const handler_session_close_entregador = async () => {
+        setIsconn(await isConnectedToInternet());
+        if(!isOffline && isOffline == undefined){
+            Alert.alert('CIERRE DE CESSION', 'No puede realizar cierre de session si no esta connectado a la red');
+        }else{
+            // valida cierre del día.
+            close_session();
+        }
+    }
+
+    const close_session = () =>{
+        Alert.alert('LA CESSION SE CERRARA');
+        closeSession('');
+    }
 
     const val_connnection = async () =>{
         let x 
-        if(typeof await checkInternetConnection() === 'boolean'){
-            let x = await checkInternetConnection()
+        if(typeof await isConnectedToInternet() === 'boolean'){
+            let x = await isConnectedToInternet()
             setIsconn(x);
         }
         
@@ -52,12 +67,16 @@ export const EntregadorIndexView : React.FC<props> = ({closeSession}) => {
     },[5000])
 
     const handlerPicker = async (value: any) => {
-         if (value === '0' && isOffline === true) {
-           Alert.alert('LA CESSION SE CERRARA');
-           closeSession('');
-         } else if (value === '0' && isOffline == false || isOffline == undefined || isOffline == null) {
-           Alert.alert('CIERRE DE SESION', 'No se puede cerrar la sesion si no esta conectado a la red');
-         } else {
+         if (value === '0') {
+            // CIERRE CONDICIONADO PARA ENTREGADOR
+            if(data.nombre != ''){
+                handler_session_close_entregador();
+            }
+
+           // CIERRE DE SESSION NORMAL PARA GUARDIA 
+           close_session();
+
+        } else {
            setSelectedValue(value);
          }
       };

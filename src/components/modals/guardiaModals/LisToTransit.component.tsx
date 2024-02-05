@@ -13,8 +13,8 @@ interface FactsComponentProps {
 }
 
 export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () => void }> = ({ modalVisible, closeModal }) => {
-    const [transportista, setTransportista] = useState<string | null>(null);        // save the data of the Entregador
-    const [camion, setCamion] = useState<string | null>(null);                      // save the data of the Camion
+    const [transportista, setTransportista] = useState<string>('');        // save the data of the Entregador
+    const [camion, setCamion] = useState<string>('');                      // save the data of the Camion
     const [visble, setModalVisibleCam] = useState(false);                           // to open modal to scam truck
     const [visbleU, setModalVisibleUser] = useState(false);                         // to open moadal of the camera to scam user
     const [listFact, setListFact] = useState<Facturas[]>([]);                       // this is to show locally
@@ -30,7 +30,7 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
     const FacturasToTransito = async () => {
         try {
             if (camion === null || camion === '' || transportista === null || transportista === '') {
-                Alert.alert('ERRO DATOS', 'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.')
+                Alert.alert('ERROR DATOS', 'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.')
             } else {
 
                 let body : Facturas[]= listFact.filter((item) => item.factura);
@@ -78,7 +78,10 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
     }
 
     if (listFact.length === 0) {
-        closeModal();
+        if(modalVisible){
+            Alert.alert('SIN FACTURAS REVISADAS');
+            closeModal();
+        }
     } else {
         return (
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
@@ -94,14 +97,20 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
                                     <View style={styles.Textplaces}>
                                         <View style={{ flexDirection: 'row', margin: 5 }}>
                                             <IconButton icon={'camera'} size={20} iconColor="white" onPress={() => { onVisibleU() }} />
-                                            <TextInput placeholder={transportista != null ? listFact[0].nombre : 'USUARIO'}
+
+                                            <TextInput 
+                                                placeholder={transportista != null ? listFact[0].nombre : 'USUARIO'}
                                                 placeholderTextColor="#9C9C9C"
+                                                //value={transportista}
                                                 onChange={() => setTransportista}
                                                 style={{ color: 'white' }} />
+
                                         </View>
                                         <View style={{ flexDirection: 'row', margin: 5 }}>
                                             <IconButton icon={'camera'} size={20} iconColor="white" onPress={() => { onVisibleCam() }} />
-                                            <TextInput placeholder={camion != null ? listFact[0].placa : 'CAMION'}
+                                            <TextInput 
+                                                placeholder={camion != null ? listFact[0].placa : 'CAMION'}
+                                                value = {camion}
                                                 placeholderTextColor="#9C9C9C"
                                                 onChange={() => setCamion}
                                                 style={{ color: 'white' }} />
@@ -137,7 +146,7 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
                                 </DataTable>
 
                                 <View style={styles.buttonContainer}>
-                                    <TouchableOpacity style={styles.button} onPress={() => { setCamion(null); setTransportista(null); closeModal(); }}>
+                                    <TouchableOpacity style={styles.button} onPress={() => { setCamion(''); setTransportista(''); closeModal(); }}>
                                         <Text style={styles.buttonText}>CERRAR</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.button} onPress={() => { FacturasToTransito(); closeModal() }}>

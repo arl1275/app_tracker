@@ -21,25 +21,25 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
     const signatureRef = useRef<any>(null);
 
     const ValSing = () => {
-        if(isPic == false){
+        if (isPic == false) {
             Alert.alert('SIN FOTO');
-        }else if (isEmpty === true) {
+        } else if (isEmpty === true) {
             Alert.alert("ERROR FALTA DE FIRMA", 'Se necesita ingresar la firma del receptor de la factura para continuar con el proceso de entrega.')
-        }else if (saveSing === false){
+        } else if (saveSing === false) {
             Alert.alert("ERROR GUARDADO DE FIRMA", 'Se necesita guardar la firma para validar la factura.')
-        }else{
+        } else {
             setValidateStep('pic');
             closeModal();
         }
     }
 
     const ConfirmAllDataBfSing = () => {
-        if(id != null || isPic == true){
+        if (id != null || isPic == true) {
             setValidateStep('sing');
-        }else{
+        } else {
             Alert.alert('FALTA DE DATA', 'Favor verificar si la fotografia o la identidad fue ingresada.')
         }
-    
+
     }
 
     const saveid = (props: string) => {
@@ -65,28 +65,54 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalContent}>
-
-                            {/* this is the element of the sing*/}
                             {validateStep === 'sing' ?
                                 <View style={styles.container}>
                                     <View>
                                         <Text style={styles.title}>RESUMEN DE ENTREGA</Text>
-                                        <View style={{ margin: 2 }}>
-                                            <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
-                                             <Text style={styles.resumen}>CAMION : {fact?.placa}</Text> 
-                                            <Text style={styles.resumen}>FACTURA : {fact?.factura}</Text>
-                                            <Text style={styles.resumen}>CAJAS : {fact?.cant_cajas}</Text>
+
+                                        <View style={{ margin: 1 }}>
+                                            <View style={styles.table}>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>CLIENTE :</Text>
+                                                    <Text style={styles.value}>{fact?.clientenombre}</Text>
+                                                </View>
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>ENTREGADOR :</Text>
+                                                    <Text style={styles.value}>{fact?.nombre}</Text>
+                                                </View>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>CAMION :</Text>
+                                                    <Text style={styles.value}>{fact?.placa}</Text>
+                                                </View>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>FACTURA :</Text>
+                                                    <Text style={styles.value}>{fact?.factura}</Text>
+                                                </View>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>CANT. CAJAS:</Text>
+                                                    <Text style={styles.value}>{fact?.cant_cajas}</Text>
+                                                </View>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>CANT. UNIDADES:</Text>
+                                                    <Text style={styles.value}>{fact?.cant_unidades}</Text>
+                                                </View>
+                                            </View>
                                         </View>
-                                        <View style={{ height: '50%', width : '45%'}}>
+                                        <View style={{ height: '60%', width: '100%' }}>
                                             <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.factura_id} isnext={setSaveSing} />
                                         </View>
                                     </View>
 
-                                    <View style={{width : 'auto'}}>
-                                        <TouchableOpacity style={styles.button} onPress={()=>{ValSing()}}>
-                                            <View style={{justifyContent : 'flex-end'}}>
+                                    <View style={{ width: 'auto', marginTop : 35 }}>
+                                        <TouchableOpacity style={styles.button} onPress={() => { ValSing() }}>
+                                            <View style={{ justifyContent: 'flex-end' }}>
                                                 <Text style={styles.buttonText}>FINALIZAR</Text>
-                                            </View>                                           
+                                            </View>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -94,40 +120,41 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
 
                             {/* this is the footer of the foto take*/}
                             {validateStep === 'pic' ?
-                                    <View style={{width : '100%'}}>
-                                        <Text style={styles.title}>FOTO O IDENTIDAD</Text>
-                                        <View style={{ borderColor: 'black' }}>
-                                            <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
-                                            <Text style={styles.resumen}>CAMION : {fact?.placa}</Text>
-                                            <Text style={styles.resumen}>FACTURA : {fact?.factura}</Text>
-                                            <Text style={styles.resumen}>CAJAS : {fact?.cant_cajas}</Text>
-                                            <TextInput
-                                                style={{ height: 40, backgroundColor: '#063970' }}
-                                                placeholder="INGRESE ID"
-                                                onChangeText={saveid}
-                                                defaultValue={''}
-                                            />
-                                            <CameraScreen fact={fact} setIsPic={setIsPic}/>
-                                        </View>
+                                <View style={{ width: '100%' }}>
+                                    <Text style={styles.title}>FOTO O IDENTIDAD</Text>
+                                    <View style={{ borderColor: 'black' }}>
+                                        <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
+                                        <Text style={styles.resumen}>CAMION : {fact?.placa}</Text>
+                                        <Text style={styles.resumen}>FACTURA : {fact?.factura}</Text>
+                                        <Text style={styles.resumen}>CAJAS : {fact?.cant_cajas}</Text>
+                                        <TextInput
+                                            style={{ height: 40, backgroundColor: '#063970' }}
+                                            placeholder="INGRESE ID"
+                                            onChangeText={saveid}
+                                            defaultValue={''}
+                                        />
+                                        <CameraScreen fact={fact} setIsPic={setIsPic} />
+                                    </View>
 
-                                        <View style={styles.buttonContainer}>
-                                            <TouchableOpacity style={styles.button} onPress={() => { closeModal() }}>
-                                                <Text style={styles.buttonText}>CERRAR</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={styles.button} onPress={() =>{ConfirmAllDataBfSing()}}>
-                                                <Text style={styles.buttonText}>SIGUIENTE</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                    <View style={styles.buttonContainer}>
+                                        <TouchableOpacity style={styles.button} onPress={() => { closeModal() }}>
+                                            <Text style={styles.buttonText}>CERRAR</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.button} onPress={() => { ConfirmAllDataBfSing() }}>
+                                            <Text style={styles.buttonText}>SIGUIENTE</Text>
+                                        </TouchableOpacity>
+                                    </View>
 
-                                    </View> 
-                                    :
-                                     null}
-                            </View>
-
+                                </View>
+                                :
+                                null
+                            }
                         </View>
-                    </View >
-                </View>
-           
+
+                    </View>
+                </View >
+            </View>
+
         </Modal >
 
     );
@@ -138,11 +165,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        width: '90%'
     },
     button: {
         padding: 10,
-        borderRadius: 5,
+        borderRadius: 3,
         backgroundColor: '#063970',
+        width: '100%'
     },
     buttonText: {
         color: 'white',
@@ -154,7 +183,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        width: 'auto',
+        width: '100%',
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
     },
     modalContent: {
@@ -162,19 +191,20 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 5,
-        elevation: 5, // For Android shadow
+        elevation: 5, // For Android shadow77
+        width: '100%'
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between', // Adjust as needed
         marginVertical: 10,
-        width: "60%",
+        width: "100%",
         backgroundColor: '#063970',
     },
     container: {
         backgroundColor: 'white',
-        width: '95%', // Adjust this width as needed  
-        height : '95%'
+        width: '100%', // Adjust this width as needed  
+        height: '80%',
     },
     title: {
         fontSize: 18,
@@ -187,6 +217,34 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'normal',
         color: 'black',
-    }
+    },
+    table: {
+        borderWidth: 0,
+        borderColor: '#000',
+        borderRadius: 5,
+        padding: 10,
+        margin: 10,
+        backgroundColor: '#EAF2F8'
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 5,
+    },
+    rowmain: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 5,
+        backgroundColor : '#5DADE2'
+    },
+    
+    header: {
+        fontWeight: 'bold',
+        color: 'black'
+    },
+    value: {
+        marginLeft: 10,
+        color: 'black'
+    },
 
 });

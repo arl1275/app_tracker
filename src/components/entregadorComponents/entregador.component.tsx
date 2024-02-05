@@ -175,13 +175,13 @@ function EntregadorListView() {
 
     const color_choose = (item: Facturas) => {
         if (item.state_name === 'FIRMADO') {
-            return 'yellow';
+            return '#73C6B6';
         } else if (item.is_Sinchro === true) {
-            return 'green';
+            return '#85C1E9';
         } else if (item.state_name === 'ENTREGADO') {
-            return 'white';
+            return '#FAD7A0';
         } else {
-            return 'red';
+            return '#F5B7B1';
         }
     }
 

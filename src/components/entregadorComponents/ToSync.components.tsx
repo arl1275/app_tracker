@@ -60,10 +60,13 @@ export function VistadeSync() {
         setLoading(true);
         if (await getStorageEntregado) {
             const data = await getAllNOTsynchroFacts();
-            setDataEntregas(data);
-            //console.log('LOCAL element : ', dataEntregas);
-            //console.log('FROM STORAGE : ', await getStorageEntregado());
-            setLoading(false);
+            if(Array.isArray(data)){
+                setDataEntregas(data);
+                setLoading(false);
+            }else{
+                Alert.alert('SIN FACTURAS PARA SINCRONIZACION');
+            }
+            
         } else {
             setLoading(false);
             Alert.alert('ERROR DE LOCAL', 'no se pudo obtener los datos de forma local');
@@ -83,9 +86,6 @@ export function VistadeSync() {
                                     <DataTable.Title><Text style={{color : 'white'}}>FACTURA</Text></DataTable.Title>
                                     <DataTable.Title><Text style={{color : 'white'}}>CAJAS</Text></DataTable.Title>
                                     <DataTable.Title><Text style={{color : 'white'}}>UNIDADES</Text></DataTable.Title>
-                                    {/* <DataTable.Title>FIRMADO</DataTable.Title>
-                                    <DataTable.Title>FOTO</DataTable.Title>
-                                    <DataTable.Title>ID_ENT</DataTable.Title> */}
                                 </DataTable.Header>
                                 {
                                     dataEntregas.map((item: Facturas) => {
@@ -97,15 +97,6 @@ export function VistadeSync() {
                                                 <DataTable.Cell>{item.factura}</DataTable.Cell>
                                                 <DataTable.Cell>{item.cant_cajas}</DataTable.Cell>
                                                 <DataTable.Cell>{item.cant_unidades}</DataTable.Cell>
-                                                {/* <DataTable.Cell>{
-                                                    item.hasSing === true ? 'SI' : 'NO'
-                                                }</DataTable.Cell>
-                                                <DataTable.Cell>{
-                                                    item.hasPic === true ? 'SI' : 'NO'
-                                                }</DataTable.Cell>
-                                                <DataTable.Cell>{
-                                                    item.hasId !== null ? 'SI' : 'NO'
-                                                }</DataTable.Cell> */}
                                             </DataTable.Row>
                                         )
                                     })

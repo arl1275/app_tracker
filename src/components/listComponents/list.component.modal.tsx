@@ -34,7 +34,7 @@ const ListComponentModal: React.FC<props> = (props) => {
     let parseIntProps = props.dec_envio;
     //console.log('dec_env => ', parseIntProps, props.dec_envio);
     const [see, setSee] = useState(false);
-    const [FilterArr, setFilterArr] = useState<Facturas[]>([]);
+    const [FilterArr, setFilterArr] = useState<any[]>([]);
     const [selectFact, setSelectFact] = useState<Facturas | null>(null);
     const { data, CargaData } = useGuardList();
 
@@ -46,7 +46,6 @@ const ListComponentModal: React.FC<props> = (props) => {
         try {
             let valores_ = await axios.get(db_dir + '/decEnv/FactsDecEnv', { params: { dec_envio: props.dec_envio } });
             let valores: Facturas[] = valores_.data.data;
-            //console.log('FACTURAS DE DECLARACION DE ENVIO : ', valores)
             setFilterArr(valores);
             CargaData(valores);
         } catch (err) {
@@ -69,18 +68,18 @@ const ListComponentModal: React.FC<props> = (props) => {
 
     const get_total_cajas = () => {
         if (data) {
-            const filteredFacturas = FilterArr.filter((factura: Facturas) => factura.declaracionenvio === parseIntProps);
+            const filteredFacturas = data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps);
             //console.log('total_cajas : ',  filteredFacturas)
-            return filteredFacturas.reduce((total, factura) => total + factura.cant_cajas, 0);
-        }else{
+            return filteredFacturas.reduce((total: number, factura: Facturas) => total + factura.cant_cajas, 0);
+        } else {
             console.log('data vacia')
         }
     }
 
     const get_total_unidades = () => {
         if (data) {
-            const filteredFacturas = FilterArr.filter((factura: Facturas) => factura.declaracionenvio === parseIntProps);
-            return filteredFacturas.reduce((total, factura) => total + factura.cant_unidades, 0);
+            const filteredFacturas = data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps);
+            return filteredFacturas.reduce((total: number, factura: Facturas) => total + factura.cant_unidades, 0);
         }
     }
 
@@ -92,28 +91,28 @@ const ListComponentModal: React.FC<props> = (props) => {
                     <DataTable>
 
                         <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
-
-                        <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>FACTURA</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>RUTA</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>CLIENTE</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>CAJAS</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>UNIDADES</Text>
-                            </DataTable.Title>
-                        </DataTable.Header>
                         <ScrollView>
+                            <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>FACTURA</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>RUTA</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>CLIENTE</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>CAJAS</Text>
+                                </DataTable.Title>
+                                <DataTable.Title>
+                                    <Text style={{ color: 'white' }}>UNIDADES</Text>
+                                </DataTable.Title>
+                            </DataTable.Header>
+
                             {
-                                data.filter((ite : Facturas)=> ite.id_dec_env === parseIntProps).map((item: Facturas) => {
-                                    let valor = item.is_check != true ? '#F5B7B1': item.is_Sinchro === true ? '#A9DFBF': '#F9E79F' ;
+                                data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
+                                    let valor = item.is_check != true ? '#F5B7B1' : item.is_Sinchro === true ? '#A9DFBF' : '#F9E79F';
                                     return (
                                         <DataTable.Row key={item.factura_id} onPress={() => { checkIsCheck(item) }} style={{ backgroundColor: valor }}>
                                             <DataTable.Cell><Text style={{ color: 'black' }}>{item.factura}</Text></DataTable.Cell>
@@ -125,14 +124,14 @@ const ListComponentModal: React.FC<props> = (props) => {
                                     )
                                 })
                             }
-                        
-                        <DataTable.Row style={{ backgroundColor: "#0C4C7A" }}>
-                            <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
-                            <DataTable.Cell><Text></Text></DataTable.Cell>
-                            <DataTable.Cell><Text></Text></DataTable.Cell>
-                            <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_cajas()}</Text></DataTable.Cell>
-                            <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_unidades()}</Text></DataTable.Cell>
-                        </DataTable.Row>
+
+                            <DataTable.Row style={{ backgroundColor: "#0C4C7A" }}>
+                                <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
+                                <DataTable.Cell><Text></Text></DataTable.Cell>
+                                <DataTable.Cell><Text></Text></DataTable.Cell>
+                                <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_cajas()}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_unidades()}</Text></DataTable.Cell>
+                            </DataTable.Row>
                         </ScrollView>
                     </DataTable>
                 </ScrollView>

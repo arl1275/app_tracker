@@ -162,7 +162,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                 {Boxes.filter((item: boxes) => item.lista_empaque === fact?.lista_empaque).map((item: boxes) => {
                                     let is_check = item.check === true ? 'green' : 'black';
                                     return (
-                                        <Text style={{ backgroundColor: is_check }}>{item.caja}</Text>
+                                        <Text style={{ backgroundColor: is_check , color : 'white'}}>{item.caja}</Text>
                                     );
                                 })}
                             </Card>

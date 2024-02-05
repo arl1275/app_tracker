@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { Text, View, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native';
-import { DataTable, IconButton } from 'react-native-paper';
+import { DataTable } from 'react-native-paper';
 import { Facturas } from "../../interfaces/facturas";
 import db_dir from "../../config/db";
 import axios from "axios";
@@ -10,6 +11,7 @@ import LoadingModal from "../Activity/activity.component";
 import boxChequerStorage from "../../storage/checkBoxes";
 import { box_to_check } from "../../interfaces/box";
 import BoxChecker_ent from "../modals/entregadorModals/BoxChequerEnt.component";
+import UserStorage from "../../storage/user";
 
 const styles = StyleSheet.create({
     container: {
@@ -17,22 +19,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     button: {
-        backgroundColor: '#063970',
+        backgroundColor: '#A3E4D7',
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 5,
+        display: 'flex',
+        flexDirection: 'row'
     },
     buttonText: {
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+        alignSelf: 'center',
+        marginLeft: 15
     },
     buttonContainer: {
         display: "flex",
-        marginVertical: 'auto',
-        alignSelf: 'flex-end',
-        width: "100%",
-        backgroundColor: '#063970',
+        marginVertical: '50%',
+        alignSelf: 'center',
+        width: "50%"
     },
     SinCheck: {
         backgroundColor: '#E77F7F'
@@ -60,7 +65,7 @@ const styles = StyleSheet.create({
 interface FacturaProps {
     id_fact: number;
     fact: string;
-  }
+}
 
 function EntregadorListView() {
     const [facturas, setFacturas] = useState<Facturas[]>([]);                                                   // set the facturas in the local array
@@ -71,6 +76,7 @@ function EntregadorListView() {
     const [see, setSee] = useState(false);
     const [fact_, setfact] = useState<Facturas>();
     const { fetchData_ } = boxChequerStorage();
+    const { getUser } = UserStorage();
 
     useEffect(() => {
         fetchData();
@@ -79,20 +85,28 @@ function EntregadorListView() {
     //THIS FUNCTION IS TO SYNCRO THE FACTURAS;
     const getEnTransitoFacts = async () => {
         try {
-            
+
             setLoading(true);
-            const data2 = await axios.get(db_dir + '/facturas/getEnTransFact');
-            setFacturas(data2.data.data);
-            if (facturas.length === data.length) {
-                Alert.alert('SINCRONIZACION', 'La lista de facturas esta actualizada');
-            } else {
-                updateFactura(facturas);
+            const id_user = getUser();
+            console.log('data para obtener facturas ::::: ', id_user);
+            const data2 = await axios.get(db_dir + '/facturas/getEnTransFact', {params : {id : id_user.id_user}});
+            
+            if (data2.data.data.length > 0) {
+                setFacturas(data2.data.data);
+                if (facturas.length === data.length) {
+                    Alert.alert('SINCRONIZACION', 'La lista de facturas esta actualizada');
+                } else {
+                    updateFactura(facturas);
+                }
+                if (facturas.length > 0) {
+                    syncroBoxes();
+                }
+                setLoading(false);
+            }else{
+                setLoading(false);
+                Alert.alert('NO HAY FACTURAS A SINCRONIZAR PARA ESTE USUARIO');
             }
-            if(facturas.length > 0){
-                syncroBoxes();
-            }
-            //console.log('facturas obtenidas : ', facturas)
-            setLoading(false);
+
         } catch (err) {
             Alert.alert('ERROR AL SINCRONIZAR', 'Es posible que no tenga conexion a internet, favor revisar la conexion en los ajustes del telefono.');
         }
@@ -100,31 +114,31 @@ function EntregadorListView() {
 
     //THIS FUNCTION IS TO SYNCRO THE BOXES THAT ARE PART OF THE FACTURAS;
     const syncroBoxes = async () => {
-        try {       
-         let props_cajas_facturas: FacturaProps[] = [];
+        try {
+            let props_cajas_facturas: FacturaProps[] = [];
 
-          if (facturas.length > 0) {
             if (facturas.length > 0) {
-                
-                for (let i = 0; i < facturas.length; i++) {
-                  const element: Facturas = facturas[i];
-                  let val = {
-                    id_fact: element.factura_id,
-                    fact: element.factura
-                  }
-                  props_cajas_facturas.push(val);
-                }
-              }
-          }
+                if (facturas.length > 0) {
 
-          const val = await axios.get(db_dir + '/facturas/app/getCajasOneFact', {params : {data : props_cajas_facturas}}).then(e => e.data);
-          const valores : box_to_check[] = val.data;
-          fetchData_(valores);
+                    for (let i = 0; i < facturas.length; i++) {
+                        const element: Facturas = facturas[i];
+                        let val = {
+                            id_fact: element.factura_id,
+                            fact: element.factura
+                        }
+                        props_cajas_facturas.push(val);
+                    }
+                }
+            }
+
+            const val = await axios.get(db_dir + '/facturas/app/getCajasOneFact', { params: { data: props_cajas_facturas } }).then(e => e.data);
+            const valores: box_to_check[] = val.data;
+            fetchData_(valores);
         } catch (err) {
-          console.log('Error fetching data:', err);
+            console.log('Error fetching data:', err);
         }
-      };
-      
+    };
+
     const openModal = () => {
         setModalVisible(true);
     };
@@ -139,18 +153,18 @@ function EntregadorListView() {
 
     //THIS IS TO OPEN THE BOXCHER OR THE FACTURA VALIDATOR
     const BoxOrSing = (item: Facturas) => {
-            if (item.is_check != true && fact_ !== null) {
-                setSee(true);
+        if (item.is_check != true && fact_ !== null) {
+            setSee(true);
+        } else {
+            if (item.hasSing === true) {
+                Alert.alert('FACTURA YA FIRMADA');
+
+            } else if (item.is_Sinchro) {
+                Alert.alert('FACTURA YA SINCRONIZADA');
             } else {
-                if(item.hasSing === true){
-                    Alert.alert('FACTURA YA FIRMADA');
-                    
-                }else if(item.is_Sinchro){
-                    Alert.alert('FACTURA YA SINCRONIZADA');
-                } else {
-                    dataToSend(item);
-                } 
+                dataToSend(item);
             }
+        }
     }
 
     //THIS IS TO SAVE THE FACTURAS THAT WERE VALIDADED
@@ -159,14 +173,14 @@ function EntregadorListView() {
         openModal();
     }
 
-    const color_choose = (item : Facturas) => {
-        if(item.state_name === 'FIRMADO'){
+    const color_choose = (item: Facturas) => {
+        if (item.state_name === 'FIRMADO') {
             return 'yellow';
-        }else if(item.is_Sinchro === true){
+        } else if (item.is_Sinchro === true) {
             return 'green';
-        }else if(item.state_name === 'ENTREGADO'){
+        } else if (item.state_name === 'ENTREGADO') {
             return 'white';
-        }else{
+        } else {
             return 'red';
         }
     }
@@ -206,8 +220,8 @@ function EntregadorListView() {
                                             <DataTable.Cell>{item.clientenombre}</DataTable.Cell>
                                             <DataTable.Cell>{item.factura}</DataTable.Cell>
                                             <DataTable.Cell>{item.lista_empaque}</DataTable.Cell>
-                                            <DataTable.Cell style={{ alignSelf : 'center'}}>{item.cant_cajas}</DataTable.Cell>
-                                            <DataTable.Cell style={{ alignSelf : 'center'}}>{item.cant_unidades}</DataTable.Cell>
+                                            <DataTable.Cell style={{ alignSelf: 'center' }}>{item.cant_cajas}</DataTable.Cell>
+                                            <DataTable.Cell style={{ alignSelf: 'center' }}>{item.cant_unidades}</DataTable.Cell>
                                             <DataTable.Cell>{item.state_name === undefined ? 'PENDIENTE' : item.state_name}</DataTable.Cell>
                                         </DataTable.Row>
                                     )
@@ -225,7 +239,8 @@ function EntregadorListView() {
                 :
                 (
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={() => { getEnTransitoFacts();}}>
+                        <TouchableOpacity style={styles.button} onPress={() => { getEnTransitoFacts(); }}>
+                            <Icon name="refresh" size={30} />
                             <Text style={styles.buttonText}>SINCRONIZAR DATOS</Text>
                         </TouchableOpacity>
                     </View>

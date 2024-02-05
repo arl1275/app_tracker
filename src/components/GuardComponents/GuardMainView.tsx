@@ -19,12 +19,16 @@ interface dec_envio {
     usuario: string
 }
 
-export const MainGuardView = () => {
+interface props{
+    closeSession : (zumachen : string) => void;
+}
+
+export const MainGuardView : React.FC<props> = ({closeSession}) => {
     const [data, setData] = useState<dec_envio[]>([]);                                          // data to show in list
     const [selectedValue, setSelectedValue] = useState<string>('');                             // THIS IS NOT WORKING
     const [selectedDecla, setSelectDeclar] = useState<number>(0);                               // this is to get the declaration in specific
     const [showResumenChecked_List, setShowResumenChecked_List] = useState<boolean>(false);     // data to show the checked list
-    const [loading, setLoading] = useState(false);                                              // this is to update facturas data
+    const [loading, setLoading] = useState(false);                                              // this is to update facturas data|
 
     useEffect(() => {
         get_data();
@@ -50,6 +54,15 @@ export const MainGuardView = () => {
         setShowResumenChecked_List(true);
     }
 
+    const hadler_picker = ( value : any) =>{
+        if(value === '0'){
+            closeSession('');
+        } 
+        else{
+            setSelectedValue(value);
+        }
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <ListToTransito modalVisible={showResumenChecked_List} closeModal={to_Close} />
@@ -58,24 +71,24 @@ export const MainGuardView = () => {
             <View>
                 <View style={styles.navbar}>
                     <View style={{ flexDirection: 'row' }}>
-                        <IconButton icon={'account-circle'} size={25} iconColor="white" />
+                        <IconButton icon={'account-circle'} size={20} iconColor="white" />
 
                         <Picker
                             selectedValue={selectedValue}
-                            style={{ height: 50, width: 150, color: 'white' }}
-                            onValueChange={(itemValue) => setSelectedValue(itemValue)}>
-                            <Picker.Item label="INICIO" value="admin" />
-                            <Picker.Item label="OTROS" value="option1" />
-                            <Picker.Item label="SALIR" value="option2" />
+                            style={{ height: 50, width: 50, color: 'white' }}
+                            onValueChange={(itemValue) => hadler_picker(itemValue)}>
+                            <Picker.Item label="INICIO" value='1' />
+                            <Picker.Item label="OTROS" value='2' />
+                            <Picker.Item label="SALIR" value='0' />
                         </Picker>
                     </View>
 
                     <View style={{ alignItems: 'flex-end' }}>
                         <View style={{ display: 'flex', flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: '10%' }} onPress={() => { }}>
+                            {/* <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: '10%' }} onPress={() => { }}>
                                 <Text style={{ color: 'white' }}>HISTORICOS</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: 'auto' }} onPress={() => { get_data() }} >
+                            </TouchableOpacity> */}
+                            <TouchableOpacity style={{ backgroundColor: '#063970', marginRight: 'auto', height : 'auto' }} onPress={() => { get_data() }} >
                                 <Text style={{ color: 'white' }}>ACTUALIZAR</Text>
                             </TouchableOpacity>
                         </View>
@@ -91,17 +104,18 @@ export const MainGuardView = () => {
                             <TouchableOpacity
                                 style={{ backgroundColor: '#0E6655', marginRight: 'auto', width: '20%' }}
                                 onPress={() => { to_Open() }}>
-                                <Text style={{ color: 'white', marginTop: '20%', alignSelf: 'center' }}>TRANSITO</Text>
+                                     {/* <Icon name={'inbox'} size={120} color={'black'} /> */}
+                                <Text style={{ color: 'white', marginTop : 10, alignSelf: 'center' }}>TRANSITO</Text>
                             </TouchableOpacity>
 
                             <Picker
                                 selectedValue={selectedDecla}
-                                style={{ height: 50, width: '80%', backgroundColor: '#1A5276' }}
+                                style={{ height: 'auto', width: '80%', backgroundColor: '#1A5276' }}
                                 onValueChange={(itemValue) => setSelectDeclar(itemValue)} >
 
-                                <Picker.Item label="SELECCIONAR DECLARACION DE ENVIO" value='0' />
+                                <Picker.Item label="SELECCIONAR DECLARACION DE ENVIO" value='0' style={{backgroundColor: '#063970', color : 'white'}}/>
                                 {data.map((item: dec_envio) => {
-                                    return (<Picker.Item label={` DECLARACION DE ENVIO: ${item.declaracion_env}`} value={item.id} style={{ backgroundColor: '#063970' }} />)
+                                    return (<Picker.Item label={`DEC_ENVIO : ${item.declaracion_env}`} value={item.id} style={{ backgroundColor: '#063970', color : 'white' }} />)
                                 })}
                             </Picker>
                         </View>
@@ -109,8 +123,9 @@ export const MainGuardView = () => {
                         {
                             selectedDecla == 0 ?
                                 <View>
-                                    
-
+                                    <Card style={{ width : '60%', alignSelf : 'center', marginTop : '45%', backgroundColor : '#A9DFBF'}}>
+                                        <Text style={{color : 'black', margin : 10}}> SELECCIONE UNA DECLARACINO DE ENVIO PARA VALIDAR</Text>
+                                    </Card>
                                 </View>
                                 :
                                 <ListComponentModal dec_envio={selectedDecla} />
@@ -175,7 +190,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#063970',
-        padding: 10,
+        paddingRight : 7,
         width: 'auto'
     },
 });

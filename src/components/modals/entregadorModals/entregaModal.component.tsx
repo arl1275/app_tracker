@@ -73,11 +73,11 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                         <Text style={styles.title}>RESUMEN DE ENTREGA</Text>
                                         <View style={{ margin: 2 }}>
                                             <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
-                                            {/* <Text style={styles.resumen}>CAMION : {fact?.placa}</Text> */}
+                                             <Text style={styles.resumen}>CAMION : {fact?.placa}</Text> 
                                             <Text style={styles.resumen}>FACTURA : {fact?.factura}</Text>
                                             <Text style={styles.resumen}>CAJAS : {fact?.cant_cajas}</Text>
                                         </View>
-                                        <View style={{ height: 450, width : 450}}>
+                                        <View style={{ height: '50%', width : '45%'}}>
                                             <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.factura_id} isnext={setSaveSing} />
                                         </View>
                                     </View>
@@ -173,7 +173,8 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: 'white',
-        width: 'auto', // Adjust this width as needed  
+        width: '95%', // Adjust this width as needed  
+        height : '95%'
     },
     title: {
         fontSize: 18,

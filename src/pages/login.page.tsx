@@ -26,8 +26,9 @@ interface LoginPageProps {
       const handleSubmit = async () => {
         try {
 
-            if(Data._Password !== '' && Data._Password !== ''){
-
+            if(Data._Password !== '' && Data._Password !== undefined && Data._Password != null && Data._Password !== '' &&
+            Data.user !== '' && Data.user !== undefined && Data.user != null && Data.user !== ''){
+                console.log('log in de: ', Data);
                 const result = await axios.get(db_dir + '/usuarios/auth/app', {params : {
                     user : Data.user,
                     _password : Data._Password
@@ -35,7 +36,7 @@ interface LoginPageProps {
     
                 if(result.status === 200){
                     console.log('resulta do in : ', result.data);
-                    props(result.data);
+                    props(result.data.data);
                 }else{
                     Alert.alert('ERROR', 'usuario no valido para esta app');
                 }
@@ -60,7 +61,7 @@ interface LoginPageProps {
                     <Text style={styles.title}>KELLER-CHECK</Text>
                 </Card>
                 
-                <View style={{marginTop : 40 , width : '80%', alignSelf : 'center'}}>
+                <View style={{marginTop : 40 , width : '50%', alignSelf : 'center'}}>
                 <TextInput 
                 placeholder="USUARIO"
                 onChangeText={handleUserChange}
@@ -79,7 +80,7 @@ interface LoginPageProps {
                 />
                 
                 <View style={styles.button}>
-                    <Button title="INGRESAR" onPress={handleSubmit} color={'#063970'}/>
+                    <Button title="INGRESAR" onPress={()=>{handleSubmit()}} color={'#063970'}/>
                 </View>
                 
                 </View>
@@ -87,7 +88,7 @@ interface LoginPageProps {
             </View>
         </View>
     )
-}
+}   
 
 const styles = StyleSheet.create({
     card: {

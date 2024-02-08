@@ -28,57 +28,34 @@ const styles = StyleSheet.create({
 });
 
 interface props{
-    closeSession : (zumachen : string) => void;
+    setpage : (value : number) => void;
 }
 
-export const EntregadorIndexView : React.FC<props> = ({closeSession}) => {
+export const EntregadorIndexView : React.FC<props> = ({ setpage }) => {
     const [page, setPage] = useState('lista');
-    const { data } = UserStorage();
+    const { data, closeSession } = UserStorage();
     const [selectedValue, setSelectedValue] = useState('1');
-    const [ isOffline, setIsconn] = useState<boolean>();
 
     const handler_session_close_entregador = async () => {
-        setIsconn(await isConnectedToInternet());
-        if(!isOffline && isOffline == undefined){
-            Alert.alert('CIERRE DE CESSION', 'No puede realizar cierre de session si no esta connectado a la red');
+        let is_conn = await isConnectedToInternet();
+        console.log('ESTA CONECTADO ENTREGADOR :', is_conn);
+        if(is_conn){
+            Alert.alert('LA CESSION SE CERRARA');
+            closeSession();
+            setpage(0);
         }else{
-            // valida cierre del día.
-            close_session();
+            Alert.alert('CIERRE DE CESSION', 'No puede realizar cierre de session si no esta connectado a la red');
         }
     }
-
-    const close_session = () =>{
-        Alert.alert('LA CESSION SE CERRARA');
-        closeSession('');
-    }
-
-    const val_connnection = async () =>{
-        let x 
-        if(typeof await isConnectedToInternet() === 'boolean'){
-            let x = await isConnectedToInternet()
-            setIsconn(x);
-        }
-        
-    }
-
-    useEffect(()=>{
-        val_connnection();
-        console.log('REFERENCIA DE ACTIVA EN RED : ', isOffline); 
-    },[5000])
 
     const handlerPicker = async (value: any) => {
-         if (value === '0') {
-            // CIERRE CONDICIONADO PARA ENTREGADOR
-            if(data.nombre != ''){
+        if (value === '0') {
+            if(data.cod_empleado != 0){
                 handler_session_close_entregador();
             }
-
-           // CIERRE DE SESSION NORMAL PARA GUARDIA 
-           close_session();
-
         } else {
            setSelectedValue(value);
-         }
+        }
       };
 
     return (

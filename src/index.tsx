@@ -3,54 +3,58 @@ import { View, StyleSheet } from 'react-native';
 import { EntregadorIndexView } from './pages/entregador/EntregadorMain.view';
 import { MainGuardView } from './components/GuardComponents/GuardMainView';
 import { LoginPage } from './pages/login.page';
+import isConnectedToInternet from './utils/network_conn';
 import UserStorage from './storage/user';
 
-
 function IndexPage() {
-  const { fetchData, setUser, data } = UserStorage();
-  const [page, setPage] = useState("");
-  const [user, setUser_] = useState({
-    id_user: 0,
-    nombre: '',
-    cod_empleado: '',
-    qr: '',
-    type_: 0,
-    active: true
-  });
+  const { fetchData, getUser, getType } = UserStorage();
+  const [page, setPage] = useState<string>('');
+  const [local_u, setLocalU] = useState<number | null>(null);
+  const [isconn, setIsconn] = useState<boolean>();
 
-  const handleUser = (prop: any) => {
-    setUser_(prop);
-  }
-
-  const openSessionHandler = () => {
-
-    if(data.active == true){
-      setPage("GUARDIA");
-    }else{
-      
-      if (user.type_ === 3) {
+  const openSessionHandler = async () => {
+    console.log('usuario validando : ', local_u);
+      if(local_u == 3 ){
         setPage("ENTREGADOR");
-        //onsole.log('usuario a guardar', user);
-        setUser(user);
-      } else if (user.type_ === 2) {
+      }else if(local_u == 2){
         setPage("GUARDIA");
-      } else {
-        setPage("");
+      }else if(local_u == 0){
+        setPage('');
       }
-    }
-
   }
 
+
+
+  const setpage_ = ( value : number) => {
+    setLocalU(value);
+  }
+  
   useEffect(() => {
-    openSessionHandler();
-  }, [user, page])
+    fetchData();
+    if(isconn){
+      openSessionHandler()
+    }else{
+     if(local_u == 2){
+      setPage("ENTREGADOR")
+     }
+    }
+    
+  }, [local_u, isconn]); 
+
+  useEffect( ()=>{
+    val_entregador();
+  })
+
+  const val_entregador = async () => {
+    setIsconn( await isConnectedToInternet());
+  }
 
   return (
     <View style={{ display: 'flex', backgroundColor: 'white' }}>
       <View style={{ width: '100%', height: '100%', alignSelf: 'center' }}>
-        {page === "GUARDIA" && <MainGuardView closeSession={handleUser} />}
-        {page === "ENTREGADOR" ? <EntregadorIndexView closeSession={handleUser} /> : null}
-        {page === "" && <LoginPage props={handleUser} />}
+        {page === "GUARDIA" && <MainGuardView setpage={setpage_}/>}
+        {page === "ENTREGADOR" && <EntregadorIndexView setpage={setpage_}/> }
+        {page === '' && <LoginPage setpage={setpage_}/>}
       </View>
     </View>
   );

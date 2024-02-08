@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native';
-import { Facturas } from "../../interfaces/facturas";
+import UserStorage from "../../storage/user";
 import axios from "axios";
 import db_dir from "../../config/db";
 import LoadingModal from "../Activity/activity.component";
@@ -19,16 +19,17 @@ interface dec_envio {
     usuario: string
 }
 
-interface props{
-    closeSession : (zumachen : string) => void;
+interface Props{
+    setpage: ( value : number) => void;
 }
 
-export const MainGuardView : React.FC<props> = ({closeSession}) => {
+export const MainGuardView : React.FC<Props> = ({ setpage }) => {
     const [data, setData] = useState<dec_envio[]>([]);                                          // data to show in list
     const [selectedValue, setSelectedValue] = useState<string>('');                             // THIS IS NOT WORKING
     const [selectedDecla, setSelectDeclar] = useState<number>(0);                               // this is to get the declaration in specific
     const [showResumenChecked_List, setShowResumenChecked_List] = useState<boolean>(false);     // data to show the checked list
     const [loading, setLoading] = useState(false);                                              // this is to update facturas data|
+    const { closeSession } = UserStorage();
 
     useEffect(() => {
         get_data();
@@ -54,9 +55,10 @@ export const MainGuardView : React.FC<props> = ({closeSession}) => {
         setShowResumenChecked_List(true);
     }
 
-    const hadler_picker = ( value : any) =>{
+    const hadler_picker = async ( value : any) =>{
         if(value === '0'){
-            closeSession('');
+            await closeSession();
+            setpage(0);
         } 
         else{
             setSelectedValue(value);
@@ -78,7 +80,7 @@ export const MainGuardView : React.FC<props> = ({closeSession}) => {
                             style={{ height: 50, width: 50, color: 'white' }}
                             onValueChange={(itemValue) => hadler_picker(itemValue)}>
                             <Picker.Item label="INICIO" value='1' />
-                            <Picker.Item label="OTROS" value='2' />
+                            {/* <Picker.Item label="OTROS" value='2' /> */}
                             <Picker.Item label="SALIR" value='0' />
                         </Picker>
                     </View>
@@ -115,7 +117,7 @@ export const MainGuardView : React.FC<props> = ({closeSession}) => {
 
                                 <Picker.Item label="SELECCIONAR DECLARACION DE ENVIO" value='0' style={{backgroundColor: '#063970', color : 'white'}}/>
                                 {data.map((item: dec_envio) => {
-                                    return (<Picker.Item label={`DEC_ENVIO : ${item.declaracion_env}`} value={item.id} style={{ backgroundColor: '#063970', color : 'white' }} />)
+                                    return (<Picker.Item key={item.declaracion_env} label={`DEC_ENVIO : ${item.declaracion_env}`} value={item.id} style={{ backgroundColor: '#063970', color : 'white' }} />)
                                 })}
                             </Picker>
                         </View>

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import db_dir from '../config/db';
-import { SafeAreaView, StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
 import { Card } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { UserInterface } from '../interfaces/user';
+import UserStorage from '../storage/user';
 
-interface LoginPageProps {
-    props: ({ }) => void;
+interface props{
+    setpage : (value : number) => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ props }) => {
+export const LoginPage : React.FC<props> = ({setpage}) => {
+    const { setUser, getType } = UserStorage();
     const [Data, setData] = useState({
         user: '',
         _Password: ''
@@ -29,7 +31,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ props }) => {
 
             if (Data._Password !== '' && Data._Password !== undefined && Data._Password != null && Data._Password !== '' &&
                 Data.user !== '' && Data.user !== undefined && Data.user != null && Data.user !== '') {
-                //console.log('log in de: ', Data);
+  
                 const result = await axios.get(db_dir + '/usuarios/auth/app', {
                     params: {
                         user: Data.user,
@@ -40,18 +42,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ props }) => {
                 if (result.status === 200) {
                     const user : UserInterface = result.data.data;
                     console.log('usuario from bk : ', user);
-                    props(user);
-                } else {
-                    Alert.alert('ERROR', 'usuario no valido para esta app');
+                    await setUser(user);
+                    setpage( await getType());
                 }
-
             } else {
                 Alert.alert('ERROR', 'Favor llene todo los campos');
             }
 
 
         } catch (err) {
-            Alert.alert('ERROR', 'Problemas para enviar usuario, favor revisar su conexion a internet');
+            Alert.alert('ERROR', 'ingrese correctamente su usuario y contraseña');
             console.log('problema al enviar usuario : ', err)
         }
     };
@@ -65,7 +65,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ props }) => {
                     <Text style={styles.title}>KELLER-CHECK</Text>
                 </Card>
 
-                <View style={{ marginTop: 40, width: '50%', alignSelf: 'center' }}>
+                <View style={{ marginTop: 40, width: '70%', alignSelf: 'center' }}>
                     <TextInput
                         placeholder="USUARIO"
                         onChangeText={handleUserChange}

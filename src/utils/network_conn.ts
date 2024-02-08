@@ -1,9 +1,15 @@
 import NetInfo, {NetInfoState} from '@react-native-community/netinfo';
+import axios from 'axios';
+import db_dir from '../config/db';
 
 const isConnectedToInternet = async (): Promise<boolean> => {
   try {
-    const connectionInfo: NetInfoState = await NetInfo.fetch();
-    return connectionInfo.isConnected ?? false;
+    const result = await axios.get(db_dir + "/conn");
+    if(result.status === 200){
+      return true;
+    }else{
+      return false;
+    }
   } catch (error) {
     console.error('Error checking internet connectivity:', error);
     return false;

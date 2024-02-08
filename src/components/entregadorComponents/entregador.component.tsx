@@ -87,7 +87,7 @@ function EntregadorListView() {
         try {
 
             setLoading(true);
-            const id_user = getUser();
+            const id_user = await getUser();
             console.log('data para obtener facturas ::::: ', id_user);
             const data2 = await axios.get(db_dir + '/facturas/getEnTransFact', {params : {id : id_user.id_user}});
             
@@ -108,6 +108,7 @@ function EntregadorListView() {
             }
 
         } catch (err) {
+            console.log('ERROR AL SINCRONIZAR FACTURAS ENTREGADOR : ', err);
             Alert.alert('ERROR AL SINCRONIZAR', 'Es posible que no tenga conexion a internet, favor revisar la conexion en los ajustes del telefono.');
         }
     }

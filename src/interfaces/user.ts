@@ -5,4 +5,5 @@ export interface UserInterface{
     qr : string,
     cod_empleado : number,
     role : number,
+    type_ : number
 }

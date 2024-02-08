@@ -127,7 +127,7 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
                                     </DataTable.Header>
                                     {
                                         listFact.map((item) => (
-                                            <DataTable.Row>
+                                            <DataTable.Row key={item.factura_id}>
                                                 <DataTable.Cell>{item.factura}</DataTable.Cell>
                                                 <DataTable.Cell>{item.clientenombre}</DataTable.Cell>
                                                 <DataTable.Cell>{item.cant_cajas}</DataTable.Cell>

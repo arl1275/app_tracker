@@ -1,63 +1,78 @@
 import { create } from 'zustand';
 import { UserInterface } from '../interfaces/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 interface UserProps {
-   data : UserInterface;
-   fetchData : () => Promise<void>;
-   setUser : (user_ : UserInterface) => void;
-   getUser : () => void;
-   closeSession : () => void;
+    data: UserInterface;
+    fetchData: () => Promise<void>;
+    setUser: (user_: UserInterface) => void;
+    getUser: () => void;
+    closeSession: () => void;
+    getType : () => void;
 }
 
-const UserStorage: any = create<UserProps>((set) =>({
+const UserStorage: any = create<UserProps>((set) => ({
     data : {
-        id_user : 0,
+        id_user: 0,
         nombre: '',
+        active: false,
         qr: '',
         cod_empleado: 0,
-        role: 0, 
-        active: false,
+        role: 0,
+        type_: 0
     },
 
-    fetchData : async () => {
+    fetchData: async () => {
         try {
             const storedData = await AsyncStorage.getItem('user');
             if (storedData !== null) {
-              set({ data: JSON.parse(storedData) });
+                set({ data: JSON.parse(storedData) });
             }
-      
-          } catch (error) {
+
+        } catch (error) {
             console.error('Error fetching data:', error);
-          }
+        }
     },
 
-    setUser : async (users_ : UserInterface) => {
+    setUser: async (users_: UserInterface) => {
         try {
-            set({ data: users_ });
             await AsyncStorage.setItem('user', JSON.stringify(users_));
-            //console.log('USUARIO GUARDADO : ', UserStorage.getState());
+            set({ data: users_ });
+            console.log('usuario GUARDADO : ', UserStorage.getState().data);
         } catch (error) {
-            console.log('NO FUE POSIBLE GUARDAR EL USUARIO');
+            console.error('Error saving user data:', error);
         }
-    }, 
+    },
 
-    getUser : () =>{
+    getUser: async () => {
         try {
-            const { data } = UserStorage.getState();
+            const { data } = await UserStorage.getState();
             return data;
         } catch (error) {
             console.log('ERROR PARA OBTENER EL USUARIO');
         }
     },
 
-    closeSession :async  () =>{
+    closeSession: async () => {
         try {
-            await UserStorage.removeItem('user')
+            await AsyncStorage.removeItem('user');
+            Alert.alert('se borro usuario'); //
             return true;
         } catch (error) {
-            console.log('ERROR PARA CERRAR SESION');
-            return false
+            Alert.alert('no se borro usuario')
+            console.log('ERROR PARA CERRAR SESION', error);
+            return false;
+        }
+    },
+
+    getType : async () => {
+        try {
+            const { data } = await UserStorage.getState();
+            return data.type_;
+        } catch (error) {
+            console.log('ERROR PARA OBTENER EL USUARIO');
+            return null;
         }
     }
 

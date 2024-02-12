@@ -103,12 +103,13 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                                 </View>
                                             </View>
                                         </View>
+
                                         <View style={{ height: '60%', width: '100%' }}>
                                             <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.factura_id} isnext={setSaveSing} />
                                         </View>
                                     </View>
 
-                                    <View style={{ width: 'auto', marginTop : 35 }}>
+                                    <View style={{ width: 'auto', marginTop: 40 }}>
                                         <TouchableOpacity style={styles.button} onPress={() => { ValSing() }}>
                                             <View style={{ justifyContent: 'flex-end' }}>
                                                 <Text style={styles.buttonText}>FINALIZAR</Text>
@@ -121,9 +122,41 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                             {/* this is the footer of the foto take*/}
                             {validateStep === 'pic' ?
                                 <View style={{ width: '100%' }}>
-                                    <Text style={styles.title}>FOTO O IDENTIDAD</Text>
+                                    <Text style={styles.title}>REGISTRO</Text>
                                     <View style={{ borderColor: 'black' }}>
-                                        <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
+
+                                        <View style={{ margin: 1 }}>
+                                            <View style={styles.table}>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>FACTURA :</Text>
+                                                    <Text style={styles.value}>{fact?.factura}</Text>
+                                                </View>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>CLIENTE :</Text>
+                                                    <Text style={styles.value}>{fact?.clientenombre}</Text>
+                                                </View>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>CAJAS:</Text>
+                                                    <Text style={styles.value}>{fact?.cant_cajas}</Text>
+                                                </View>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>UNIDADES :</Text>
+                                                    <Text style={styles.value}>{fact?.cant_unidades}</Text>
+                                                </View>
+
+                                                <View style={styles.row}>
+                                                    <Text style={styles.header}>ENTREGADOR :</Text>
+                                                    <Text style={styles.value}>{fact?.nombre}</Text>
+                                                </View>
+
+                                            </View>
+                                        </View>
+
+                                        {/* <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
                                         <Text style={styles.resumen}>CAMION : {fact?.placa}</Text>
                                         <Text style={styles.resumen}>FACTURA : {fact?.factura}</Text>
                                         <Text style={styles.resumen}>CAJAS : {fact?.cant_cajas}</Text>
@@ -132,17 +165,20 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                             placeholder="INGRESE ID"
                                             onChangeText={saveid}
                                             defaultValue={''}
-                                        />
+                                        /> */}
                                         <CameraScreen fact={fact} setIsPic={setIsPic} />
                                     </View>
 
                                     <View style={styles.buttonContainer}>
+
                                         <TouchableOpacity style={styles.button} onPress={() => { closeModal() }}>
                                             <Text style={styles.buttonText}>CERRAR</Text>
                                         </TouchableOpacity>
+
                                         <TouchableOpacity style={styles.button} onPress={() => { ConfirmAllDataBfSing() }}>
                                             <Text style={styles.buttonText}>SIGUIENTE</Text>
                                         </TouchableOpacity>
+
                                     </View>
 
                                 </View>
@@ -153,6 +189,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
 
                     </View>
                 </View >
+
             </View>
 
         </Modal >
@@ -171,7 +208,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 3,
         backgroundColor: '#063970',
-        width: '100%'
+        width: 'auto'
     },
     buttonText: {
         color: 'white',
@@ -198,13 +235,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between', // Adjust as needed
         marginVertical: 10,
-        width: "100%",
+        width: "auto",
         backgroundColor: '#063970',
     },
     container: {
         backgroundColor: 'white',
         width: '100%', // Adjust this width as needed  
-        height: '80%',
+        height: '90%',
     },
     title: {
         fontSize: 18,
@@ -235,9 +272,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 5,
-        backgroundColor : '#5DADE2'
+        backgroundColor: '#5DADE2'
     },
-    
+
     header: {
         fontWeight: 'bold',
         color: 'black'

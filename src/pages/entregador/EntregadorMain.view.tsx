@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { DataTable, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import EntregadorListView from "../../components/entregadorComponents/entregador.component";
 import { VistadeSync } from "../../components/entregadorComponents/ToSync.components";
 import { Picker } from "@react-native-picker/picker";
@@ -37,11 +37,9 @@ export const EntregadorIndexView : React.FC<props> = ({ setpage }) => {
     const [selectedValue, setSelectedValue] = useState('1');
 
     const handler_session_close_entregador = async () => {
-        let is_conn = await isConnectedToInternet();
-        console.log('ESTA CONECTADO ENTREGADOR :', is_conn);
-        if(is_conn){
+        if(await isConnectedToInternet()){
             Alert.alert('LA CESSION SE CERRARA');
-            closeSession();
+            await closeSession();
             setpage(0);
         }else{
             Alert.alert('CIERRE DE CESSION', 'No puede realizar cierre de session si no esta connectado a la red');

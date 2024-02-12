@@ -7,24 +7,14 @@
 
 import React from 'react';
 //import type {PropsWithChildren} from 'react';
-import {SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, useColorScheme, View,} from 'react-native';
+import {SafeAreaView, StatusBar, StyleSheet, useColorScheme, View,} from 'react-native';
 
-import {Colors, DebugInstructions, Header, LearnMoreLinks, ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 //local imports
-import LoginPage from './src/pages/login.page';
 import IndexPage from './src';
 
-/*type SectionProps = PropsWithChildren<{title: string;}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <LoginPage/>
-  );
-}*/
-
-function App()/*JSX.Element*/ {
+function App()/*JSX.Element*/{
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {

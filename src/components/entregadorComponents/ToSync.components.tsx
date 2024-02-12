@@ -58,13 +58,15 @@ export function VistadeSync() {
 
     const getData = async () => {
         setLoading(true);
-        if (await getStorageEntregado) {
+        if (await getStorageEntregado()) {
             const data = await getAllNOTsynchroFacts();
             if(Array.isArray(data)){
-                setDataEntregas(data);
-                setLoading(false);
-            }else{
-                Alert.alert('SIN FACTURAS PARA SINCRONIZACION');
+                if(data.length > 0){
+                    setDataEntregas(data);
+                    setLoading(false);
+                }else{
+                    Alert.alert('SIN FACTURAS ENTREGADAS');
+                }
             }
             
         } else {

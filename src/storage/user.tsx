@@ -39,9 +39,10 @@ const UserStorage: any = create<UserProps>((set) => ({
         try {
             await AsyncStorage.setItem('user', JSON.stringify(users_));
             set({ data: users_ });
-            console.log('usuario GUARDADO : ', UserStorage.getState().data);
+            //console.log('usuario GUARDADO : ', UserStorage.getState().data);
         } catch (error) {
             console.error('Error saving user data:', error);
+            Alert.alert('NO SE PUDO GUARDAR EL USUARIO')
         }
     },
 
@@ -57,7 +58,7 @@ const UserStorage: any = create<UserProps>((set) => ({
     closeSession: async () => {
         try {
             await AsyncStorage.removeItem('user');
-            Alert.alert('se borro usuario'); //
+            //Alert.alert('se borro usuario'); //
             return true;
         } catch (error) {
             Alert.alert('no se borro usuario')

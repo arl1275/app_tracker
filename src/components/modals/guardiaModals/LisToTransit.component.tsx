@@ -1,84 +1,75 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Text, View, TextInput, FlatList, StyleSheet, Modal, Alert, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, FlatList, StyleSheet, Modal, Alert, TouchableOpacity, ScrollView } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
-import axios, { all } from "axios";
+import axios from "axios";
 import db_dir from "../../../config/db";
-import { QRUScaner } from "../../camara/camScam.component";
-import { DataTable, Icon, IconButton } from 'react-native-paper';
+import { DataTable } from 'react-native-paper';
 import useGuardList from "../../../storage/gaurdMemory";
-
-
-interface FactsComponentProps {
-    factura: Facturas[]; // Array of Factura objects
-}
 
 export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () => void }> = ({ modalVisible, closeModal }) => {
     const [transportista, setTransportista] = useState<string>('');        // save the data of the Entregador
     const [camion, setCamion] = useState<string>('');                      // save the data of the Camion
-    const [visble, setModalVisibleCam] = useState(false);                           // to open modal to scam truck
-    const [visbleU, setModalVisibleUser] = useState(false);                         // to open moadal of the camera to scam user
-    const [listFact, setListFact] = useState<Facturas[]>([]);                       // this is to show locally
-    const { GetIsCheckedFacts, updateIsInTransit } = useGuardList();                                   // this is to get the checked facts
+    const [listFact, setListFact] = useState<Facturas[]>([]);              // this is to show locally
+    const { GetIsCheckedFacts, updateIsInTransit } = useGuardList();       // this is to get the checked facts
+    const inputRef = useRef<TextInput>(null);                              // this is to check the camion and entregador 
+    const [Value_, setValue_] = useState('');                              // this is used as well to check camion and entregador
 
     useEffect(() => {
         setListFact(GetIsCheckedFacts());
-        if(listFact.length <= 0 && modalVisible === true){
-            Alert.alert('ENVIO A TRANSITO',' No tiene facturas revisadas o ya envio las facturas a transito');
+        if (listFact.length <= 0 && modalVisible === true) {
+            Alert.alert('ENVIO A TRANSITO', ' No tiene facturas revisadas o ya envio las facturas a transito');
         }
     }, [modalVisible]);
 
+
     const FacturasToTransito = async () => {
         try {
-            if (camion === null || camion === '' || transportista === null || transportista === '') {
+            if (!camion || !transportista) {
                 Alert.alert('ERROR DATOS', 'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.')
             } else {
+                let body: string[] = listFact.map((item) => item.factura);
 
-                let body : Facturas[]= listFact.filter((item) => item.factura);
-                let req_body = body.map((item) => item.factura)
+                const response = await axios.put(db_dir + '/facturas/toTransito', body);
 
-                const response = await axios.put(db_dir + '/facturas/toTransito', req_body);
-
-                 if (response.status === 200) {
-                    for (let i = 0; i < listFact.length; i++) {
-                        updateIsInTransit(listFact[i].factura_id);
-                    }
-                     Alert.alert('SE ENVIO A TRANSITO', 'Se enviaron las facturas a transito');
-                 } else if (response.status != 200) {
-                     Alert.alert('ERROR', 'No se pudo enviar las facturas a transito');
-                 }
-
+                if (response.status === 200) {
+                    listFact.forEach((factura) => {
+                        updateIsInTransit(factura.factura_id);
+                    });
+                    Alert.alert('SE ENVIO A TRANSITO', 'Se enviaron las facturas a transito');
+                } else {
+                    Alert.alert('ERROR', 'No se pudo enviar las facturas a transito');
+                }
             }
         } catch (error) {
-            console.error("Error:", error); // Log the error if the request fails
+            console.error("Error:", error);
         }
-    }
+    };
 
-    const onVisibleCam = () => {
-        setModalVisibleCam(true);
-    }
-
-    const toCloseCam = () => {
-        setModalVisibleCam(false);
-    }
-
-    const onVisibleU = () => {
-        setModalVisibleUser(true);
-    }
-
-    const toCloseU = () => {
-        setModalVisibleUser(false);
-    }
-
-    const sum_cajas = () => {
-        return listFact.reduce((total, factura) => total + factura.cant_cajas, 0);
-    }
-
-    const sum_unidades = () => {
-        return listFact.reduce((total, factura) => total + factura.cant_unidades, 0);
-    }
+    const handleBarcodeScan = () => {
+        let t = Value_;
+        if (t.length > 0) {
+            if (listFact) {
+                if (listFact.some(item => item.placa === t)) {
+                    setCamion(t);
+                    Alert.alert('CAMION ESCANEADO');
+                    setValue_('');
+                } else if (listFact.some(item => item.nombre === t)) {
+                    setTransportista(t);
+                    Alert.alert('ENTREGADOR ESCANEADO');
+                    setValue_('');
+                } else {
+                    Alert.alert('NO PERTENECE A ESTA DECLARACION DE ENVIO');
+                    setValue_('');
+                }
+            } else {
+                Alert.alert('NO PERTENECE A ESTA DECLARACION DE ENVIO');
+                setValue_('');
+            }
+        }
+    };
 
     if (listFact.length === 0) {
-        if(modalVisible){
+        if (modalVisible) {
             Alert.alert('SIN FACTURAS REVISADAS');
             closeModal();
         }
@@ -93,27 +84,29 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
 
                                 <View style={{ backgroundColor: '#063970' }}>
                                     <Text style={{ color: 'white', textAlign: 'center', fontSize: 25, margin: 10 }}>ENVIO A TRANSITO</Text>
+                                    
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flex: 1, marginLeft : 10}}>
+                                            <Text style={{color : 'white'}}>{listFact[0].placa}</Text>
+                                        </View>
+                                        <View style={{ flex: 1, marginRight : 10 }}>
+                                            <Text style={{color : 'white'}}>{listFact[0].nombre}</Text>
+                                        </View>
+                                    </View>
 
                                     <View style={styles.Textplaces}>
                                         <View style={{ flexDirection: 'row', margin: 5 }}>
-                                            <IconButton icon={'camera'} size={20} iconColor="white" onPress={() => { onVisibleU() }} />
-
-                                            <TextInput 
-                                                placeholder={transportista != null ? listFact[0].nombre : 'USUARIO'}
-                                                placeholderTextColor="#9C9C9C"
-                                                //value={transportista}
-                                                onChange={() => setTransportista}
-                                                style={{ color: 'white' }} />
-
-                                        </View>
-                                        <View style={{ flexDirection: 'row', margin: 5 }}>
-                                            <IconButton icon={'camera'} size={20} iconColor="white" onPress={() => { onVisibleCam() }} />
-                                            <TextInput 
-                                                placeholder={camion != null ? listFact[0].placa : 'CAMION'}
-                                                value = {camion}
-                                                placeholderTextColor="#9C9C9C"
-                                                onChange={() => setCamion}
-                                                style={{ color: 'white' }} />
+                                            <TextInput
+                                                ref={inputRef}
+                                                style={{ color: 'black', borderColor: 'grey' }}
+                                                value={Value_}
+                                                onChangeText={(text) => setValue_(text)}
+                                                onSubmitEditing={handleBarcodeScan}
+                                                placeholderTextColor={'white'}
+                                                placeholder="ESCANEE CAMION Y ENTREGADOR"
+                                                autoFocus
+                                                onBlur={() => inputRef.current?.focus()}
+                                            />
                                         </View>
                                     </View>
                                 </View>
@@ -125,6 +118,7 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
                                         <DataTable.Title><Text style={{ color: 'black' }}>CAJAS</Text></DataTable.Title>
                                         <DataTable.Title><Text style={{ color: 'black' }}>UNIDADES</Text></DataTable.Title>
                                     </DataTable.Header>
+                                    <ScrollView>
                                     {
                                         listFact.map((item) => (
                                             <DataTable.Row key={item.factura_id}>
@@ -135,12 +129,13 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
                                             </DataTable.Row>
                                         ))
                                     }
+                                    </ScrollView>
 
                                     <DataTable.Row style={{ backgroundColor: '#5499C7' }}>
                                         <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
                                         <DataTable.Cell>-</DataTable.Cell>
-                                        <DataTable.Cell><Text style={{ color: 'white' }}>{sum_cajas()}</Text></DataTable.Cell>
-                                        <DataTable.Cell><Text style={{ color: 'white' }}>{sum_unidades()}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_cajas, 0)}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_unidades, 0)}</Text></DataTable.Cell>
                                     </DataTable.Row>
 
                                 </DataTable>
@@ -158,15 +153,13 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
                         </View>
                     </View>
 
-
-                    <QRUScaner close={toCloseCam} visible={visble} ReturnText={setCamion} />
-                    <QRUScaner close={toCloseU} visible={visbleU} ReturnText={setTransportista} />
                 </View >
             </Modal >
 
         );
     }
 };
+
 
 
 const styles = StyleSheet.create({

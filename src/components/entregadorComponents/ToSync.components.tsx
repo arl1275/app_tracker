@@ -17,9 +17,10 @@ export function VistadeSync() {
         getData();
     }, []);
 
-    const setSynchro = (arreglo: Facturas[]) => {
+    const setSynchro = async (arreglo: Facturas[]) => {
         for (let i = 0; i < arreglo.length ; i++) {
-            updateSynchro(arreglo[i].factura_id);
+            //console.log('facturas a sincronizar : ', arreglo[i].factura_id)
+            await updateSynchro(arreglo[i].factura_id);
         }
     }
 

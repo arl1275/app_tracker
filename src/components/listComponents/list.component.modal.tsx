@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Text, View, TextInput, FlatList, StyleSheet, ScrollView, Alert } from "react-native";
+import { Button, Text, View, TextInput, FlatList, StyleSheet, ScrollView, Alert, SafeAreaView } from "react-native";
 import { Facturas } from "../../interfaces/facturas";
 import { DataTable, IconButton } from 'react-native-paper';
 import useGuardList from "../../storage/gaurdMemory";
@@ -69,7 +69,6 @@ const ListComponentModal: React.FC<props> = (props) => {
     const get_total_cajas = () => {
         if (data) {
             const filteredFacturas = data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps);
-            //console.log('total_cajas : ',  filteredFacturas)
             return filteredFacturas.reduce((total: number, factura: Facturas) => total + factura.cant_cajas, 0);
         } else {
             console.log('data vacia')
@@ -88,11 +87,7 @@ const ListComponentModal: React.FC<props> = (props) => {
         return (
             <View>
                 <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
-                <ScrollView>
                     <DataTable>
-
-                        
-                        <ScrollView>
                             <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
                                 <DataTable.Title>
                                     <Text style={{ color: 'white' }}>FACTURA</Text>
@@ -110,7 +105,7 @@ const ListComponentModal: React.FC<props> = (props) => {
                                     <Text style={{ color: 'white' }}>UNIDADES</Text>
                                 </DataTable.Title>
                             </DataTable.Header>
-
+                            <ScrollView>
                             {
                                 data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
                                     let valor = item.is_check != true ? '#F5B7B1' : item.is_Sinchro === true ? '#A9DFBF' : '#F9E79F';
@@ -125,6 +120,7 @@ const ListComponentModal: React.FC<props> = (props) => {
                                     )
                                 })
                             }
+                            </ScrollView>
 
                             <DataTable.Row style={{ backgroundColor: "#0C4C7A" }}>
                                 <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
@@ -133,9 +129,8 @@ const ListComponentModal: React.FC<props> = (props) => {
                                 <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_cajas()}</Text></DataTable.Cell>
                                 <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_unidades()}</Text></DataTable.Cell>
                             </DataTable.Row>
-                        </ScrollView>
                     </DataTable>
-                </ScrollView>
+                
             </View>
         )
     }

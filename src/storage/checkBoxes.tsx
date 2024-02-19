@@ -8,6 +8,7 @@ interface box_checker {
     validateBox : (caja : string ) => void;
     toSynchro : ( caja : string ) => void;
     getcajasFacts : (factura : string, id : number) => void;
+    closeBoxes : () => void;
 }
 
 const boxChequerStorage : any = create<box_checker>((set)=>({
@@ -30,9 +31,7 @@ const boxChequerStorage : any = create<box_checker>((set)=>({
                 for (let j = 0; j < newData_.length; j++) {
                   if (data_[i].caja !== newData_[j].caja) {
                     newData.push(newData_[j]);
-                    //console.log('CAJA AGREGADA : ', newData_[j])
                   }
-                  //console.log('CAJA NO AGREGADA : ', newData_[j])
                 }
               }
               
@@ -137,6 +136,17 @@ const boxChequerStorage : any = create<box_checker>((set)=>({
         return 'ERROR';
       }
       
+    },
+
+    closeBoxes : async () => {
+      try {
+        await AsyncStorage.removeItem('boxData');
+        set({ data: [] });
+        return true;
+      } catch (err) {
+        console.log('error al borrar cajas : ', err);
+        return false;
+      }
     }
 
 }));

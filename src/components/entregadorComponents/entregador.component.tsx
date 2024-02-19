@@ -88,7 +88,6 @@ function EntregadorListView() {
 
             setLoading(true);
             const id_user = await getUser();
-            console.log('data para obtener facturas ::::: ', id_user);
             const data2 = await axios.get(db_dir + '/facturas/getEnTransFact', {params : {id : id_user.id_user}});
             
             if (data2.data.data.length > 0) {
@@ -229,9 +228,9 @@ function EntregadorListView() {
                                 })
                             }
                         </DataTable>
-                        <TouchableOpacity style={styles.floatingButton} onPress={() => { getEnTransitoFacts(); }}>
+                        {/* <TouchableOpacity style={styles.floatingButton} onPress={() => { getEnTransitoFacts(); }}>
                             <Text>+</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </ScrollView>
 
                     <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />

@@ -66,7 +66,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                     <View style={styles.centeredView}>
                         <View style={styles.modalContent}>
                             {validateStep === 'sing' ?
-                                <View style={styles.container}>
+                                <View>
                                     <View>
                                         <Text style={styles.title}>RESUMEN DE ENTREGA</Text>
 
@@ -109,7 +109,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                         </View>
                                     </View>
 
-                                    <View style={{ width: 'auto', marginTop: 40 }}>
+                                    <View style={{ width: 'auto' }}>
                                         <TouchableOpacity style={styles.button} onPress={() => { ValSing() }}>
                                             <View style={{ justifyContent: 'flex-end' }}>
                                                 <Text style={styles.buttonText}>FINALIZAR</Text>
@@ -156,16 +156,6 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                             </View>
                                         </View>
 
-                                        {/* <Text style={styles.resumen}>ENTREGADOR : {fact?.nombre}</Text>
-                                        <Text style={styles.resumen}>CAMION : {fact?.placa}</Text>
-                                        <Text style={styles.resumen}>FACTURA : {fact?.factura}</Text>
-                                        <Text style={styles.resumen}>CAJAS : {fact?.cant_cajas}</Text>
-                                        <TextInput
-                                            style={{ height: 40, backgroundColor: '#063970' }}
-                                            placeholder="INGRESE ID"
-                                            onChangeText={saveid}
-                                            defaultValue={''}
-                                        /> */}
                                         <CameraScreen fact={fact} setIsPic={setIsPic} />
                                     </View>
 
@@ -241,7 +231,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
         width: '100%', // Adjust this width as needed  
-        height: '90%',
+        height: 'auto',
     },
     title: {
         fontSize: 18,

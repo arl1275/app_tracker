@@ -19,6 +19,6 @@ export interface Facturas{
     nameSing?: string | FormData,
     namePic?: string | FormData,
     state : string,
-    is_Sinchro :boolean,            //this is to check is fact is already synchro with the server
-    is_check : boolean            // this is for guardia things, that is for to check is the cant of boxes is full
+    is_Sinchro : boolean,               //this is to check is fact is already synchro with the server
+    is_check : boolean                  // this is for guardia things, that is for to check is the cant of boxes is full
 }

@@ -40,7 +40,7 @@ export const LoginPage : React.FC<props> = ({setpage}) => {
                         _password: Data._Password
                     }
                 });
-
+                console.log('LA RESPUESTA DEL SERVIDOR FUE : ', result.status, result);
                 if (result.status === 200) {
                     const user : UserInterface = result.data.data;
                     console.log('usuario from bk : ', user);
@@ -57,8 +57,7 @@ export const LoginPage : React.FC<props> = ({setpage}) => {
 
             setOpenl(false);
         } catch (err) {
-            Alert.alert('ERROR', 'ingrese correctamente su usuario y contraseña');
-            console.log('problema al enviar usuario : ', err);
+            Alert.alert('ERROR', 'ingrese El usuario correcto');
             setOpenl(false);
         }
     };
@@ -70,7 +69,7 @@ export const LoginPage : React.FC<props> = ({setpage}) => {
             <View>
                 <View>
                     {/* <View style={{ alignSelf: 'center' }}><Icon name={'truck'} size={190} color={'white'} /></View> */}
-                    <Text style={styles.title}>DESPACHO BODEGA</Text>
+                    <Text style={styles.title}>KELLER CHECK</Text>
                 </View>
 
                 <View style={{ marginTop: '20%', width: '70%', alignSelf: 'center' }}>

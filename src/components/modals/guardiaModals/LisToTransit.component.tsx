@@ -13,22 +13,36 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
     const { GetIsCheckedFacts, updateIsInTransit } = useGuardList();       // this is to get the checked facts
     const inputRef = useRef<TextInput>(null);                              // this is to check the camion and entregador 
     const [Value_, setValue_] = useState('');                              // this is used as well to check camion and entregador
+    const [encabezado, setEncabezado ] = useState<any>();                  // this got the header of one declaracion de envio
 
     useEffect(() => {
         setListFact(GetIsCheckedFacts());
         if (listFact.length <= 0 && modalVisible === true) {
             Alert.alert('ENVIO A TRANSITO', ' No tiene facturas revisadas o ya envio las facturas a transito');
+        }else{
+            get_encabezado();
         }
     }, [modalVisible]);
+
+    const get_encabezado = async () =>{
+        let params_ : number = listFact[0].id_dec_env;
+
+        const enca = await axios.get(db_dir + '/decEnv/app/getEncabezado', { params : {id_dec_env : params_}});
+        setEncabezado(enca.data.data)
+        console.log(encabezado);
+    }
 
 
     const FacturasToTransito = async () => {
         try {
             if (!camion || !transportista) {
-                Alert.alert('ERROR DATOS', 'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.')
-            } else {
-                let body: string[] = listFact.map((item) => item.factura);
 
+                Alert.alert('ERROR DATOS', 'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.');
+
+            } else {
+
+                let body: number[] = listFact.map((item) => item.factura_id);
+                
                 const response = await axios.put(db_dir + '/facturas/toTransito', body);
 
                 if (response.status === 200) {
@@ -49,18 +63,22 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
         let t = Value_;
         if (t.length > 0) {
             if (listFact) {
-                if (listFact.some(item => item.placa === t)) {
+
+                if ( encabezado[0].placa === t ) { //  listFact.some(item => item.placa === t)
                     setCamion(t);
                     Alert.alert('CAMION ESCANEADO');
                     setValue_('');
-                } else if (listFact.some(item => item.nombre === t)) {
+
+                } else if ( encabezado[0].cod_empleado.toString() === t) { // listFact.some(item => item.nombre === t)
                     setTransportista(t);
                     Alert.alert('ENTREGADOR ESCANEADO');
                     setValue_('');
+
                 } else {
                     Alert.alert('NO PERTENECE A ESTA DECLARACION DE ENVIO');
                     setValue_('');
                 }
+
             } else {
                 Alert.alert('NO PERTENECE A ESTA DECLARACION DE ENVIO');
                 setValue_('');

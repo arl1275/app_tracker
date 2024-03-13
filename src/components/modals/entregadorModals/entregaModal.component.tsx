@@ -67,10 +67,10 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                         <View style={styles.modalContent}>
                             {validateStep === 'sing' ?
                                 <View>
-                                    <View>
-                                        <Text style={styles.title}>RESUMEN DE ENTREGA</Text>
+                                    
+                                        <Text style={styles.title}>FIRMA DE ENTREGA</Text>
 
-                                        <View style={{ margin: 1 }}>
+                                        <View style={{ margin: 1 }} >
                                             <View style={styles.table}>
 
                                                 <View style={styles.row}>
@@ -104,22 +104,21 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                             </View>
                                         </View>
 
-                                        <View style={{ height: '60%', width: '100%' }}>
-                                            <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.factura_id} isnext={setSaveSing} />
-                                        </View>
-                                    </View>
-
-                                    <View style={{ width: 'auto' }}>
-                                        <TouchableOpacity style={styles.button} onPress={() => { ValSing() }}>
-                                            <View style={{ justifyContent: 'flex-end' }}>
+                                         
+                                        <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.factura_id} isnext={setSaveSing} />
+                                         
+                                     <View>
+                                        <TouchableOpacity style={styles.button } onPress={() => { ValSing() }}>
+                                            <View >
                                                 <Text style={styles.buttonText}>FINALIZAR</Text>
                                             </View>
                                         </TouchableOpacity>
-                                    </View>
-                                </View>
-                                : null}
+                                    </View>  
 
-                            {/* this is the footer of the foto take*/}
+                                </View>
+                                : 
+                                null
+                                }
                             {validateStep === 'pic' ?
                                 <View style={{ width: '100%' }}>
                                     <Text style={styles.title}>REGISTRO</Text>
@@ -192,7 +191,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        width: '90%'
+        width: '90%',
+        height : 'auto'
     },
     button: {
         padding: 10,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between', // Adjust as needed
-        marginVertical: 10,
+        marginVertical: 0,
         width: "auto",
         backgroundColor: '#063970',
     },

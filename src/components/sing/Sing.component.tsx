@@ -57,11 +57,10 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
   };
 
   return (
-    <View style={{ flex: 1, flexDirection: 'column', borderWidth: 0.5, borderColor: 'black', backgroundColor : '#A9CCE3' }}>
-   
-      <Text style={{ alignSelf: 'center', color: 'black' }}>FIRMAR FACTURA</Text>
+    <View style={{ backgroundColor: 'white' }}>
+      <View style={{ borderBlockColor: 'black', borderWidth: 1 }}>
         <SignatureCapture
-          style={{ width: '100%', height: '100%' }}
+          style={{ height: 300 }} // Ajusta la altura según sea necesario
           ref={signatureRef}
           onSaveEvent={_onSaveEvent}
           onDragEvent={_onDragEvent}
@@ -70,7 +69,11 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
           viewMode="portrait"
           showNativeButtons={true}
         />
+      </View>
+
+      <Text style={{ alignSelf: 'center', color: 'black', fontSize: 20 }}>FIRME EN ESTA AREA</Text>
     </View>
+
   );
 
 

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import db_dir from '../config/db';
-import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Alert, Image } from 'react-native';
 import LoadingModal from '../components/Activity/activity.component';
 import { UserInterface } from '../interfaces/user';
 import UserStorage from '../storage/user';
 import isConnectedToInternet from '../utils/network_conn';
+const image = require('../assets/images/factura_logo.png')
+
 
 interface props{
     setpage : (value : number) => void;
@@ -67,18 +69,18 @@ export const LoginPage : React.FC<props> = ({setpage}) => {
         <View style={{ width: '100%', height: '100%', backgroundColor: 'white', flex: 1 }}>
             <LoadingModal visible={openl}  message='CARGANDO'/>
             <View>
-                <View>
-                    {/* <View style={{ alignSelf: 'center' }}><Icon name={'truck'} size={190} color={'white'} /></View> */}
+                <View style={{marginTop : '10%'}}>
+                    <Image source={image} style={{ width: 350, height: 300, alignSelf : 'center'}} />
                     <Text style={styles.title}>KELLER CHECK</Text>
                 </View>
 
-                <View style={{ marginTop: '20%', width: '70%', alignSelf: 'center' }}>
+                <View style={{ marginTop: 20, width: '60%', alignSelf: 'center' }}>
                     <TextInput
                         placeholder="USUARIO"
                         onChangeText={handleUserChange}
                         value={Data.user}
                         placeholderTextColor={'grey'}
-                        style={{ color: 'black', fontSize : 25, borderBottomWidth: 1, borderBottomColor: 'grey' }}
+                        style={{ color: 'black', fontSize : 15, borderBottomWidth: 1, borderBottomColor: 'grey' }}
                     />
 
                     <TextInput
@@ -87,11 +89,11 @@ export const LoginPage : React.FC<props> = ({setpage}) => {
                         value={Data._Password}
                         secureTextEntry
                         placeholderTextColor={'grey'}
-                        style={{ color: 'black', fontSize : 25,  borderBottomWidth: 1, borderBottomColor: 'grey', marginTop : 30}}
+                        style={{ color: 'black', fontSize : 15,  borderBottomWidth: 1, borderBottomColor: 'grey', marginTop : 30}}
                     />
 
                     <View style={styles.button}>
-                        <Button title="INGRESAR" onPress={() => { handleSubmit() }} color={'#063970'} />
+                        <Button title="INGRESAR" onPress={() => { handleSubmit() }} color={'#5DADE2'}  />
                     </View>
 
                 </View>
@@ -103,15 +105,14 @@ export const LoginPage : React.FC<props> = ({setpage}) => {
 
 const styles = StyleSheet.create({
     title: {
-        fontSize: 35,
+        fontSize: 25,
         fontWeight: 'bold',
-        marginTop: '30%',
+        marginTop: 10,
         color: 'black',
         alignSelf: 'center'
     },
     button: {
-        marginTop : '10%',
-        backgroundColor: '#063970'
-        
+        marginTop : 40,
+        borderRadius : 50
     },
 });

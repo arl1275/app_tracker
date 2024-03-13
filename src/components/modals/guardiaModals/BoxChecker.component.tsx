@@ -88,6 +88,8 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                     }
                     Alert.alert('CAJA NO ES DE ESTA FACTURA');
                 }
+            }else{
+                setValue_('');
             }
         }
     };

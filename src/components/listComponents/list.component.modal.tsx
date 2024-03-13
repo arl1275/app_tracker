@@ -111,7 +111,7 @@ const ListComponentModal: React.FC<props> = (props) => {
                                     let valor = item.is_check != true ? '#F5B7B1' : item.is_Sinchro === true ? '#A9DFBF' : '#F9E79F';
                                     return (
                                         <DataTable.Row key={item.factura_id} onPress={() => { checkIsCheck(item) }} style={{ backgroundColor: valor }}>
-                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.factura}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ color: 'black', fontSize : 15, margin : 1}}>{item.factura}</Text></DataTable.Cell>
                                             <DataTable.Cell><Text style={{ color: 'black' }}>{item.lista_empaque}</Text></DataTable.Cell>
                                             <DataTable.Cell><Text style={{ color: 'black' }}>{item.clientenombre}</Text></DataTable.Cell>
                                             <DataTable.Cell><Text style={{ color: 'black' }}>{item.cant_cajas}</Text></DataTable.Cell>
@@ -120,15 +120,15 @@ const ListComponentModal: React.FC<props> = (props) => {
                                     )
                                 })
                             }
-                            </ScrollView>
-
-                            <DataTable.Row style={{ backgroundColor: "#0C4C7A" }}>
+                            <DataTable.Row style={{ backgroundColor: "#0C4C7A"}}>
                                 <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
                                 <DataTable.Cell><Text></Text></DataTable.Cell>
                                 <DataTable.Cell><Text></Text></DataTable.Cell>
                                 <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_cajas()}</Text></DataTable.Cell>
                                 <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_unidades()}</Text></DataTable.Cell>
                             </DataTable.Row>
+                            
+                            </ScrollView>                            
                     </DataTable>
                 
             </View>

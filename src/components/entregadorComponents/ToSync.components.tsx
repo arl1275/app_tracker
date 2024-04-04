@@ -1,4 +1,4 @@
-import { View, Text, Button, Alert, ScrollView } from "react-native";
+import { View, Text, Button, Alert, ScrollView, Image } from "react-native";
 import { useState, useEffect } from 'react';
 import useFacturaStore from "../../storage/storage";
 import { Facturas } from "../../interfaces/facturas";
@@ -6,6 +6,7 @@ import { DataTable } from "react-native-paper";
 import db_dir from "../../config/db";
 import axios from "axios";
 import LoadingModal from "../Activity/activity.component";
+const box = require('../../assets/images/team_work.png')
 
 export function VistadeSync() {
     const { getStorageEntregado, updateSynchro, getAllNOTsynchroFacts } = useFacturaStore();
@@ -92,14 +93,12 @@ export function VistadeSync() {
                                 </DataTable.Header>
                                 {
                                     dataEntregas.map((item: Facturas) => {
-                                        //console.log('ESTE ES EL ESTADO: ', item.state_name);
                                         return (
-                                            // <DataTable.Row onPress={()=> openModal(item)} key={item.id}>
                                             <DataTable.Row key={item.factura_id}>
-                                                <DataTable.Cell>{item.clientenombre}</DataTable.Cell>
-                                                <DataTable.Cell>{item.factura}</DataTable.Cell>
-                                                <DataTable.Cell>{item.cant_cajas}</DataTable.Cell>
-                                                <DataTable.Cell>{item.cant_unidades}</DataTable.Cell>
+                                                <DataTable.Cell><Text>{item.clientenombre}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text>{item.factura}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text>{item.cant_cajas}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text>{item.cant_unidades}</Text></DataTable.Cell>
                                             </DataTable.Row>
                                         )
                                     })
@@ -109,13 +108,14 @@ export function VistadeSync() {
 
                     </View >
 
-                    <View style={{ height: 50, backgroundColor: '#063970', justifyContent: 'center', alignItems: 'flex-end' }}>
-                        <Button color={'#063970'} title="SINCRONIZAR" onPress={() => { SentToValidate(); }} />
+                    <View style={{ height: 50, backgroundColor: '#1C2833', justifyContent: 'center', alignItems: 'flex-end' }}>
+                        <Button color={'#1C2833'} title="SINCRONIZAR" onPress={() => { SentToValidate(); }} />
                     </View>
                     <LoadingModal visible={loading} message="SINCRONIZANDO FACTURAS" />
                 </View>) : (
-                    <View>
-                        <LoadingModal message="CAGANDO FACTURAS" visible={loadinglist}/>
+                    <View style={{alignSelf : 'center', top : '30%'}}>
+                        <Text style={{alignSelf : 'center'}}>SIN FACTURAS FIRMADAS</Text>
+                        <Image source={box} style={{ width : 300, height : 300 }}/>
                     </View>
                 )
         }</View>

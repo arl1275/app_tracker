@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Text, View, TextInput, FlatList, StyleSheet, Modal, Alert, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, TextInput, Dimensions, StyleSheet, Alert, TouchableOpacity, ScrollView, ActivityIndicator, Image } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
 import axios from "axios";
 import db_dir from "../../../config/db";
 import { DataTable } from 'react-native-paper';
 import useGuardList from "../../../storage/gaurdMemory";
+const windowWithd = Dimensions.get('window').width;
+const processing = require('../../../assets/images/Processing-bro.png');
 
 export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () => void }> = ({ modalVisible, closeModal }) => {
     const [transportista, setTransportista] = useState<string>('');        // save the data of the Entregador
@@ -13,23 +15,29 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
     const { GetIsCheckedFacts, updateIsInTransit } = useGuardList();       // this is to get the checked facts
     const inputRef = useRef<TextInput>(null);                              // this is to check the camion and entregador 
     const [Value_, setValue_] = useState('');                              // this is used as well to check camion and entregador
-    const [encabezado, setEncabezado ] = useState<any>();                  // this got the header of one declaracion de envio
+    const [encabezado, setEncabezado] = useState<any>();                   // this got the header of one declaracion de envio
 
     useEffect(() => {
         setListFact(GetIsCheckedFacts());
         if (listFact.length <= 0 && modalVisible === true) {
-            Alert.alert('ENVIO A TRANSITO', ' No tiene facturas revisadas o ya envio las facturas a transito');
-        }else{
-            get_encabezado();
+            load();
         }
     }, [modalVisible]);
 
-    const get_encabezado = async () =>{
-        let params_ : number = listFact[0].id_dec_env;
+    useEffect(() => {
+        get_encabezado();
+    })
 
-        const enca = await axios.get(db_dir + '/decEnv/app/getEncabezado', { params : {id_dec_env : params_}});
+    const get_encabezado = async () => {
+        let params_: number = listFact[0].id_dec_env;
+
+        const enca = await axios.get(db_dir + '/decEnv/app/getEncabezado', { params: { id_dec_env: params_ } });
         setEncabezado(enca.data.data)
         console.log(encabezado);
+    }
+
+    const load = () => {
+        return (<ActivityIndicator size="large" color="#0000ff" />)
     }
 
 
@@ -42,7 +50,7 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
             } else {
 
                 let body: number[] = listFact.map((item) => item.factura_id);
-                
+
                 const response = await axios.put(db_dir + '/facturas/toTransito', body);
 
                 if (response.status === 200) {
@@ -64,12 +72,12 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
         if (t.length > 0) {
             if (listFact) {
 
-                if ( encabezado[0].placa === t ) { //  listFact.some(item => item.placa === t)
+                if (encabezado[0]?.placa === t) { //  listFact.some(item => item.placa === t)
                     setCamion(t);
                     Alert.alert('CAMION ESCANEADO');
                     setValue_('');
 
-                } else if ( encabezado[0].cod_empleado.toString() === t) { // listFact.some(item => item.nombre === t)
+                } else if (encabezado[0]?.cod_empleado.toString() === t) { // listFact.some(item => item.nombre === t)
                     setTransportista(t);
                     Alert.alert('ENTREGADOR ESCANEADO');
                     setValue_('');
@@ -81,98 +89,87 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
 
             } else {
                 Alert.alert('NO PERTENECE A ESTA DECLARACION DE ENVIO');
-                setValue_('');
             }
         }
+        setValue_('');
     };
 
     if (listFact.length === 0) {
         if (modalVisible) {
-            Alert.alert('SIN FACTURAS REVISADAS');
-            closeModal();
+            return (
+                <View style={{ alignContent: 'center' }}>
+                    <Text style={{ alignSelf: 'center', top: '20%', color: 'white' }}>SIN FACTURAS ESCANEADAS</Text>
+                    <Image source={processing} style={{ width: '50%', height: '50%', alignSelf: 'center', top: '30%' }} />
+                </View>
+            )
         }
     } else {
         return (
-            <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
-                <View style={styles.modalOverlay}>
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <View style={styles.centeredView}>
-                            <View></View>
-                            <View style={styles.modalContent}>
+            <View>
 
-                                <View style={{ backgroundColor: '#063970' }}>
-                                    <Text style={{ color: 'white', textAlign: 'center', fontSize: 25, margin: 10 }}>ENVIO A TRANSITO</Text>
-                                    
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <View style={{ flex: 1, marginLeft : 10}}>
-                                            <Text style={{color : 'white'}}>{listFact[0].placa}</Text>
-                                        </View>
-                                        <View style={{ flex: 1, marginRight : 10 }}>
-                                            <Text style={{color : 'white'}}>{listFact[0].nombre}</Text>
-                                        </View>
-                                    </View>
+                <View style={styles.headSty}>
+                    <View style={styles.buttonContainer}>
+                        <Text style={styles.headTitle}>ENVIO A TRANSITO</Text>
 
-                                    <View style={styles.Textplaces}>
-                                        <View style={{ flexDirection: 'row', margin: 5 }}>
-                                            <TextInput
-                                                ref={inputRef}
-                                                style={{ color: 'black', borderColor: 'grey' }}
-                                                value={Value_}
-                                                onChangeText={(text) => setValue_(text)}
-                                                onSubmitEditing={handleBarcodeScan}
-                                                placeholderTextColor={'white'}
-                                                placeholder="ESCANEE CAMION Y ENTREGADOR"
-                                                autoFocus
-                                                onBlur={() => inputRef.current?.focus()}
-                                            />
-                                        </View>
-                                    </View>
-                                </View>
+                        <TouchableOpacity style={styles.button} onPress={() => { FacturasToTransito(); closeModal() }}>
+                            <Text style={styles.buttonText}>FINALIZAR</Text>
+                        </TouchableOpacity>
 
-                                <DataTable>
-                                    <DataTable.Header style={{ width: '95%', backgroundColor: 'white' }}>
-                                        <DataTable.Title><Text style={{ color: 'black' }}>FACTURA</Text></DataTable.Title>
-                                        <DataTable.Title><Text style={{ color: 'black' }}>CLIENTE</Text></DataTable.Title>
-                                        <DataTable.Title><Text style={{ color: 'black' }}>CAJAS</Text></DataTable.Title>
-                                        <DataTable.Title><Text style={{ color: 'black' }}>UNIDADES</Text></DataTable.Title>
-                                    </DataTable.Header>
-                                    <ScrollView>
-                                    {
-                                        listFact.map((item) => (
-                                            <DataTable.Row key={item.factura_id}>
-                                                <DataTable.Cell>{item.factura}</DataTable.Cell>
-                                                <DataTable.Cell>{item.clientenombre}</DataTable.Cell>
-                                                <DataTable.Cell>{item.cant_cajas}</DataTable.Cell>
-                                                <DataTable.Cell>{item.cant_unidades}</DataTable.Cell>
-                                            </DataTable.Row>
-                                        ))
-                                    }
-                                    </ScrollView>
-
-                                    <DataTable.Row style={{ backgroundColor: '#5499C7' }}>
-                                        <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
-                                        <DataTable.Cell>-</DataTable.Cell>
-                                        <DataTable.Cell><Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_cajas, 0)}</Text></DataTable.Cell>
-                                        <DataTable.Cell><Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_unidades, 0)}</Text></DataTable.Cell>
-                                    </DataTable.Row>
-
-                                </DataTable>
-
-                                <View style={styles.buttonContainer}>
-                                    <TouchableOpacity style={styles.button} onPress={() => { setCamion(''); setTransportista(''); closeModal(); }}>
-                                        <Text style={styles.buttonText}>CERRAR</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.button} onPress={() => { FacturasToTransito(); closeModal() }}>
-                                        <Text style={styles.buttonText}>FINALIZAR</Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                            </View >
-                        </View>
                     </View>
 
-                </View >
-            </Modal >
+                    <View style={styles.Textplaces}>
+                        <TextInput
+                            ref={inputRef}
+                            style={{ color: 'white', borderColor: 'grey', textAlign: 'center' }}
+                            value={Value_}
+                            onChangeText={(text) => setValue_(text)}
+                            onSubmitEditing={handleBarcodeScan}
+                            placeholderTextColor={'white'}
+                            placeholder="ESCANEE CAMION Y ENTREGADOR"
+                            autoFocus
+                            onBlur={() => inputRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.descrip}>
+                        <Text style={[styles.headtext, { backgroundColor: camion === '' ? '#FF9900' : '#0066FF' }]}>CAMION :{listFact[0].placa}</Text>
+                        <Text style={[styles.headtext, { backgroundColor: transportista === '' ? '#FF9900' : '#0066FF' }]}>ENTREGADOR :{listFact[0].nombre}</Text>
+                    </View>
+                </View>
+                <ScrollView>
+                    <DataTable style={styles.table}>
+                        <DataTable.Header>
+                            <DataTable.Title><Text style={styles.tableheader}>RUTA</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.tableheader}>FACTURA</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.tableheader}>CLIENTE</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.tableheader}>CAJAS</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.tableheader}>UNIDADES</Text></DataTable.Title>
+                        </DataTable.Header>
+                        <ScrollView style={{ height: 'auto' }}>
+                            {
+                                listFact.map((item) => (
+                                    <DataTable.Row key={item.factura_id} style={styles.tableRow}>
+                                        <DataTable.Cell><Text style={styles.tableText}>{item.lista_empaque}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={styles.tableText}>{item.factura}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={styles.tableText}>{item.clientenombre}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={styles.tableText}>{item.cant_cajas}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={styles.tableText}>{item.cant_unidades}</Text></DataTable.Cell>
+                                    </DataTable.Row>
+                                ))
+                            }
+                        </ScrollView>
+
+                        <DataTable.Row>
+                            <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
+                            <DataTable.Cell>-</DataTable.Cell>
+                            <DataTable.Cell>-</DataTable.Cell>
+                            <DataTable.Cell><Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_cajas, 0)}</Text></DataTable.Cell>
+                            <DataTable.Cell><Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_unidades, 0)}</Text></DataTable.Cell>
+                        </DataTable.Row>
+
+                    </DataTable>
+                </ScrollView>
+            </View >
 
         );
     }
@@ -181,48 +178,80 @@ export const ListToTransito: React.FC<{ modalVisible: boolean, closeModal: () =>
 
 
 const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalOverlay: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        width: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black
-    },
-    modalContent: {
-        zIndex: 1, // Ensure the content is above the overlay
-        padding: 0,
-        backgroundColor: 'white',
+    headSty: {
+        margin: 15,
+        backgroundColor: '#010E21',
         borderRadius: 0,
-        elevation: 5, // For Android shadow
-
+        borderLeftColor: '#00BCD4',
+        borderLeftWidth: 10
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between', // Adjust as needed
-        //marginVertical: 10,
-        width: "auto",
-        backgroundColor: '#063970',
+        justifyContent: 'space-between', // Adjust as neede
+        backgroundColor: '#010E21',
     },
     button: {
-        padding: 10,
+        marginTop: 10,
+        marginBottom: 10,
         borderRadius: 0,
-        backgroundColor: '#063970',
+        backgroundColor: '#010E21',
+        position: 'absolute',
+        right: 4
     },
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
+        fontSize: windowWithd * 0.025,
     },
     Textplaces: {
-        backgroundColor: '#063970',
-        display: 'flex',
+        backgroundColor: '#1C2833',
+        width: '90%',
+        textAlign: 'center',
+        alignSelf: 'center'
+    },
+    descrip: {
+        alignSelf: 'center',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        width: '90%',
+        padding: '3%',
+        borderRadius: 10,
+        justifyContent: 'space-between'
+    },
+    headTitle: {
+        color: '#00BCD4',
+        textAlign: 'center',
+        fontSize: windowWithd * 0.029,
+        fontWeight: '700',
+        marginTop: 10,
+        marginBottom: 5,
+        marginLeft: '35%'
+    },
+    headtext: {
+        fontWeight: 'bold',
+        fontSize: windowWithd * 0.025,
+        borderRadius: 70,
+        alignSelf: 'center',
+        textAlign: 'center',
+        padding: 3,
+        marginTop: 3,
+        width: '40%',
+        color: 'white'
+    },
+    table: {
+        width: '95%',
+        alignSelf: 'center',
+        backgroundColor: '#010E21'
+    },
+    tableheader: {
+        color: 'white',
+        fontSize: windowWithd * 0.025
+    },
+    tableRow: {
+        backgroundColor: '#1C2833',
+        fontSize: windowWithd * 0.02
+    },
+    tableText: {
+        color: 'white',
+        width: 'auto'
     }
 });

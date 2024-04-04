@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Button, Text, View, TextInput, FlatList, StyleSheet, ScrollView, Modal, Alert, Keyboard } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { Text, View, TextInput, StyleSheet, ScrollView, Modal, Alert, Keyboard } from "react-native";
+import { play_sound } from "../../Activity/sound.component";
 import { Facturas } from "../../../interfaces/facturas";
 import { Card } from 'react-native-paper';
+import { box_to_check } from "../../../interfaces/box";
 import boxChequerStorage from "../../../storage/checkBoxes";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import useFacturaStore from "../../../storage/storage";
-import { box_to_check } from "../../../interfaces/box";
-
 
 
 interface props {
@@ -59,13 +59,14 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
         if (t.length > 0) {
             if (t.length === 13) {                                      // that 13 means the lengt of the barcode
                 if (scanned?.includes(t)) {
-                    Alert.alert("CAJA YA ESCANEADA");
+                    //Alert.alert("CAJA YA ESCANEADA");
+                    play_sound(false);
                     setValue_('');
                 } else {
                     for (let i = 0; i < Boxes.length; i++) {
                         if (t === Boxes[i].caja) {
                             Boxes[i].is_check = true;
-                            //console.log('valor guardado : ', t);
+                            play_sound(true);
                             CounterBoxes(1);
                             scanned?.push(t);
                             setValue_('');
@@ -73,10 +74,14 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                         }
                         setValue_('');
                     }
-                    Alert.alert('CAJA NO ES DE ESTA FACTURA');
+                    play_sound(false);
                 }
+            }else{
+                setValue_(''); 
+                play_sound(false);
             }
         }
+        setValue_('');
     };
 
     const getBoxes = async () => {
@@ -87,6 +92,10 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
             console.log('NO SE PUDO OBTENER LAS CAJAS : ', err)
         }
     };
+
+    const OpenDetail = () => {
+        setSee2(!see2);
+    }
 
     return (
         <>
@@ -99,27 +108,44 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                         onRequestClose={() => { close }}>
                         <View style={styles.modalOverlay}>
                             <View style={styles.centeredView}>
-                                <Card style={{ width: '80%', height: 'auto', borderRadius: 3 }}>
+                                <Card style={{ backgroundColor: '#1B2631', borderRadius: 0, borderTopColor: '#FF0099', borderTopWidth: 7, width: '95%' }}>
 
-                                    <Card>
-                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#CFD8DC' }}>
+                                    <View style={{ margin: 5 }}>
+                                        <Icon
+                                            name={'close'}
+                                            onPress={() => { setSee2(false); setCounter(0); close(); }} // this cleal all my variables with the close button
+                                            color="red" size={25}
+                                        />
+                                    </View>
 
-                                            <View>
-                                                <Text style={styles.title}>CLIENTE : {fact?.clientenombre}</Text>
-                                                <Text style={styles.title}>RUTA : {fact?.lista_empaque}</Text>
-                                                <Text style={styles.title}>FACTURA : {fact?.factura}</Text>
-                                            </View>
-                                            <View style={{ alignItems: 'flex-end' }}>
-                                                <Icon
-                                                    name={'close'}
-                                                    onPress={() => { setCounter(0); setScanned([]); getBoxes(); close(); }} // this cleal all my variables with the close button
-                                                    color="red" size={25}
-                                                    style={{ alignItems: 'flex-end', marginRight: 10 }}
-                                                />
-                                            </View>
+                                    <View style={{ position: 'absolute', right: 10, top: 5 }}>
+                                        <Icon name={'eye'} color={"white"} size={25} onPress={() => OpenDetail()} />
+                                    </View>
 
+                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
+
+                                        <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column' }}>
+
+                                            <Card style={{ margin: 7, alignSelf: 'center', backgroundColor: '#263238', width: '95%' }}>
+
+                                                <View style={{ margin: 10 }}>
+                                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                        <Text style={[styles.title, { textAlign: 'right' }]}>FACTURA :</Text>
+                                                        <Text style={styles.title}>{fact?.factura}</Text>
+                                                    </View>
+                                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                        <Text style={[styles.title, { textAlign: 'right' }]}>RUTA :</Text>
+                                                        <Text style={styles.title}>{fact?.lista_empaque}</Text>
+                                                    </View>
+                                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                        <Text style={[styles.title, { textAlign: 'right' }]}>CLIENTE :</Text>
+                                                        <Text style={styles.title}>{fact?.clientenombre}</Text>
+                                                    </View>
+                                                </View>
+
+                                            </Card>
                                         </View>
-                                    </Card>
+                                    </View>
 
                                     <View style={{
                                         display: 'flex',
@@ -127,9 +153,9 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                     }}>
                                         <View>
                                             <View style={{ display: 'flex', flexDirection: 'row', alignSelf: 'center' }}>
-                                                <Icon name={'inbox'} size={120} color={'black'} />
+                                                <Icon name={'inbox'} size={120} color={'white'} />
                                                 <View>
-                                                    <Text style={{ color: 'black', fontSize: 70 }}> {counter}/{fact?.cant_cajas} </Text>
+                                                    <Text style={{ color: 'white', fontSize: 70 }}> {counter}/{fact?.cant_cajas} </Text>
                                                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                                                         <TextInput
                                                             ref={inputRef}
@@ -147,15 +173,24 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                             </View>
                                         </View>
 
-                                        <Card style={{ height: 'auto' }}>
+                                        <Card>
                                             {
-                                                 Array.isArray(Boxes)  ?
-                                                    Boxes.map((item) => {
-                                                        let ischeck = item.is_check === true ? 'green' : 'black';
-                                                        return (
-                                                            <Text style={{ backgroundColor: ischeck, color: 'white' }}>{item.caja}</Text>
-                                                        )
-                                                    }) : <Text style={{ color: 'black' }}>SIN DATA</Text>
+                                                see2 === true &&
+                                                <View style={{ backgroundColor: '#1B2631' }}>
+                                                    <Card style={{ alignSelf: 'center', width: '90%', margin : 10, height : 100, backgroundColor: '#1B2631' }}>
+                                                        <ScrollView>
+                                                            {
+                                                                Array.isArray(Boxes) ?
+                                                                    Boxes.map((item) => {
+                                                                        let ischeck = item.is_check === true ? '#00FFFF' : '#FF9900';
+                                                                        return (
+                                                                            <Text style={{ backgroundColor: ischeck, color: 'black' }}>{item.caja}</Text>
+                                                                        )
+                                                                    }) : <Text style={{ color: 'black' }}>SIN DATA</Text>
+                                                            }
+                                                        </ScrollView>
+                                                    </Card>
+                                                </View>
                                             }
                                         </Card>
                                     </View>
@@ -231,7 +266,7 @@ const styles = StyleSheet.create({
     title: {
         margin: 2,
         fontSize: 15,
-        color: 'black'
+        color: 'white'
     },
     textbody: {
         color: "#858585",

@@ -179,9 +179,9 @@ function EntregadorListView() {
         } else if (item.state_name === 'SINCRONIZADO') {
             return '#85C1E9';
         } else if (item.state_name === 'ENTREGADO') {
-            return '#FAD7A0';
+            return '#239B56';
         } else {
-            return '#F5B7B1';
+            return '#FFB42A';
         }
     }
 
@@ -192,9 +192,9 @@ function EntregadorListView() {
                     <LoadingModal visible={loading} message="ESPERANDO FACTURAS" />
                     <ScrollView>
                         <DataTable>
-                            <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
+                            <DataTable.Header style={{ width: 'auto', backgroundColor: "#212F3D" }}>
                                 <DataTable.Title>
-                                    <Text style={{ color: 'white' }}> CLIENTE</Text>
+                                    <Text style={{ color: 'white' }}>CLIENTE</Text>
                                 </DataTable.Title>
                                 <DataTable.Title>
                                     <Text style={{ color: 'white' }}>FACTURA</Text>
@@ -228,9 +228,6 @@ function EntregadorListView() {
                                 })
                             }
                         </DataTable>
-                        {/* <TouchableOpacity style={styles.floatingButton} onPress={() => { getEnTransitoFacts(); }}>
-                            <Text>+</Text>
-                        </TouchableOpacity> */}
                     </ScrollView>
 
                     <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />

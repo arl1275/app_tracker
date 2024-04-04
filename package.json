@@ -24,9 +24,11 @@
     "react-native-data-table": "^0.1.6",
     "react-native-fs": "^2.20.0",
     "react-native-image-picker": "^7.0.3",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-paper": "^5.11.2",
     "react-native-qrcode-scanner": "^1.5.5",
     "react-native-signature-capture": "^0.4.12",
+    "react-native-sound-player": "^0.13.2",
     "react-native-table-component": "^1.2.2",
     "react-native-vector-icons": "^10.0.3",
     "zustand": "^4.4.7"

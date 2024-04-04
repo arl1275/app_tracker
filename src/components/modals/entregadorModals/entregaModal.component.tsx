@@ -120,11 +120,11 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                 null
                                 }
                             {validateStep === 'pic' ?
-                                <View style={{ width: '100%' }}>
+                                <View>
                                     <Text style={styles.title}>REGISTRO</Text>
                                     <View style={{ borderColor: 'black' }}>
 
-                                        <View style={{ margin: 1 }}>
+                                        <View style={{ margin: 1, width : '100%' }}>
                                             <View style={styles.table}>
 
                                                 <View style={styles.row}>
@@ -194,10 +194,15 @@ const styles = StyleSheet.create({
         width: '90%',
         height : 'auto'
     },
+    registroCard : {
+        backgroundColor : '#212F3D',
+        borderTopColor : '#0099FF',
+        borderTopWidth : 7
+    },
     button: {
         padding: 10,
         borderRadius: 3,
-        backgroundColor: '#063970',
+        backgroundColor: '#2E4053',
         width: 'auto'
     },
     buttonText: {
@@ -211,22 +216,24 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         width: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
+        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black
     },
     modalContent: {
         zIndex: 1, // Ensure the content is above the overlay
         padding: 20,
-        backgroundColor: 'white',
+        backgroundColor: '#1C2833',
         borderRadius: 5,
         elevation: 5, // For Android shadow77
-        width: '100%'
+        width: '100%',
+        borderTopColor : '#33FFFF',
+        borderTopWidth : 7
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between', // Adjust as needed
         marginVertical: 0,
         width: "auto",
-        backgroundColor: '#063970',
+        backgroundColor: '#2E4053',
     },
     container: {
         backgroundColor: 'white',
@@ -238,7 +245,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
         alignSelf: 'center',
-        color: 'black',
+        color: 'white',
     },
     resumen: {
         fontSize: 15,
@@ -251,7 +258,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 10,
         margin: 10,
-        backgroundColor: '#EAF2F8'
+        backgroundColor: '#2E4053'
     },
     row: {
         flexDirection: 'row',
@@ -267,11 +274,11 @@ const styles = StyleSheet.create({
 
     header: {
         fontWeight: 'bold',
-        color: 'black'
+        color: 'white'
     },
     value: {
         marginLeft: 10,
-        color: 'black'
+        color: 'white'
     },
 
 });

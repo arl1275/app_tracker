@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import EntregadorListView from "../../components/entregadorComponents/entregador.component";
 import { VistadeSync } from "../../components/entregadorComponents/ToSync.components";
 import { Picker } from "@react-native-picker/picker";
 import isConnectedToInternet from "../../utils/network_conn";
 import UserStorage from "../../storage/user";
 import useFacturaStore from "../../storage/storage";
 import boxChequerStorage from "../../storage/checkBoxes";
+import EntregadorListView from "../../components/entregadorComponents/entregador.component";
 
 const styles = StyleSheet.create({
     navbar: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#063970',
+        backgroundColor: '#1C2833',
         padding: 10,
         width: 'auto'
     },
@@ -99,7 +99,6 @@ export const EntregadorIndexView: React.FC<props> = ({ setpage }) => {
                         onValueChange={(itemValue) => handlerPicker(itemValue)}
                     >
                         <Picker.Item label={data ? data.nombre : 'INICIO'} value="1" />
-                        {/* <Picker.Item label="CIERRE DIARIO" value="2" /> */}
                         <Picker.Item label="CERRAR SESSION" value="0" />
                     </Picker>
                 </View>
@@ -122,7 +121,7 @@ export const EntregadorIndexView: React.FC<props> = ({ setpage }) => {
                 </View>
             </View>
 
-            <View>
+            <View style={{ backgroundColor : '#212F3D', height : '100%'}}>
                 {page === 'lista' ? <EntregadorListView /> : null}
                 {page === 'sync' ? <VistadeSync /> : null}
             </View>

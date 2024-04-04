@@ -57,8 +57,8 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
   };
 
   return (
-    <View style={{ backgroundColor: 'white' }}>
-      <View style={{ borderBlockColor: 'black', borderWidth: 1 }}>
+    <View style={{ backgroundColor : '#1C2833' }}>
+      <View>
         <SignatureCapture
           style={{ height: 300 }} // Ajusta la altura según sea necesario
           ref={signatureRef}
@@ -71,7 +71,7 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
         />
       </View>
 
-      <Text style={{ alignSelf: 'center', color: 'black', fontSize: 20 }}>FIRME EN ESTA AREA</Text>
+      <Text style={{ alignSelf: 'center', color: 'white', fontSize: 10 }}>FIRME EN ESTA AREA</Text>
     </View>
 
   );

@@ -1,29 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { Button, Text, View, TextInput, FlatList, StyleSheet, ScrollView, Alert, SafeAreaView } from "react-native";
+import { Dimensions, Text, View, StyleSheet, ScrollView, Alert } from "react-native";
 import { Facturas } from "../../interfaces/facturas";
-import { DataTable, IconButton } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import useGuardList from "../../storage/gaurdMemory";
 import BoxChecker from "../modals/guardiaModals/BoxChecker.component";
 import db_dir from "../../config/db";
 import axios from "axios";
+const windowWithd = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     container: {
-        padding: 15,
+        padding: 20,
         width: '100%'
     },
-    tableHeader: {
-        backgroundColor: 'white',
+    text_head: {
+        color: 'white',
+        fontSize: windowWithd * 0.03,
+        fontFamily: 'system-ui',
+        marginLeft: 10
     },
-    SinCheck: {
-        backgroundColor: '#E77F7F'
+    center_text: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    ConCkeck: {
-        backgroundColor: '#2E86C1'
+    designed_area: {
+        color: 'black', // Set your text color here
+        fontFamily: 'sans-serif',
+        fontSize: windowWithd * 0.03,
+        textAlign: 'left',
+        width: '25%'
     },
-    title: {
-        color: 'white', // Set your text color here
+    designed_area2: {
+        color: 'black', // Set your text color here
+        fontFamily: 'sans-serif',
+        fontSize: windowWithd * 0.03,
+        textAlign: 'left',
+        width: '25%'
     },
+    sp_text: {
+        fontFamily: 'system-ui',
+        fontSize: windowWithd * 0.03,
+        margin: 5,
+        color: 'black',
+        fontWeight: '700'
+    },
+    sp_text_head: {
+        fontFamily: 'system-ui',
+        fontSize: windowWithd * 0.035,
+        margin: 5,
+        color: 'black',
+        fontWeight: '700'
+    }
 });
 
 interface props {
@@ -37,6 +66,7 @@ const ListComponentModal: React.FC<props> = (props) => {
     const [FilterArr, setFilterArr] = useState<any[]>([]);
     const [selectFact, setSelectFact] = useState<Facturas | null>(null);
     const { data, CargaData } = useGuardList();
+
 
     useEffect(() => {
         get_facts();
@@ -87,54 +117,71 @@ const ListComponentModal: React.FC<props> = (props) => {
         return (
             <View>
                 <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
-                    <DataTable>
-                            <DataTable.Header style={{ width: 'auto', backgroundColor: "#0C4C7A" }}>
-                                <DataTable.Title>
-                                    <Text style={{ color: 'white' }}>FACTURA</Text>
-                                </DataTable.Title>
-                                <DataTable.Title>
-                                    <Text style={{ color: 'white' }}>RUTA</Text>
-                                </DataTable.Title>
-                                <DataTable.Title>
-                                    <Text style={{ color: 'white' }}>CLIENTE</Text>
-                                </DataTable.Title>
-                                <DataTable.Title>
-                                    <Text style={{ color: 'white' }}>CAJAS</Text>
-                                </DataTable.Title>
-                                <DataTable.Title>
-                                    <Text style={{ color: 'white' }}>UNIDADES</Text>
-                                </DataTable.Title>
-                            </DataTable.Header>
-                            <ScrollView>
-                            {
-                                data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
-                                    let valor = item.is_check != true ? '#F5B7B1' : item.is_Sinchro === true ? '#A9DFBF' : '#F9E79F';
-                                    return (
-                                        <DataTable.Row key={item.factura_id} onPress={() => { checkIsCheck(item) }} style={{ backgroundColor: valor }}>
-                                            <DataTable.Cell><Text style={{ color: 'black', fontSize : 15, margin : 1}}>{item.factura}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.lista_empaque}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.clientenombre}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.cant_cajas}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ color: 'black' }}>{item.cant_unidades}</Text></DataTable.Cell>
-                                        </DataTable.Row>
-                                    )
-                                })
-                            }
-                            <DataTable.Row style={{ backgroundColor: "#0C4C7A"}}>
-                                <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
-                                <DataTable.Cell><Text></Text></DataTable.Cell>
-                                <DataTable.Cell><Text></Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_cajas()}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={{ color: 'white' }}>{get_total_unidades()}</Text></DataTable.Cell>
-                            </DataTable.Row>
-                            
-                            </ScrollView>                            
-                    </DataTable>
-                
+
+                <View style={{ margin: 5, width: '97%', alignSelf: 'center' }}>
+
+                    <Card style={{ borderRadius: 5, borderColor: 'none', backgroundColor: '#34495E', height: 'auto' }}>
+                        <View style={styles.center_text}>
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', display: "flex" }}>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Text style={styles.text_head}>CAJAS :</Text>
+                                    <Text style={styles.text_head}>{get_total_cajas()}</Text>
+                                </View>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Text style={styles.text_head}>UNIDADES :</Text>
+                                    <Text style={styles.text_head}>{get_total_unidades()}</Text>
+                                </View>
+                                
+                            </View>
+                        </View>
+
+
+                    </Card>
+                </View>
+
+                <ScrollView>
+                    {
+                        data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
+                            let valor = item.is_check != true ? '#FFB42A' : item.is_Sinchro === true ? '#A5D6A7' : '#239B56';
+                            let head_valor = item.is_check != true ? '#E91E63' : item.is_Sinchro === true ? '#1B5E20' : '#00FF66';
+                            return (
+                                <View style={{ alignSelf: "center", width: '95%', marginTop: 10 }} key={item.factura_id}>
+
+                                    <Card
+                                        style={{
+                                            borderRadius: 0,
+                                            borderColor: 'none',
+                                            backgroundColor: valor,
+                                            height: 'auto',
+                                            borderLeftColor: head_valor, // Color de la línea superior
+                                            borderLeftWidth: 10,
+                                        }} onPress={() => { checkIsCheck(item) }}>
+
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+
+                                            <Text style={styles.sp_text}>{item.factura}</Text>
+                                            <Text style={styles.sp_text}>{item.lista_empaque}</Text>
+                                            <Text style={[styles.sp_text, { width : '30%'}]}>{item.clientenombre}</Text>
+                                            <Text style={styles.sp_text}>{item.cant_cajas}</Text>
+                                            <Text style={styles.sp_text}>{item.cant_unidades}</Text>
+
+                                        </View>
+
+                                    </Card>
+                                </View>
+                            )
+                        })
+                    }
+                </ScrollView>
+
             </View>
         )
     }
 
 };
+
 
 export default ListComponentModal;

@@ -240,7 +240,7 @@ export function MainGuardView(){
                                 <IconButton icon={'update'} size={25} iconColor="#00FF66" />
                             </TouchableOpacity>
 
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 style={
                                     {
                                         backgroundColor: fastCheck_activate ? '#00FF66' : 'grey',
@@ -255,7 +255,7 @@ export function MainGuardView(){
                                     }}
                                 onPress={() => { setFastCheck_activate(!fastCheck_activate) }} >
                                 <IconButton icon={'barcode'} size={25} iconColor="black" />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
 
                             <View style={styles.containePickerr}>
                                 <View style={styles.pickerContainer}>

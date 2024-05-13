@@ -6,6 +6,7 @@ import db_dir from "../../../config/db";
 import { DataTable, Icon } from 'react-native-paper';
 import useGuardList from "../../../storage/gaurdMemory";
 import { play_sound } from "../../Activity/sound.component";
+import LoadingModal from "../../Activity/activity.component";
 const windowWithd = Dimensions.get('window').width;
 const processing = require('../../../assets/images/Processing-bro.png');
 
@@ -17,7 +18,8 @@ const ListToTransito = () => {
     const { GetIsCheckedFacts, updateIsInTransit } = useGuardList();       // this is to get the checked facts
     const inputRef = useRef<TextInput>(null);                              // this is to check the camion and entregador 
     const [Value_, setValue_] = useState('');                              // this is used as well to check camion and entregador
-    const [encabezado, setEncabezado] = useState<any>();                   // this got the header of one declaracion de envio
+    const [encabezado, setEncabezado] = useState<any>();                   // this got the header of one declaracion de envio7
+    const [ openModal , setOpenl] = useState<boolean>(false);              // this si to open the modal of chargin   
 
 
     useEffect(() => {
@@ -26,6 +28,10 @@ const ListToTransito = () => {
             load();
         }
     }, []);
+
+    const ModalOpen=()=>{
+        setOpenl(!openModal);
+    }
 
     useEffect(() => {
         get_encabezado();
@@ -44,10 +50,10 @@ const ListToTransito = () => {
 
     const FacturasToTransito = async () => {
         try {
+            ModalOpen();
             if (!camion || !transportista) {
-
-                Alert.alert('ERROR DATOS', 'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.');
-
+                Alert.alert('ERROR DATOS', 
+                'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.');
             } else {
 
                 let body: number[] = listFact.map((item) => item.factura_id);
@@ -63,7 +69,10 @@ const ListToTransito = () => {
                 }
             }
         } catch (error) {
+
             console.error("Error:", error);
+        }finally{
+            ModalOpen();
         }
     };
 
@@ -105,12 +114,15 @@ const ListToTransito = () => {
     } else {
         return (
             <View>
+                {
+                    openModal && < LoadingModal message="ENVIANDO A TRANSITO" visible={openModal}/>
+                }
 
                 <View style={styles.headSty}>
                     <View style={styles.buttonContainer}>
                         <Text style={styles.headTitle}>ENVIO A TRANSITO</Text>
 
-                        <TouchableOpacity style={styles.button} onPress={() => { FacturasToTransito(); /*closeModal()*/ }}>
+                        <TouchableOpacity style={styles.button} onPress={() => { FacturasToTransito(); }}>
                             <Text style={styles.buttonText}>FINALIZAR</Text>
                         </TouchableOpacity>
 

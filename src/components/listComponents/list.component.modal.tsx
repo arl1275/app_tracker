@@ -32,6 +32,7 @@ const ListComponentModal: React.FC<props> = (props) => {
 
     const updateList = async () => {
         try {
+            console.log('data como props : ',  props.dec_envio)
             let valores_ = await axios.get(db_dir + '/decEnv/FactsDecEnv', { params: { dec_envio: props.dec_envio } });
             let valores: Facturas[] = valores_.data.data;
             setFilterArr(valores);
@@ -143,7 +144,7 @@ const ListComponentModal: React.FC<props> = (props) => {
                                                         <Text style={[styles.sp_text, { width: '20%' }]}>{item.factura}</Text>
                                                         <Text style={[styles.sp_text, { width: '20%' }]}>{item.lista_empaque}</Text>
                                                         <Text style={[styles.sp_text, { width: '30%' }]}>{item.clientenombre}</Text>
-                                                        <Text style={[styles.sp_text, { width: '20%' }]}>[ 0 /{item.cant_cajas} ]</Text>
+                                                        <Text style={[styles.sp_text, { width: '20%' }]}>{item.cant_cajas}</Text>
                                                         <Text style={[styles.sp_text, { width: '5%' }]}>{item.cant_unidades}</Text>
                                                     </View>
 

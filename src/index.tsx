@@ -1,10 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, SafeAreaView, Modal, Alert } from 'react-native';
 import { EntregadorIndexView } from './pages/entregador/EntregadorMain.view';
 import { MainGuardView } from './pages/guardia/GuardMainView';
 import LoginPage from './pages/login/login.page';
-import isConnectedToInternet from './utils/network_conn';
-import UserStorage from './storage/user';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -17,10 +13,8 @@ export type RootStackParamList = {
 };
 
 function IndexPage() {
-  const [ isconn , setIsconn] = useState<boolean>(false);
   const Stack = createStackNavigator<RootStackParamList>();
-  const { getType } = UserStorage();
-
+  
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">

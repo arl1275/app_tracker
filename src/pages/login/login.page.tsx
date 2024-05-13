@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import db_dir from '../../config/db';
-import { Text, View, TextInput, Alert, ImageBackground, Modal } from 'react-native';
+import { Text, View, TextInput, Alert, ImageBackground, Modal, StyleSheet } from 'react-native';
 import { UserInterface } from '../../interfaces/user';
 import UserStorage from '../../storage/user';
-import LinearGradient from 'react-native-linear-gradient';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../..';
 import { EnterPage } from '../../components/Activity/enter.component';
+import { Icon } from 'react-native-paper';
+const back = require('../../assets/images/forest.jpg');
 
 
-function LoginPage( navigator : any ) {
+function LoginPage(navigator: any) {
     const { setUser, getType } = UserStorage();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [openl, setOpenl] = useState(false);
@@ -22,20 +23,20 @@ function LoginPage( navigator : any ) {
     });
 
     const session_is_save = async () => {
-        const UL : number = await getType();
-        if(UL == 3){
-          navigation.navigate('Entregador')
-        }else if( UL == 2){
-          navigation.navigate('Guardia');
-        }else{
+        const UL: number = await getType();
+        if (UL == 3) {
+            navigation.navigate('Entregador')
+        } else if (UL == 2) {
+            navigation.navigate('Guardia');
+        } else {
             navigation.navigate('Home');
         }
     }
-    
-    useEffect(()=> {
+
+    useEffect(() => {
         session_is_save();
-    },[])
-    
+    }, [])
+
 
 
     const handleUserChange = (text: string) => {
@@ -59,20 +60,20 @@ function LoginPage( navigator : any ) {
                         _password: Data._Password
                     }
                 });
-                
+
                 if (result.status === 200) {
                     const user: UserInterface = result.data.data;
                     await setUser(user);
 
-                    let UL : number = await getType();
+                    let UL: number = await getType();
 
-                    if(UL == 3){
+                    if (UL == 3) {
                         navigation.navigate('Entregador')
-                    }else if( UL == 2){
+                    } else if (UL == 2) {
                         navigation.navigate('Guardia');
                     }
-                    
-                    
+
+
                 } else {
                     Alert.alert('ERROR RED', 'No se pudo conectar a la red')
                 }
@@ -83,106 +84,151 @@ function LoginPage( navigator : any ) {
         } catch (err) {
             Alert.alert('ERROR', 'ingrese El usuario correcto');
             setOpenl(false);
-        }finally{
-            Data._Password = '';
-            Data.user = '';   
+        } finally {
+            setData({ user : '', _Password : ''});
         }
     };
 
 
     return (
-        <View style={{ flex: 1 }}>
-            
+        <View style={styles.container}>
+            {/* Modal */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={openl}
+                onRequestClose={() => { /* Handle close modal */ }}
+            >
+                <EnterPage />
+            </Modal>
 
-                <LinearGradient colors={['rgba(0,0,0,0.01)', 'black']} locations={[0.04, 0.6]}>
+            {/* Contenido principal */}
+            <View style={styles.contentContainer}>
+                {/* Título */}
+                <Text style={styles.title}>[ KELLER ]</Text>
 
-                    <Modal
-                        animationType="fade"
-                        transparent={true}
-                        visible={openl}
-                        onRequestClose={() => { }}>
-                        <EnterPage />
-                    </Modal> 
+                {/* Bienvenida */}
+                <View style={styles.welcomeContainer}>
+                    <Text style={styles.welcomeText}>Bienvenido!!</Text>
+                    <Text style={styles.instructionsText}>Favor ingresa los datos de su usuario, para continuar.</Text>
+                </View>
 
-                    <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
-                        <View>
-                            <View style={{ marginTop: 25, display: 'flex', flexDirection: 'row', alignSelf: 'center' }}>
-                                <Text style={{ color: 'white', fontSize: 70, fontWeight: 700, top : 50 }}>[ KELLER ]</Text>
-                            </View>
-
-                            <View style={{ marginTop: 120, width: '70%', alignSelf: 'center', marginBottom: 30 }}>
-                                <Text style={{ color: 'white', fontWeight: 500, fontSize: 40, marginBottom: 5 }}>Bienvenido!!</Text>
-                                <Text style={{ color: 'grey', fontWeight: 500, fontSize: 15, marginTop : 40 }}>Favor ingresa los datos de su usuario, para continuar.</Text>
-                            </View>
-
-                            <View style={{ marginTop: 1, width: '70%', alignSelf: 'center' }}>
-                                <TextInput
-                                    placeholder="USUARIO"
-                                    onChangeText={handleUserChange}
-                                    value={Data.user}
-                                    placeholderTextColor={'grey'}
-                                    style={{
-                                        color: 'white',
-                                        fontSize: 15,
-                                        backgroundColor: 'black',//'#0D151E',
-                                        borderRadius: 50,
-                                        borderWidth: 1,
-                                        borderColor: 'grey',
-                                        marginBottom: 30,
-                                        textAlign: 'center'
-                                    }}
-                                />
-
-                                <TextInput
-                                    placeholder="CONTRASEÑA"
-                                    onChangeText={handlePasswordChange}
-                                    value={Data._Password}
-                                    secureTextEntry
-                                    placeholderTextColor={'grey'}
-                                    style={{
-                                        color: 'white',
-                                        fontSize: 15,
-                                        backgroundColor: 'black',
-                                        borderRadius: 50,
-                                        borderWidth: 1,
-                                        borderColor: 'grey',
-                                        textAlign: 'center'
-                                    }}
-                                />
-
-                                <View style={{ borderBottomWidth: 2, borderBottomColor: 'grey', marginTop: 40 }} />
-
-                            </View>
-
-                            <View style={{ marginTop: 40 }}>
-                                <TouchableOpacity onPress={() => { handleSubmit() }}>
-                                    <Text style={{
-                                        color: 'white',
-                                        alignSelf: 'center',
-                                        fontSize: 20,
-                                        width: '70%',
-                                        height: 40,
-                                        backgroundColor: 'grey',
-                                        borderRadius: 50,
-                                        borderColor: 'white',
-                                        borderWidth : 1.5,
-                                        textAlign: 'center',
-                                        fontWeight: 700,
-                                        textAlignVertical: 'center'
-                                    }}>INGRESAR</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                        </View>
-
-                        <Text style={{ color: 'white', fontSize: 10, position: 'absolute', bottom: 0, right: 10 }}>V.0.0.12</Text>
-
+                {/* Campos de entrada */}
+                <View style={styles.inputContainer}>
+                    {/* Usuario */}
+                    <View style={styles.inputWrapper}>
+                        <Icon source="account" size={30} color="black" />
+                        <TextInput
+                            placeholder="USUARIO"
+                            onChangeText={handleUserChange}
+                            value={Data.user}
+                            placeholderTextColor="grey"
+                            style={styles.input}
+                        />
                     </View>
 
-                </ LinearGradient>
+                    {/* Contraseña */}
+                    <View style={styles.inputWrapper}>
+                        <Icon source="lock" size={30} color="black" />
+                        <TextInput
+                            placeholder="CONTRASEÑA"
+                            onChangeText={handlePasswordChange}
+                            value={Data._Password}
+                            secureTextEntry
+                            placeholderTextColor="grey"
+                            style={styles.input}
+                        />
+                    </View>
+                </View>
 
-        </View >
-    )
-}
+                {/* Botón de ingresar */}
+                <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+                    <Text style={styles.buttonText}>INGRESAR</Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* Versión */}
+            <Text style={styles.versionText}>V.0.0.13</Text>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#EBEDEF',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    contentContainer: {
+        width: '90%',
+        height: '90%',
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius : 20
+    },
+    title: {
+        fontSize: 60,
+        fontWeight: '700',
+        marginTop: 0,
+        marginBottom: '15%',
+        textAlign: 'center',
+        color: 'black',
+    },
+    welcomeContainer: {
+        marginBottom: 50,
+    },
+    welcomeText: {
+        color: 'grey',
+        fontWeight: '500',
+        fontSize: 25,
+        marginBottom: 5,
+    },
+    instructionsText: {
+        color: 'grey',
+        fontWeight: '500',
+        fontSize: 15,
+        textAlign: 'center',
+    },
+    inputContainer: {
+        width: '70%',
+        marginBottom: 30,
+    },
+    inputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: 'grey',
+        marginBottom: 20,
+    },
+    input: {
+        flex: 1,
+        color: 'black',
+        fontSize: 15,
+        textAlign: 'center',
+    },
+    button: {
+        width: '70%',
+        height: 40,
+        backgroundColor: 'black',
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: '700',
+        textAlign: 'center',
+    },
+    versionText: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        color: 'black',
+        fontSize: 10,
+    },
+});
 
 export default LoginPage

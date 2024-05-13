@@ -91,21 +91,22 @@ function EntregadorListView() {
     const getEnTransitoFacts = async () => {
         try {
 
-            setLoading(true);
             const id_user = await getUser();
             const data2 = await axios.get(db_dir + '/facturas/getEnTransFact', { params: { id: id_user.id_user } });
 
             if (data2.data.data.length > 0) {
                 setFacturas(data2.data.data);
+
                 if (facturas.length === data.length) {
                     Alert.alert('SINCRONIZACION', 'La lista de facturas esta actualizada');
                 } else {
-                    updateFactura(facturas);
+                    await updateFactura(facturas);
+                    setLoading(false);
                 }
                 if (facturas.length > 0) {
                     syncroBoxes();
                 }
-                setLoading(false);
+                
 
             } else {
                 setLoading(false);
@@ -136,9 +137,9 @@ function EntregadorListView() {
                     }
                 }
             }
-
-            const val = await axios.get(db_dir + '/facturas/app/getCajasOneFact', { params: { data: props_cajas_facturas } }).then(e => e.data);
-            const valores: box_to_check[] = val.data;
+            console.log('esto va como param ::: ', props_cajas_facturas);
+            const response = await axios.post(db_dir + '/facturas/app/getCajasOneFact', props_cajas_facturas);
+            const valores: box_to_check[] = response.data.data;
             fetchData_(valores);
         } catch (err) {
             console.log('Error fetching data:', err);
@@ -203,10 +204,10 @@ function EntregadorListView() {
                                     width: '100%',
                                     backgroundColor: "black",
                                     marginBottom: 10,
-                                    marginTop : 10,
-                                    borderWidth : 2,
-                                    borderColor : 'white',
-                                    borderRadius : 10
+                                    marginTop: 10,
+                                    borderWidth: 2,
+                                    borderColor: 'white',
+                                    borderRadius: 10
                                 }
                             }>
                             <DataTable.Title>
@@ -237,18 +238,18 @@ function EntregadorListView() {
                                             key={item.factura_id} onPress={() => { setfact(item); BoxOrSing(item); }}
                                             style={{
                                                 backgroundColor: "#1a1a1a",//valor, 
-                                                borderWidth: 1.5,
+                                                borderWidth: 1,
                                                 borderColor: valor,
-                                                borderRadius: 10,
+                                                borderRadius: 7,
                                                 marginBottom: 10,
                                                 padding: 9,
                                             }}>
-                                            <DataTable.Cell><Text style={{ fontSize: 15, fontWeight: '400', color: 'white' }}>{item.clientenombre}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 15, fontWeight: '400', color: 'white' }}>{item.factura}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 15, fontWeight: '400', color: 'white' }}>{item.lista_empaque}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 15, fontWeight: '400', color: 'white' }}>{item.cant_cajas}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 15, fontWeight: '400', color: 'white' }}>{item.cant_unidades}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 11, fontWeight: 'bold', color: 'white' }}>{item.state_name === undefined ? 'PENDIENTE' : item.state_name}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ fontSize: 10, fontWeight: '600', color: 'white' , margin : '5%' }}>{item.clientenombre}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: '400', color: 'white' }}>{item.factura}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: '400', color: 'white' , margin : '5%'}}>{item.lista_empaque}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: '400', color: 'white' , margin : '5%'}}>{item.cant_cajas}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: '400', color: 'white' , margin : '5%'}}>{item.cant_unidades}</Text></DataTable.Cell>
+                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: 'bold', color: 'white'}}>{item.state_name === undefined ? 'PENDIENTE' : item.state_name}</Text></DataTable.Cell>
                                         </DataTable.Row>
                                     )
                                 })

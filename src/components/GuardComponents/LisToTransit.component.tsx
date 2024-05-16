@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Text, View, TextInput, Dimensions, StyleSheet, Alert, TouchableOpacity, ScrollView, ActivityIndicator, Image } from "react-native";
-import { Facturas } from "../../../interfaces/facturas";
+import { Facturas } from "../../interfaces/facturas";
 import axios from "axios";
-import db_dir from "../../../config/db";
+import db_dir from "../../config/db";
 import { DataTable, Icon } from 'react-native-paper';
-import useGuardList from "../../../storage/gaurdMemory";
-import { play_sound } from "../../Activity/sound.component";
-import LoadingModal from "../../Activity/activity.component";
+import useGuardList from "../../storage/gaurdMemory";
+import { play_sound } from "../Activity/sound.component";
+import LoadingModal from "../Activity/activity.component";
 const windowWithd = Dimensions.get('window').width;
-const processing = require('../../../assets/images/Processing-bro.png');
+const processing = require('../../assets/images/Processing-bro.png');
 
 
 const ListToTransito = () => {
@@ -106,11 +106,12 @@ const ListToTransito = () => {
 
     if ( listFact.length === 0 ){
             return (
-                <View style={{ alignContent: 'center', backgroundColor : 'blalck' }}>
-                    <Text style={{ alignSelf: 'center', top: '20%', color: 'white' }}>SIN FACTURAS ESCANEADAS</Text>
-                    <Image source={processing} style={{ width: '50%', height: '50%', alignSelf: 'center', top: '30%' }} />
+                <View style={{ alignContent: 'center', backgroundColor : '#F4F6F7' }}>
+                    {/* <Text style={{ alignSelf: 'center', top: '20%', color: 'white' }}>SIN FACTURAS ESCANEADAS</Text> */}
+                    <Image source={processing} style={{ width: '40%', height: '40%', alignSelf: 'center', top: '30%', backgroundColor : '#F4F6F7'}} /> 
                 </View>
             )
+            
     } else {
         return (
             <View>
@@ -119,8 +120,9 @@ const ListToTransito = () => {
                 }
 
                 <View style={styles.headSty}>
+
                     <View style={styles.buttonContainer}>
-                        <Text style={styles.headTitle}>ENVIO A TRANSITO</Text>
+                        <Text style={styles.headTitle}>DESPACHO A TRANSITO</Text>
 
                         <TouchableOpacity style={styles.button} onPress={() => { FacturasToTransito(); }}>
                             <Text style={styles.buttonText}>FINALIZAR</Text>
@@ -128,35 +130,35 @@ const ListToTransito = () => {
 
                     </View>
 
-                    <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row', width: '100%' }}>
-                        <View style={{ width: 300, left: 30 }}>
+                    <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row', width: '100%', marginBottom : 5 }}>
+                        <View style={{ width: '80%', paddingLeft : 20, paddingRight : 10}}>
 
                             <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row', width: '100%' }}>
-                                <Text style={{ color: 'white', fontSize: 15 }}>Camion</Text>
-                                <Text style={{ color: 'white', fontSize: 15 }}>{listFact[0]?.placa}</Text>
+                                <Text style={{ color: 'black', fontSize: 15 }}>Camion</Text>
+                                <Text style={{ color: 'black', fontSize: 15 }}>{listFact[0]?.placa}</Text>
                             </View>
 
                             <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row' }}>
-                                <Text style={{ color: 'white', fontSize: 15 }}>Entregador</Text>
-                                <Text style={{ color: 'white', fontSize: 15 }}>{listFact[0]?.nombre}</Text>
+                                <Text style={{ color: 'black', fontSize: 15 }}>Entregador</Text>
+                                <Text style={{ color: 'black', fontSize: 15 }}>{listFact[0]?.nombre}</Text>
                             </View>
                             <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row' }}>
-                                <Text style={{ color: 'white', fontSize: 15 }}>Cajas</Text>
-                                <Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_cajas, 0)}</Text>
+                                <Text style={{ color: 'black', fontSize: 15 }}>Cajas</Text>
+                                <Text style={{ color: 'black' }}>{listFact.reduce((total, factura) => total + factura.cant_cajas, 0)}</Text>
                             </View>
                             <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row' }}>
-                                <Text style={{ color: 'white', fontSize: 15 }}>Unidades</Text>
-                                <Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_unidades, 0)}</Text>
+                                <Text style={{ color: 'black', fontSize: 15 }}>Unidades</Text>
+                                <Text style={{ color: 'black' }}>{listFact.reduce((total, factura) => total + factura.cant_unidades, 0)}</Text>
                             </View>
 
                         </View>
 
 
                         <View style={styles.descrip}>
-                            <View style={[styles.headtext, { backgroundColor: camion === '' ? '#FF6600' : '#00FF66', width : 100 }]}>
+                            <View style={[styles.headtext, { backgroundColor: camion === '' ? '#FF6600' : '#00FF66', width : 'auto'}]}>
                                 <Icon source={'truck'} color={"black"} size={25} />
                             </View>
-                            <View style={[styles.headtext, { backgroundColor: transportista === '' ? '#FF6600' : '#00FF66', width : 100 }]}>
+                            <View style={[styles.headtext, { backgroundColor: transportista === '' ? '#FF6600' : '#00FF66', width : 'auto' }]}>
                                 <Icon source={'account'} color={"black"} size={25}/>
                             </View>
                         </View>
@@ -166,11 +168,11 @@ const ListToTransito = () => {
                     <View style={styles.Textplaces}>
                         <TextInput
                             ref={inputRef}
-                            style={{ color: 'white', borderColor: 'grey', textAlign: 'center' }}
+                            style={{ color: 'black', borderColor: 'white', textAlign: 'center' }}
                             value={Value_}
                             onChangeText={(text) => setValue_(text)}
                             onSubmitEditing={handleBarcodeScan}
-                            placeholderTextColor={'white'}
+                            placeholderTextColor={'grey'}
                             placeholder="ESCANEE CAMION Y ENTREGADOR"
                             autoFocus
                             onBlur={() => inputRef.current?.focus()}
@@ -195,7 +197,7 @@ const ListToTransito = () => {
                                         <DataTable.Cell><Text style={styles.tableText}>{item.lista_empaque}</Text></DataTable.Cell>
                                         <DataTable.Cell><Text style={styles.tableText}>{item.factura}</Text></DataTable.Cell>
                                         <DataTable.Cell><Text style={styles.tableText}>{item.clientenombre}</Text></DataTable.Cell>
-                                        <DataTable.Cell><Text style={[{ textAlign : 'right', color : 'white' }]}>{item.cant_cajas}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={[{ textAlign : 'right', color : 'black' }]}>{item.cant_cajas}</Text></DataTable.Cell>
                                         <DataTable.Cell><Text style={styles.tableText}>{item.cant_unidades}</Text></DataTable.Cell>
                                     </DataTable.Row>
                                 ))
@@ -203,12 +205,13 @@ const ListToTransito = () => {
 
 
                             <DataTable.Row>
-                                <DataTable.Cell><Text style={{ color: 'white' }}>totales</Text></DataTable.Cell>
-                                <DataTable.Cell>-</DataTable.Cell>
-                                <DataTable.Cell>-</DataTable.Cell>
-                                <DataTable.Cell><Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_cajas, 0)}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={{ color: 'white' }}>{listFact.reduce((total, factura) => total + factura.cant_unidades, 0)}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text style={{ color: 'black' }}>totales</Text></DataTable.Cell>
+                                <DataTable.Cell>.</DataTable.Cell>
+                                <DataTable.Cell>.</DataTable.Cell>
+                                <DataTable.Cell><Text style={{ color: 'black' }}>{listFact.reduce((total, factura) => total + factura.cant_cajas, 0)}</Text></DataTable.Cell>
+                                <DataTable.Cell><Text style={{ color: 'black' }}>{listFact.reduce((total, factura) => total + factura.cant_unidades, 0)}</Text></DataTable.Cell>
                             </DataTable.Row>
+
                         </ScrollView>
 
                     </DataTable>
@@ -225,19 +228,18 @@ export default ListToTransito;
 const styles = StyleSheet.create({
     headSty: {
         margin: 15,
-        backgroundColor: '#1a1a1a',
-        borderRadius: 7,
-        borderColor: 'grey',
-        borderWidth: 1
+        backgroundColor: 'white',
+        borderRadius: 10,
+        elevation : 10
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between', // Adjust as neede
-        backgroundColor: '#1a1a1a',
+        backgroundColor: 'white',
         alignSelf: 'center',
         width: '90%',
         borderBottomWidth: 1,
-        borderBottomColor: 'white',
+        borderBottomColor: 'green',
         marginBottom: 7
     },
     button: {
@@ -251,28 +253,27 @@ const styles = StyleSheet.create({
         borderLeftColor: 'white'
     },
     buttonText: {
-        color: 'white',
+        color: 'green',
         fontWeight: 'bold',
         fontSize: windowWithd * 0.025,
         marginLeft: 30
     },
     Textplaces: {
-        backgroundColor: '#1a1a1a',
+        backgroundColor: 'white',
         width: '90%',
         textAlign: 'center',
         alignSelf: 'center',
         borderTopWidth: 1,
-        borderTopColor: 'white'
+        borderTopColor: 'black'
     },
     descrip: {
         alignSelf: 'center',
-        width: 'auto',
-        padding: '3%',
+        width: '20%',
         borderRadius: 10,
         justifyContent: 'space-between'
     },
     headTitle: {
-        color: 'white',
+        color: 'black',
         textAlign: 'left',
         fontSize: windowWithd * 0.03,
         fontWeight: '700',
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
     headtext: {
         fontWeight: 'bold',
         fontSize: windowWithd * 0.025,
-        borderRadius: 70,
+        borderRadius: 5,
         alignSelf: 'center',
         textAlign: 'center',
         padding: 3,
@@ -293,19 +294,22 @@ const styles = StyleSheet.create({
     table: {
         width: '95%',
         alignSelf: 'center',
-        backgroundColor: '#323232',
-        borderRadius : 10
+        backgroundColor: 'white',
+        borderRadius : 15,
+        elevation : 15,
+        height : '100%',
+        marginBottom : 20
     },
     tableheader: {
-        color: 'white',
+        color: 'black',
         fontSize: windowWithd * 0.025
     },
     tableRow: {
-        backgroundColor: '#1a1a1a',
+        backgroundColor: '#ECF0F1',
         fontSize: windowWithd * 0.02
     },
     tableText: {
-        color: 'white',
+        color: 'black',
         width: 'auto',
         fontSize: windowWithd * 0.025
     }

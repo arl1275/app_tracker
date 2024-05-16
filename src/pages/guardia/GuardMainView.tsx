@@ -5,11 +5,9 @@ import axios from "axios";
 import db_dir from "../../config/db";
 import LoadingModal from "../../components/Activity/activity.component";
 import { IconButton } from "react-native-paper";
-import ListComponentModal from "../../components/listComponents/list.component.modal";                        // this is the component to show table of the declaraciones_env
-import ListToTransito  from "../../components/modals/guardiaModals/LisToTransit.component";
+import ListComponentModal from "../../components/listComponents/list.component.modal";  
 import { Picker } from "@react-native-picker/picker";
 import { EnterPage } from "../../components/Activity/enter.component";
-import { ScannerConfig } from "../../components/Activity/ScannerConfig";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../..";
@@ -118,101 +116,8 @@ export function MainGuardView(){
                 <EnterPage />
             </Modal>
 
-            <View>
 
-                <View style={styles.navbar}>
-
-                    <View style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', alignContent: 'center' }}>
-
-                        <TouchableOpacity onPress={() => { hadler_picker('3')}} style={{ display :'flex', flexDirection : 'row'}}>
-                            <IconButton icon={'shield-account-variant'} size={30} iconColor={ selectedValue == '3' ? 'white' : 'grey'} style={{ alignSelf: 'center' }}/>
-                            <Text style={{color : 'white', alignSelf : 'center', margin : 10}}>{ user?.nombre }</Text>
-                        </TouchableOpacity>
-                        
-
-                        <View style={
-                            {
-                                display: 'flex',
-                                flexDirection: 'row',
-                                width: 180,
-                                justifyContent: 'space-around',
-                                height: 45,
-                                right: 60,
-                                top: 5,
-                                backgroundColor: '#383737',
-                                padding: 15,
-                                borderRadius: 60
-                            }}>
-
-                            <TouchableOpacity onPress={() => { hadler_picker('1') }}
-                                style={
-                                    {
-                                        height: 30,
-                                        padding: 3,
-                                        width: 50,
-                                        borderRadius: 60,
-                                        alignSelf: 'center',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignContent: 'center',
-                                        flexDirection: 'row',
-                                        backgroundColor: selectedValue === '1' ? 'white' : '#424949', //#FF33FF
-                                    }}>
-
-                                <IconButton icon={'cube-scan'} size={25} iconColor={selectedValue === '1' ? "black" : '#7B7D7D'}
-                                    style={{ alignSelf: 'center' }} />
-
-                            </TouchableOpacity>
-
-                            <TouchableOpacity onPress={() => { hadler_picker('2') }}
-                                style={
-                                    {
-                                        height: 30,
-                                        padding: 3,
-                                        width: 50,
-                                        borderRadius: 60,
-                                        alignSelf: 'center',
-                                        display: 'flex',
-                                        alignContent: 'center',
-                                        justifyContent: 'center',
-                                        flexDirection: 'row',
-                                        backgroundColor: selectedValue === '2' ? 'white' : '#424949'
-                                    }}>
-                                <IconButton
-                                    icon="text-box-check"
-                                    size={25}
-                                    iconColor={selectedValue === '2' ? 'black' : '#7B7D7D'}
-                                    style={{ alignSelf: 'center' }}
-                                />
-                            </TouchableOpacity>
-
-                        </View>
-
-                        <View>
-                            <TouchableOpacity
-                                style={
-                                    {
-                                        backgroundColor: '#323232',
-                                        borderRadius: 70,
-                                        justifyContent: 'center',
-                                        height: 40,
-                                        width: 40,
-                                        marginTop: 5,
-                                        right: 15
-                                    }
-                                }
-                                onPress={() => hadler_picker('0')} >
-                                <IconButton icon={'logout'} size={17} iconColor="white" />
-                            </TouchableOpacity>
-                        </View>
-
-                    </View>
-                </View>
-
-            </View>
-
-
-            <View style={{ backgroundColor: 'black', height: '100%' }}>
+            <View style={{ backgroundColor: '#F0F3F4', height: '100%' }}>
                 {
                     selectedValue == '1' &&
                     <View>
@@ -220,17 +125,18 @@ export function MainGuardView(){
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: 'space-between',
-                            backgroundColor: '#323232',
+                            backgroundColor: 'white',
                             margin: 10,
                             borderRadius: 7,
                             borderWidth: 1,
-                            borderColor: 'white'
+                            borderColor: 'white',
+                            elevation : 10
                         }}>
 
                             <TouchableOpacity
                                 style={
                                     {
-                                        backgroundColor: '#323232',
+                                        backgroundColor: 'white',
                                         left: 15,
                                         marginRight: 10,
                                         alignItems: 'center'
@@ -239,23 +145,6 @@ export function MainGuardView(){
                                 onPress={() => { get_data() }} >
                                 <IconButton icon={'update'} size={25} iconColor="#00FF66" />
                             </TouchableOpacity>
-
-                            {/* <TouchableOpacity
-                                style={
-                                    {
-                                        backgroundColor: fastCheck_activate ? '#00FF66' : 'grey',
-                                        left: 15,
-                                        marginRight: 10,
-                                        alignItems: 'center',
-                                        width : 40,
-                                        height : 40,
-                                        alignSelf : 'center',
-                                        justifyContent : 'center',
-                                        borderRadius : 10
-                                    }}
-                                onPress={() => { setFastCheck_activate(!fastCheck_activate) }} >
-                                <IconButton icon={'barcode'} size={25} iconColor="black" />
-                            </TouchableOpacity> */}
 
                             <View style={styles.containePickerr}>
                                 <View style={styles.pickerContainer}>
@@ -267,8 +156,8 @@ export function MainGuardView(){
                                             style={
                                                 {
                                                     fontSize: 12,
-                                                    backgroundColor: '#1a1a1a',
-                                                    color: 'white'
+                                                    backgroundColor: 'white',
+                                                    color: 'black'
                                                 }} />
                                         {
                                             data.map((item) => (
@@ -276,7 +165,7 @@ export function MainGuardView(){
                                                     key={item.id}
                                                     label={`DECLARACION     ${item.declaracion_env}`}
                                                     value={item.id}
-                                                    style={{ fontSize: 15, backgroundColor: '#323232', color: 'white' }}
+                                                    style={{ fontSize: 15, backgroundColor: 'white', color: 'black' }}
                                                 />
                                             ))}
                                     </Picker>
@@ -288,7 +177,7 @@ export function MainGuardView(){
                             selectedDecla == 0 ?
                                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                     <Image source={image} style={{ width: '60%', height: '60%', alignSelf: 'center', aspectRatio: 1 }} />
-                                    <Text style={{ marginTop: 60, color: 'white', fontSize: 19 }}>DESPACHO DE FACTURAS</Text>
+                                    <Text style={{ marginTop: 60, color: 'black', fontSize: 19 }}>DESPACHO DE FACTURAS</Text>
                                     <Text style={{ color: 'grey', fontSize: 15 }}>Buen día.</Text>
                                     <Text style={{ color: 'grey', fontSize: 15 }}>Solo despachar una sola declaracion de envio a la vez.</Text>
                                 </View>
@@ -301,10 +190,6 @@ export function MainGuardView(){
                     </View>
                 }
 
-                {
-                    selectedValue === '2' && <ListToTransito />
-                }
-                {   selectedValue === '3' &&  <ScannerConfig />}
             </View>
 
         </View>
@@ -389,19 +274,18 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-
     },
     pickerContainer: {
         width: '95%',
-        backgroundColor: 'black',
+        backgroundColor: 'white',
         borderRadius: 7, // Borde redondeado
         overflow: 'hidden', // Recortar el contenido dentro del borde
         margin: 0
     },
     picker: {
         height: 'auto',
-        color: 'white',
-        backgroundColor: '#323232'
+        color: 'black',
+        backgroundColor: 'white'
     }
 });
 

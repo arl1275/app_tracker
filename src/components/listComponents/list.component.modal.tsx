@@ -32,7 +32,7 @@ const ListComponentModal: React.FC<props> = (props) => {
 
     const updateList = async () => {
         try {
-            console.log('data como props : ',  props.dec_envio)
+            console.log('data como props : ', props.dec_envio)
             let valores_ = await axios.get(db_dir + '/decEnv/FactsDecEnv', { params: { dec_envio: props.dec_envio } });
             let valores: Facturas[] = valores_.data.data;
             setFilterArr(valores);
@@ -97,24 +97,26 @@ const ListComponentModal: React.FC<props> = (props) => {
 
                             <View>
 
-                                <Card style={{ borderRadius: 5, borderColor: 'white', backgroundColor: 'black', height: 'auto', padding: 10 }}>
-                                    <View style={styles.center_text}>
-
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', display: "flex", width: '100%' }}>
-                                            <View style={{ flexDirection: 'row', left: 100 }}>
-                                                <Text style={styles.text_head}>CAJAS :</Text>
-                                                <Text style={[styles.text_head, { color: 'red', fontWeight: 'bold' }]}>{get_total_cajas()}</Text>
-                                            </View>
-                                            <View style={{ borderRightWidth: 2, borderColor: 'white' }} />
-                                            <View style={{ flexDirection: 'row', right: 100 }}>
-                                                <Text style={styles.text_head}>UNIDADES :</Text>
-                                                <Text style={styles.text_head}>{get_total_unidades()}</Text>
-                                            </View>
+                                <Card style={styles.card}>
+                                    <View style={{ 
+                                        flexDirection: 'row', 
+                                        justifyContent: 'space-around', 
+                                        alignContent : 'center', 
+                                        display: "flex", 
+                                        marginTop : 5,
+                                        width: '100%' }}>
+                                            
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={styles.text_head}>CAJAS :</Text>
+                                            <Text style={[styles.text_head, { color: 'black', fontWeight: 'bold' }]}>{get_total_cajas()}</Text>
                                         </View>
-
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={styles.text_head}>UNIDADES :</Text>
+                                            <Text style={styles.text_head}>{get_total_unidades()}</Text>
+                                        </View>
                                     </View>
                                 </Card>
-                                
+
                             </View>
 
                             <ScrollView style={{ marginBottom: 150, marginTop: 10 }}>
@@ -128,13 +130,14 @@ const ListComponentModal: React.FC<props> = (props) => {
                                                 <Card
                                                     style={{
                                                         borderRadius: 10,
-                                                        backgroundColor: '#1a1a1a',
+                                                        backgroundColor: 'white',
                                                         height: 75,
                                                         alignItems: 'center', // Centra los elementos en el eje principal (horizontal)
                                                         justifyContent: 'center', // Centra los elementos en el eje secundario (vertical)
                                                         borderColor: head_valor,
                                                         borderWidth: 1,
-                                                        marginBottom: 5
+                                                        marginBottom: 5,
+                                                        elevation: 10
                                                     }}
                                                     onPress={() => { checkIsCheck(item) }}
                                                     key={item.factura_id}
@@ -160,16 +163,16 @@ const ListComponentModal: React.FC<props> = (props) => {
                     :
 
                     <View style={{ alignSelf: 'center', alignItems: 'center', top: 200 }}>
-                        <ActivityIndicator animating={openLog} size={120} color="white" />
+                        <ActivityIndicator animating={openLog} size={120} color="#FF66FF" />
                     </View>
 
             }
             {
                 FilterArr.length === 0 && openLog === false &&
-                <View style={{ alignSelf: 'center', display: 'flex', flexDirection: 'column' }}>
-                    <Text style={{ color: 'white', fontSize: 40 }}>Facturas</Text>
+                <View style={{ alignSelf: 'center', display: 'flex', flexDirection: 'column', width: '80%' }}>
+                    <Text style={{ color: 'grey', fontSize: 40 }}>Facturas En Proceso</Text>
                     <Text style={{ color: 'grey', fontSize: 20, top: 120 }}>Detalle</Text>
-                    <Text style={{ color: 'grey', fontSize: 20, width: 400, marginTop: 140 }}>Las facturas de esta declaración de envio están en transito actualmente.</Text>
+                    <Text style={{ color: 'grey', fontSize: 20, width: 'auto', marginTop: 140 }}>Las facturas de esta declaración de envio están en transito actualmente.</Text>
                 </View>
             }
 
@@ -218,7 +221,7 @@ const styles = StyleSheet.create({
     sp_text: {
         fontFamily: 'system-ui',
         fontSize: windowWithd * 0.027,
-        color: 'white',
+        color: 'black',
         fontWeight: '700'
     },
     sp_text_head: {
@@ -241,5 +244,17 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 7,
         height: '100%', // Ocupar todo el espacio vertical disponible
+    },
+
+    //---------------------------------------------------------------------
+
+    card: {
+        borderRadius: 5,
+        backgroundColor: '#FF66FF',
+        height: 30, // Ajusta la altura según tu necesidad
+        marginTop : 5,
+        marginLeft : 10,
+        marginRight : 10,
+        elevation: 40,
     },
 });

@@ -156,7 +156,7 @@ function LoginPage(navigator: any) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EBEDEF',
+        backgroundColor: '#F4F6F7',
         justifyContent: 'center',
         alignItems: 'center',
     },

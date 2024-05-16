@@ -21,7 +21,7 @@
     "@types/react-native": "^0.73.0",
     "axios": "^1.6.8",
     "react": "18.2.0",
-    "react-native": "0.74.1",
+    "react-native": "^0.74.1",
     "react-native-data-table": "^0.2.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.16.2",

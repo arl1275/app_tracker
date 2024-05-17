@@ -21,12 +21,15 @@ const ListToTransito = () => {
     const [encabezado, setEncabezado] = useState<any>();                   // this got the header of one declaracion de envio7
     const [ openModal , setOpenl] = useState<boolean>(false);              // this si to open the modal of chargin   
 
+    const SetData = async () => {
+        await setListFact(GetIsCheckedFacts());
+    }
 
     useEffect(() => {
-        setListFact(GetIsCheckedFacts());
-        if (listFact.length <= 0){ //&& modalVisible === true) {
-            load();
-        }
+        SetData();
+        //if (listFact.length == 0){ //&& modalVisible === true) {
+        //    load();
+        //}
     }, []);
 
     const ModalOpen=()=>{
@@ -39,13 +42,8 @@ const ListToTransito = () => {
 
     const get_encabezado = async () => {
         let params_: number = listFact[0]?.id_dec_env;
-
         const enca = await axios.get(db_dir + '/decEnv/app/getEncabezado', { params: { id_dec_env: params_ } });
         setEncabezado(enca.data.data);
-    }
-
-    const load = () => {
-        return (<ActivityIndicator size="large" color="#0000ff" />)
     }
 
     const FacturasToTransito = async () => {
@@ -108,7 +106,7 @@ const ListToTransito = () => {
             return (
                 <View style={{ alignContent: 'center', backgroundColor : '#F4F6F7' }}>
                     {/* <Text style={{ alignSelf: 'center', top: '20%', color: 'white' }}>SIN FACTURAS ESCANEADAS</Text> */}
-                    <Image source={processing} style={{ width: '40%', height: '40%', alignSelf: 'center', top: '30%', backgroundColor : '#F4F6F7'}} /> 
+                    <Image source={processing} style={{ width: '60%', height: '60%', alignSelf: 'center', top: '30%', backgroundColor : '#F4F6F7'}} /> 
                 </View>
             )
             

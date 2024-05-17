@@ -3,12 +3,14 @@ import ListToTransito from '../../components/GuardComponents/LisToTransit.compon
 import GuardiaNavbar from '../../components/GuardComponents/GuardNavbar.component';
 import { MainGuardView } from './GuardMainView';
 import HomeGuardView from '../../components/GuardComponents/home.component';
+import { ScannerConfig } from '../../components/Activity/ScannerConfig';
 
 export type RootStackGuardList = {
-    Inicio: undefined;
-    Despacho: undefined;
-    Transito: undefined,
-    Details: { itemId: number };
+    Inicio   : undefined;
+    Despacho : undefined;
+    Transito : undefined,
+    Barcode  : undefined,
+    Details  : { itemId: number } ;
 };
 
 function GuardiaRoutes() {
@@ -20,6 +22,7 @@ function GuardiaRoutes() {
                 <Stack.Screen name="Inicio" component={HomeGuardView} options={{ headerShown: false }} />
                 <Stack.Screen name="Transito" component={ListToTransito} options={{ headerShown: false }}/>
                 <Stack.Screen name="Despacho" component={MainGuardView} options={{ headerShown  : false}}/> 
+                <Stack.Screen name="Barcode" component={ScannerConfig} options={{ headerShown  : false}}/> 
             </Stack.Navigator>
         </>
 

@@ -2,7 +2,6 @@ import { EntregadorIndexView } from './pages/entregador/EntregadorMain.view';
 import LoginPage from './pages/login/login.page';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import GuardiaRoutes from './pages/guardia/guard_navigate';
 
 export type RootStackParamList = {

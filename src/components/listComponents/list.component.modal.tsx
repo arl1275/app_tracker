@@ -59,7 +59,7 @@ const ListComponentModal: React.FC<props> = (props) => {
 
     const checkIsCheck = (it: Facturas) => {
         if (it.is_check) {
-            Alert.alert('ERROR', 'factura ya validada');
+            Alert.alert('Factura Escaneada');
         } else {
             setSee(true);
             setSelectFact(it);
@@ -123,7 +123,7 @@ const ListComponentModal: React.FC<props> = (props) => {
                                 {
                                     data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
                                         let valor = item.is_check != true ? '#FFB42A' : item.is_Sinchro === true ? '#A5D6A7' : '#239B56';
-                                        let head_valor = item.is_check != true ? '#FF6600' : item.is_Sinchro === true ? '#00FFFF' : '#00FF66';
+                                        let head_valor = item.is_check != true ? '#E64A19' : item.is_Sinchro === true ? '#00FFFF' : '#00FF66';
                                         return (
                                             <View style={{ alignSelf: "center", width: '95%', marginBottom: 10 }} key={item.factura_id}>
 
@@ -131,13 +131,15 @@ const ListComponentModal: React.FC<props> = (props) => {
                                                     style={{
                                                         borderRadius: 10,
                                                         backgroundColor: 'white',
-                                                        height: 75,
+                                                        height: 'auto',
                                                         alignItems: 'center', // Centra los elementos en el eje principal (horizontal)
                                                         justifyContent: 'center', // Centra los elementos en el eje secundario (vertical)
                                                         borderColor: head_valor,
-                                                        borderWidth: 1,
+                                                        borderWidth: 1.2,
                                                         marginBottom: 5,
-                                                        elevation: 10
+                                                        elevation: 15,
+                                                        paddingTop : 10,
+                                                        paddingBottom : 10
                                                     }}
                                                     onPress={() => { checkIsCheck(item) }}
                                                     key={item.factura_id}
@@ -148,7 +150,7 @@ const ListComponentModal: React.FC<props> = (props) => {
                                                         <Text style={[styles.sp_text, { width: '20%' }]}>{item.lista_empaque}</Text>
                                                         <Text style={[styles.sp_text, { width: '30%' }]}>{item.clientenombre}</Text>
                                                         <Text style={[styles.sp_text, { width: '20%' }]}>{item.cant_cajas}</Text>
-                                                        <Text style={[styles.sp_text, { width: '5%' }]}>{item.cant_unidades}</Text>
+                                                        <Text style={[styles.sp_text, { width: '7%' }]}>{item.cant_unidades}</Text>
                                                     </View>
 
                                                 </Card>
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     },
     sp_text: {
         fontFamily: 'system-ui',
-        fontSize: windowWithd * 0.027,
+        fontSize: windowWithd * 0.025,
         color: 'black',
         fontWeight: '700'
     },

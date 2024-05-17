@@ -13,7 +13,7 @@ import { Icon } from 'react-native-paper';
 const back = require('../../assets/images/forest.jpg');
 
 
-function LoginPage(navigator: any) {
+function LoginPage() {
     const { setUser, getType } = UserStorage();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [openl, setOpenl] = useState(false);
@@ -22,7 +22,7 @@ function LoginPage(navigator: any) {
         _Password: ''
     });
 
-    const session_is_save = async () => {
+    const SessionIsOpen = async () => {
         const UL: number = await getType();
         if (UL == 3) {
             navigation.navigate('Entregador')
@@ -34,7 +34,7 @@ function LoginPage(navigator: any) {
     }
 
     useEffect(() => {
-        session_is_save();
+        SessionIsOpen();
     }, [])
 
 

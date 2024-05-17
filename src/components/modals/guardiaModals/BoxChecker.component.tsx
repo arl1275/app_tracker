@@ -44,10 +44,10 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
             if (dat === counter && dat != 0) {
                 setSee2(false);
                 UpdateIsChecked(fact?.factura);
-                Alert.alert('FINALIZADO');
                 setCounter(0);
                 setData([]);
                 close();
+                Alert.alert('FINALIZADO');
             }
         }
     }, [counter]);
@@ -117,13 +117,14 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
             <View style={styles.modalOverlay}>
                 <View style={styles.centeredView}>
-                    <View style={{ width: '90%', height: 'auto', borderRadius: 15 }}>
+                    <View style={{ width: '90%', height: 'auto'}}>
 
-                        <View style={{ backgroundColor: '#1B2631', borderRadius: 0, borderTopColor: '#00FFFF', borderTopWidth: 7, width: '100%' }}>
+                        <View style={{ backgroundColor: 'white', width: '100%' , borderRadius : 15}}>
 
                             <View style={{ marginBottom : 7, flexDirection : 'row', justifyContent : 'space-between'}}>
+
                                 <View style={{ marginLeft : 10, marginTop : 5 }}>
-                                    <Icon name={'eye'} color={"white"} size={25} onPress={() => OpenDetail()} />
+                                    <Icon name={'eye'} color={"black"} size={25} onPress={() => OpenDetail()} />
                                 </View>
 
                                 <View style={{ marginRight : 10, marginTop : 5}}>
@@ -139,9 +140,10 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
                                 <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column' }}>
 
-                                    <Card style={{ margin: 7, alignSelf: 'center', backgroundColor: '#263238', width: '95%' }}>
+                                    <Card style={{ margin: 10, alignSelf: 'center', backgroundColor : 'white' , borderWidth : 1 , borderColor : 'black', width: '95%', elevation : 80 }}>
 
-                                        <View style={{ margin: 10 }}>
+                                        <View style={{ margin: 10 , paddingLeft : 20 , paddingRight : 20}}>
+
                                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                                 <Text style={[styles.title, { textAlign: 'right' }]}>FACTURA :</Text>
                                                 <Text style={styles.title}>{fact?.factura}</Text>
@@ -150,17 +152,18 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                                 <Text style={[styles.title, { textAlign: 'right' }]}>RUTA :</Text>
                                                 <Text style={styles.title}>{fact?.lista_empaque}</Text>
                                             </View>
-                                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={[styles.title, { textAlign: 'right' }]}>CLIENTE :</Text>
-                                                <Text style={styles.title}>{fact?.clientenombre}</Text>
+                                            <View style={{ display: 'flex' , flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                <Text style={[styles.title , { textAlign: 'right' }]}>CLIENTE :</Text>
+                                                <Text style={[styles.title , { textAlign: 'right' , width : '70%'}]}>{fact?.clientenombre}</Text>
                                             </View>
+
                                         </View>
 
                                     </Card>
 
-                                    <Card style={{ backgroundColor: '#212F3C', marginBottom: 10, borderRadius: 7, alignSelf: 'center', width: '95%' }}>
+                                    <Card style={{ backgroundColor: 'white', marginBottom: 10, borderRadius: 7, alignSelf: 'center', borderColor : 'black', borderWidth : 1 , width: '95%', elevation : 15 }}>
                                         <View style={{ margin: 4, display: 'flex', flexDirection: 'column', alignSelf: 'center' }}>
-                                            <Text style={{ color: 'white', fontSize: 60, fontFamily: 'system-ui', alignSelf: 'center' }}> {counter}/{fact?.cant_cajas} </Text>
+                                            <Text style={{ color: 'black', fontSize: 60, fontFamily: 'system-ui', alignSelf: 'center' }}> {counter}/{fact?.cant_cajas} </Text>
                                             <TextInput
                                                 ref={inputRef}
                                                 style={{}}
@@ -182,7 +185,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                             {
                                 see2 === true &&
                                 <View style={{ height: 'auto' }}>
-                                    <Card style={{ alignSelf: 'center', width: '90%', height: 100, margin: 10, backgroundColor: '#1B2631' }}>
+                                    <Card style={{ alignSelf: 'center', width: '90%', height: 100, margin: 10, backgroundColor: 'white' }}>
                                         <ScrollView>
                                             {
                                                 Array.isArray(Boxes) ?
@@ -225,7 +228,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         width: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
     },
     modalContent: {
         zIndex: 1, // Ensure the content is above the overlay
@@ -261,7 +264,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontFamily: 'system-ui',
         fontSize: windowWithd * 0.023,
-        color: 'white',
+        color: 'black',
         fontWeight: '700'
     },
     textbody: {

@@ -40,37 +40,6 @@ export function MainGuardView(){
         get_data();
     }, [])
 
-    const handler_session_close_entregador = async () => {
-            Alert.alert(
-                'Confirmar cierre de sesión',
-                '¿Estás seguro de que deseas cerrar la sesión?, puede que tengas FACTURAS PENDIENTES',
-                [
-                    {
-                        text: 'Cancelar',
-                        style: 'cancel',
-                    },
-                    {
-                        text: 'Aceptar',
-                        onPress: async () => {
-
-                            setOpenl(true);
-                            let res = await closeSession();
-
-                            if(res === true){
-                                setOpenl(false);
-                                navigation.navigate('Home');
-                            }else{
-                                setOpenl(false);
-                                Alert.alert('ERROR AL CERRAR SESION')
-                            }
-                            
-                        },
-                    },
-                ],
-            );
-        
-    }
-
     const get_data = async () => {
         setLoading(true);
         let nombre =  await getUser();
@@ -94,15 +63,7 @@ export function MainGuardView(){
         setShowResumenChecked_List(true);
     }
 
-    const hadler_picker = async (value: any) => {
-        if (value === '0') {
-            handler_session_close_entregador();   
 
-        }
-        else {
-            setSelectedValue(value);
-        }
-    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -156,7 +117,7 @@ export function MainGuardView(){
                                             style={
                                                 {
                                                     fontSize: 12,
-                                                    backgroundColor: 'white',
+                                                    backgroundColor: '#F2F3F4',
                                                     color: 'black'
                                                 }} />
                                         {

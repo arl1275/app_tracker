@@ -4,6 +4,7 @@ import SignatureCapture, { SaveEventParams } from 'react-native-signature-captur
 import RNFS from 'react-native-fs';
 import useFacturaStore from '../../storage/storage';
 import { Card } from 'react-native-paper';
+import { Facturas } from '../../interfaces/facturas';
 
 interface Props {
   setIsEmpty: (val: boolean) => void;   // this is to check if the sing is empty
@@ -18,8 +19,14 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
   const { data, fetchData, updateFactura, getFacturaById, updateSing } = useFacturaStore();
 
   const saveNameFileSing = () => {
-    const dataFact = getFacturaById(id);
-    return defRoute + dataFact.factura_id.toString() + '.png';
+    const dataFact : Facturas | null = getFacturaById(id);
+    if(dataFact != null){
+      return defRoute + dataFact.factura_id.toString() + '.png';
+    }else{
+      //Alert.alert('ERROR', 'Error al guardar el nombre de la foto')
+      return null
+    }
+    
   }
 
   const saveSign = () => {
@@ -39,6 +46,10 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
       const oldPath = result.pathName;
       const newPath = saveNameFileSing();
 
+      if(newPath == null){
+          throw Error;
+      }
+
       await RNFS.moveFile(oldPath, newPath);
       console.log('Image renamed :', newPath);
 
@@ -46,8 +57,10 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
       updateSing(id, result.encoded);
       isnext(true);
       Alert.alert('FINALIZADO', 'Se guardo la firma')
+
     } catch (err) {
       console.log('Error renaming image:', err);
+      Alert.alert('error' , 'error al generar nombre de foto')
     }
   };
 
@@ -57,8 +70,8 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
   };
 
   return (
-    <View style={{ backgroundColor : '#1C2833' }}>
-      <View>
+    <View style={{ backgroundColor : 'white' }}>
+      <View style={{ borderWidth : 1 , borderColor : 'grey', elevation : 10}}>
         <SignatureCapture
           style={{ height: 300 }} // Ajusta la altura según sea necesario
           ref={signatureRef}
@@ -71,7 +84,7 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
         />
       </View>
 
-      <Text style={{ alignSelf: 'center', color: 'white', fontSize: 10 }}>FIRME EN ESTA AREA</Text>
+      <Text style={{ alignSelf: 'center', color: 'black', fontSize: 10 }}>FIRME EN ESTA AREA</Text>
     </View>
 
   );

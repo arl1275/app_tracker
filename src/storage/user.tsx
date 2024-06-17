@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { UserInterface } from '../interfaces/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
+import isConnectedToInternet from '../utils/network_conn';
 
 interface UserProps {
     data: UserInterface;
@@ -57,23 +58,40 @@ const UserStorage: any = create<UserProps>((set) => ({
 
     closeSession: async () => {
         try {
-            await AsyncStorage.removeItem('user');
-            await AsyncStorage.removeItem('user');
-            return true;
+            const isconn = await isConnectedToInternet();
+            if (isconn) {
+                await AsyncStorage.removeItem('user');
+                set({
+                    data: {
+                        id_user: 0,
+                        nombre: '',
+                        active: false,
+                        qr: '',
+                        cod_empleado: 0,
+                        role: 0,
+                        type_: 0
+                    }
+                });
+                return true;
+            } else {
+                Alert.alert('Conexion', 'No está dentro de la red Empresarial. No puede cerrar la sesión.');
+                return false;
+            }
         } catch (error) {
-            Alert.alert('no se borro usuario')
-            console.log('ERROR PARA CERRAR SESION', error);
+            Alert.alert('No se borró el usuario');
+            console.error('ERROR PARA CERRAR SESION', error);
             return false;
         }
     },
 
     getType : async () => {
         try {
-            const { data } = await UserStorage.getState();
+            const { data } = await UserStorage.getState('user');
+            //console.log('valores :: : ::: ', data)
             return data.type_;
         } catch (error) {
             console.log('ERROR PARA OBTENER EL USUARIO');
-            return null;
+            return 0;
         }
     }
 

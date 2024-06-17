@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, Text, View, StyleSheet, ScrollView, Alert, ActivityIndicator, SafeAreaView } from "react-native";
+import { Dimensions, Text, View, StyleSheet, ScrollView, Alert, ActivityIndicator, Platform } from "react-native";
 import { Facturas } from "../../interfaces/facturas";
 import { Card } from 'react-native-paper';
 import useGuardList from "../../storage/gaurdMemory";
 import BoxChecker from "../modals/guardiaModals/BoxChecker.component";
 import db_dir from "../../config/db";
 import axios from "axios";
+import { SafeAreaView } from "react-native-safe-area-context";
 const windowWithd = Dimensions.get('window').width;
 
 interface props {
@@ -18,7 +19,7 @@ const ListComponentModal: React.FC<props> = (props) => {
     const [FilterArr, setFilterArr] = useState<any[]>([]);
     const [selectFact, setSelectFact] = useState<Facturas | null>(null);
     const { data, CargaData } = useGuardList();
-
+    const TotalFacturas: number | null = data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).length
     const [openLog, setOpenLog] = useState(false);
 
 
@@ -61,8 +62,8 @@ const ListComponentModal: React.FC<props> = (props) => {
         if (it.is_check) {
             Alert.alert('Factura Escaneada');
         } else {
-            setSee(true);
             setSelectFact(it);
+            setSee(true);
         }
     }
 
@@ -87,49 +88,45 @@ const ListComponentModal: React.FC<props> = (props) => {
     }
 
     return (
-        <SafeAreaView>
+        <View style={{ maxHeight : 'auto', marginBottom : '40%'}}>
             {
                 openLog === false && FilterArr.length > 0 ?
 
-                    <View >
-                        <View>
+                    <View>
+                        <View style={{ height : '100%'}}>
                             <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
+                            <Card style={styles.card}>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-around',
+                                    alignContent: 'center',
+                                    display: "flex",
+                                    marginTop: 5,
+                                    //width: '100%' 
+                                }}>
 
-                            <View>
-
-                                <Card style={styles.card}>
-                                    <View style={{ 
-                                        flexDirection: 'row', 
-                                        justifyContent: 'space-around', 
-                                        alignContent : 'center', 
-                                        display: "flex", 
-                                        marginTop : 5,
-                                        width: '100%' }}>
-                                            
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <Text style={styles.text_head}>CAJAS :</Text>
-                                            <Text style={[styles.text_head, { color: 'black', fontWeight: 'bold' }]}>{get_total_cajas()}</Text>
-                                        </View>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <Text style={styles.text_head}>UNIDADES :</Text>
-                                            <Text style={styles.text_head}>{get_total_unidades()}</Text>
-                                        </View>
+                                    <Text style={{ color: 'white' }}>Facturas : {TotalFacturas}</Text>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={styles.text_head}>CAJAS :</Text>
+                                        <Text style={[styles.text_head, { color: 'white', fontWeight: 'bold' }]}>{get_total_cajas()}</Text>
                                     </View>
-                                </Card>
-
-                            </View>
-
-                            <ScrollView style={{ marginBottom: 150, marginTop: 10 }}>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={styles.text_head}>UNIDADES :</Text>
+                                        <Text style={styles.text_head}>{get_total_unidades()}</Text>
+                                    </View>
+                                </View>
+                            </Card>
+                            <ScrollView style={{ marginTop: 5 }}>
                                 {
                                     data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
                                         let valor = item.is_check != true ? '#FFB42A' : item.is_Sinchro === true ? '#A5D6A7' : '#239B56';
-                                        let head_valor = item.is_check != true ? '#E64A19' : item.is_Sinchro === true ? '#00FFFF' : '#00FF66';
+                                        let head_valor = item.is_check != true ? '#616161' : item.is_Sinchro === true ? '#00FFFF' : '#00FF66';
                                         return (
                                             <View style={{ alignSelf: "center", width: '95%', marginBottom: 10 }} key={item.factura_id}>
 
                                                 <Card
                                                     style={{
-                                                        borderRadius: 10,
+                                                        borderRadius: 15,
                                                         backgroundColor: 'white',
                                                         height: 'auto',
                                                         alignItems: 'center', // Centra los elementos en el eje principal (horizontal)
@@ -138,8 +135,8 @@ const ListComponentModal: React.FC<props> = (props) => {
                                                         borderWidth: 1.2,
                                                         marginBottom: 5,
                                                         elevation: 15,
-                                                        paddingTop : 10,
-                                                        paddingBottom : 10
+                                                        paddingTop: 10,
+                                                        paddingBottom: 10
                                                     }}
                                                     onPress={() => { checkIsCheck(item) }}
                                                     key={item.factura_id}
@@ -164,14 +161,14 @@ const ListComponentModal: React.FC<props> = (props) => {
 
                     :
 
-                    <View style={{ alignSelf: 'center', alignItems: 'center', top: 200 }}>
-                        <ActivityIndicator animating={openLog} size={120} color="#FF66FF" />
+                    <View style={{ alignSelf: 'center', alignItems: 'center', top: 200, height: '100%' }}>
+                        <ActivityIndicator animating={openLog} size={120} color="#E91E63" />
                     </View>
 
             }
             {
                 FilterArr.length === 0 && openLog === false &&
-                <View style={{ alignSelf: 'center', display: 'flex', flexDirection: 'column', width: '80%' }}>
+                <View style={{ alignSelf: 'center', display: 'flex', flexDirection: 'column', width: '80%', height: '100%' }}>
                     <Text style={{ color: 'grey', fontSize: 40 }}>Facturas En Proceso</Text>
                     <Text style={{ color: 'grey', fontSize: 20, top: 120 }}>Detalle</Text>
                     <Text style={{ color: 'grey', fontSize: 20, width: 'auto', marginTop: 140 }}>Las facturas de esta declaración de envio están en transito actualmente.</Text>
@@ -180,7 +177,7 @@ const ListComponentModal: React.FC<props> = (props) => {
 
 
 
-        </SafeAreaView>
+        </View>
     )
 
 };
@@ -195,7 +192,7 @@ const styles = StyleSheet.create({
     },
     text_head: {
         color: 'white',
-        fontSize: windowWithd * 0.03,
+        fontSize: windowWithd * 0.025,
         fontFamily: 'system-ui',
         marginLeft: 10
     },
@@ -251,12 +248,12 @@ const styles = StyleSheet.create({
     //---------------------------------------------------------------------
 
     card: {
-        borderRadius: 5,
-        backgroundColor: '#FF66FF',
+        borderRadius: 50,
+        backgroundColor: 'black',
         height: 30, // Ajusta la altura según tu necesidad
-        marginTop : 5,
-        marginLeft : 10,
-        marginRight : 10,
+        marginTop: 5,
+        marginLeft: 10,
+        marginRight: 10,
         elevation: 40,
     },
 });

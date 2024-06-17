@@ -19,20 +19,24 @@ const ListToTransito = () => {
     const inputRef = useRef<TextInput>(null);                              // this is to check the camion and entregador 
     const [Value_, setValue_] = useState('');                              // this is used as well to check camion and entregador
     const [encabezado, setEncabezado] = useState<any>();                   // this got the header of one declaracion de envio7
-    const [ openModal , setOpenl] = useState<boolean>(false);              // this si to open the modal of chargin   
+    const [openModal, setOpenl] = useState<boolean>(false);                // this si to open the modal of chargin   
+    const [dibisable, setDibisable] = useState<boolean>(true);             // this allows or deny to press the button
 
     const SetData = async () => {
-        await setListFact(GetIsCheckedFacts());
+        await setListFact(await GetIsCheckedFacts());
     }
 
     useEffect(() => {
+        if (camion != '' && transportista != '') {
+            setDibisable(false);
+        }
+    }, [camion, transportista])
+
+    useEffect(() => {
         SetData();
-        //if (listFact.length == 0){ //&& modalVisible === true) {
-        //    load();
-        //}
     }, []);
 
-    const ModalOpen=()=>{
+    const ModalOpen = () => {
         setOpenl(!openModal);
     }
 
@@ -48,10 +52,9 @@ const ListToTransito = () => {
 
     const FacturasToTransito = async () => {
         try {
-            ModalOpen();
             if (!camion || !transportista) {
-                Alert.alert('ERROR DATOS', 
-                'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.');
+                Alert.alert('ERROR DATOS',
+                    'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.');
             } else {
 
                 let body: number[] = listFact.map((item) => item.factura_id);
@@ -67,18 +70,18 @@ const ListToTransito = () => {
                 }
             }
         } catch (error) {
-
             console.error("Error:", error);
-        }finally{
+        } finally {
             ModalOpen();
+            setOpenl(false);
         }
     };
+
 
     const handleBarcodeScan = () => {
         let t = Value_;
         if (t.length > 0) {
             if (listFact) {
-
                 if (encabezado[0]?.placa === t) { //  listFact.some(item => item.placa === t)
                     setCamion(t);
                     play_sound(true)
@@ -93,7 +96,6 @@ const ListToTransito = () => {
                     play_sound(false);
                     setValue_('');
                 }
-
             } else {
                 Alert.alert('NO PERTENECE A ESTA DECLARACION DE ENVIO');
                 play_sound(false);
@@ -102,34 +104,44 @@ const ListToTransito = () => {
         setValue_('');
     };
 
-    if ( listFact.length === 0 ){
-            return (
-                <View style={{ alignContent: 'center', backgroundColor : '#F4F6F7' }}>
-                    {/* <Text style={{ alignSelf: 'center', top: '20%', color: 'white' }}>SIN FACTURAS ESCANEADAS</Text> */}
-                    <Image source={processing} style={{ width: '60%', height: '60%', alignSelf: 'center', top: '30%', backgroundColor : '#F4F6F7'}} /> 
-                </View>
-            )
-            
+    if (listFact.length === 0) {
+        return (
+            <View style={{ alignContent: 'center', backgroundColor: '#F4F6F7', height : '100%'}}>
+                <Image source={processing} style={{ width: '60%', height: '60%', alignSelf: 'center', top: '10%', backgroundColor: '#F4F6F7' }} />
+                <Text style={{ color : 'grey' , fontSize : 30 , alignSelf : 'center', marginTop : 20 }}>Sin Facturas para Transito</Text>
+            </View>
+        )
+
     } else {
         return (
-            <View>
-                {
-                    openModal && < LoadingModal message="ENVIANDO A TRANSITO" visible={openModal}/>
-                }
+            <View style={{ height: '100%' }}>
+                < LoadingModal message="ENVIANDO A TRANSITO" visible={openModal} />
+
 
                 <View style={styles.headSty}>
 
                     <View style={styles.buttonContainer}>
                         <Text style={styles.headTitle}>DESPACHO A TRANSITO</Text>
 
-                        <TouchableOpacity style={styles.button} onPress={() => { FacturasToTransito(); }}>
-                            <Text style={styles.buttonText}>FINALIZAR</Text>
+                        <TouchableOpacity
+                            style={[{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '30%'
+                            },
+                            dibisable ? styles.buttonUnDibisable : styles.buttonDibisable]}
+                            onPress={() => { ModalOpen(); FacturasToTransito(); }} disabled={dibisable}>
+                            {
+                                openModal ? <ActivityIndicator size={'small'} color={'white'}/>: <Text style={[styles.buttonText, { color: dibisable ? 'grey' : 'white' }]}>FINALIZAR</Text>
+                            }
+                            
+
                         </TouchableOpacity>
 
                     </View>
 
-                    <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row', width: '100%', marginBottom : 5 }}>
-                        <View style={{ width: '80%', paddingLeft : 20, paddingRight : 10}}>
+                    <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row', width: '100%', marginBottom: 5 }}>
+                        <View style={{ width: '80%', paddingLeft: 20, paddingRight: 10 }}>
 
                             <View style={{ justifyContent: 'space-between', display: "flex", flexDirection: 'row', width: '100%' }}>
                                 <Text style={{ color: 'black', fontSize: 15 }}>Camion</Text>
@@ -153,11 +165,11 @@ const ListToTransito = () => {
 
 
                         <View style={styles.descrip}>
-                            <View style={[styles.headtext, { backgroundColor: camion === '' ? '#FF6600' : '#00FF66', width : 'auto'}]}>
-                                <Icon source={'truck'} color={"black"} size={25} />
+                            <View style={[styles.headtext, { backgroundColor: camion === '' ? 'black' : '#E91E63', width: 'auto' }]}>
+                                <Icon source={'truck'} color={"white"} size={25} />
                             </View>
-                            <View style={[styles.headtext, { backgroundColor: transportista === '' ? '#FF6600' : '#00FF66', width : 'auto' }]}>
-                                <Icon source={'account'} color={"black"} size={25}/>
+                            <View style={[styles.headtext, { backgroundColor: transportista === '' ? 'black' : '#E91E63', width: 'auto' }]}>
+                                <Icon source={'account'} color={"white"} size={25} />
                             </View>
                         </View>
 
@@ -188,14 +200,15 @@ const ListToTransito = () => {
                             <DataTable.Title><Text style={styles.tableheader}>CAJAS</Text></DataTable.Title>
                             <DataTable.Title><Text style={styles.tableheader}>UNIDADES</Text></DataTable.Title>
                         </DataTable.Header>
-                        <ScrollView style={{ height: '90%' }}>
+
+                        <ScrollView>
                             {
                                 listFact.map((item) => (
                                     <DataTable.Row key={item.factura_id} style={styles.tableRow}>
                                         <DataTable.Cell><Text style={styles.tableText}>{item.lista_empaque}</Text></DataTable.Cell>
                                         <DataTable.Cell><Text style={styles.tableText}>{item.factura}</Text></DataTable.Cell>
-                                        <DataTable.Cell><Text style={styles.tableText}>{item.clientenombre}</Text></DataTable.Cell>
-                                        <DataTable.Cell><Text style={[{ textAlign : 'right', color : 'black' }]}>{item.cant_cajas}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={styles.textcliente}>{item.clientenombre}</Text></DataTable.Cell>
+                                        <DataTable.Cell><Text style={[{ textAlign: 'right', color: 'black' }]}>{item.cant_cajas}</Text></DataTable.Cell>
                                         <DataTable.Cell><Text style={styles.tableText}>{item.cant_unidades}</Text></DataTable.Cell>
                                     </DataTable.Row>
                                 ))
@@ -228,7 +241,7 @@ const styles = StyleSheet.create({
         margin: 15,
         backgroundColor: 'white',
         borderRadius: 10,
-        elevation : 10
+        elevation: 10
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -237,24 +250,34 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         width: '90%',
         borderBottomWidth: 1,
-        borderBottomColor: 'green',
+        borderBottomColor: 'black',
         marginBottom: 7
     },
-    button: {
+    buttonDibisable: {
         marginTop: 10,
         marginBottom: 10,
-        borderRadius: 0,
-        backgroundColor: 'none',
+        borderRadius: 20,
+        backgroundColor: '#E91E63',
         position: 'absolute',
         right: 4,
         borderLeftWidth: 2,
         borderLeftColor: 'white'
     },
+    buttonUnDibisable: {
+        marginTop: 10,
+        marginBottom: 10,
+        borderRadius: 20,
+        backgroundColor: '#ECEFF1',
+        position: 'absolute',
+        right: 4,
+        borderLeftWidth: 2,
+        borderLeftColor: 'white',
+        height: '60%',
+    },
     buttonText: {
-        color: 'green',
         fontWeight: 'bold',
         fontSize: windowWithd * 0.025,
-        marginLeft: 30
+        alignSelf: 'center'
     },
     Textplaces: {
         backgroundColor: 'white',
@@ -293,14 +316,14 @@ const styles = StyleSheet.create({
         width: '95%',
         alignSelf: 'center',
         backgroundColor: 'white',
-        borderRadius : 15,
-        elevation : 15,
-        height : '100%',
-        marginBottom : 20
+        borderRadius: 15,
+        elevation: 15,
+        height: 'auto',
+        marginBottom: 20
     },
     tableheader: {
         color: 'black',
-        fontSize: windowWithd * 0.025
+        fontSize: windowWithd * 0.020
     },
     tableRow: {
         backgroundColor: '#ECF0F1',
@@ -310,5 +333,10 @@ const styles = StyleSheet.create({
         color: 'black',
         width: 'auto',
         fontSize: windowWithd * 0.025
+    },
+    textcliente: {
+        color: 'black',
+        width: '95%',
+        fontSize: windowWithd * 0.019
     }
 });

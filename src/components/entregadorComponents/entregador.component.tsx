@@ -11,71 +11,38 @@ import LoadingModal from "../Activity/activity.component";
 import boxChequerStorage from "../../storage/checkBoxes";
 import { box_to_check } from "../../interfaces/box";
 import BoxChecker_ent from "../modals/entregadorModals/BoxChequerEnt.component";
+import { Dimensions } from "react-native";
+const widthScreen = Dimensions.get('window').width;
 import UserStorage from "../../storage/user";
 
 const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    button: {
-        backgroundColor: '#A3E4D7',
-        borderRadius: 40,
-        display: 'flex',
-        width: '100%',
-        flexDirection: 'row'
-    },
-    buttonText: {
-        color: 'black',
-        fontSize: 16,
-        fontWeight: 'bold',
-        alignSelf: 'center'
-    },
-    buttonContainer: {
-        display: "flex",
-        marginVertical: '60%',
-        alignSelf: 'center',
-        width: "70%",
-        alignContent: 'center'
-    },
-    SinCheck: {
-        backgroundColor: '#E77F7F'
-    },
-    ConCkeck: {
-        backgroundColor: '#F7DC6F'
-    },
-    IsSynchro: {
-        backgroundColor: '#28B463'
-    },
-    floatingButton: {
-        backgroundColor: '#063970',
-        width: 50,
-        height: 50,
+    tableHeader: {
+        width: '95%',
+        backgroundColor: "black",
+        marginBottom: 5,
+        marginTop: 5,
+        borderWidth: 2,
+        borderColor: 'white',
         borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        bottom: 0,
-        right: 10,
-        elevation: 3, // Add shadow for Android
+        elevation: 10,
+        alignSelf: 'center',
+        height: '7%'
     },
+    tableRow: {
+        backgroundColor: "white",
+        width: '95%',
+        alignSelf: 'center'
+    }
 });
 
-interface FacturaProps {
-    id_fact: number;
-    fact: string;
-}
 
 function EntregadorListView() {
-    const [facturas, setFacturas] = useState<Facturas[]>([]);                                                   // set the facturas in the local array
+    const [facturas, setFacturas] = useState<Facturas[]>([]);
     const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);                                    //
     const [modalVisible, setModalVisible] = useState(false);
-    const { data, fetchData, updateFactura } = useFacturaStore();
-    const [loading, setLoading] = useState(false);
     const [see, setSee] = useState(false);
     const [fact_, setfact] = useState<Facturas>();
-    const { fetchData_ } = boxChequerStorage();
-    const { getUser } = UserStorage();
+    const { data, fetchData, updateFactura } = useFacturaStore();
 
     useEffect(() => {
         const fetchDataInterval = setInterval(() => {
@@ -87,64 +54,6 @@ function EntregadorListView() {
         };
     }, []);
 
-    //THIS FUNCTION IS TO SYNCRO THE FACTURAS;
-    const getEnTransitoFacts = async () => {
-        try {
-
-            const id_user = await getUser();
-            const data2 = await axios.get(db_dir + '/facturas/getEnTransFact', { params: { id: id_user.id_user } });
-
-            if (data2.data.data.length > 0) {
-                setFacturas(data2.data.data);
-
-                if (facturas.length === data.length) {
-                    Alert.alert('SINCRONIZACION', 'La lista de facturas esta actualizada');
-                } else {
-                    await updateFactura(facturas);
-                    setLoading(false);
-                }
-                if (facturas.length > 0) {
-                    syncroBoxes();
-                }
-                
-
-            } else {
-                setLoading(false);
-                Alert.alert('NO HAY FACTURAS A SINCRONIZAR PARA ESTE USUARIO');
-            }
-
-        } catch (err) {
-            console.log('ERROR AL SINCRONIZAR FACTURAS ENTREGADOR : ', err);
-            Alert.alert('ERROR AL SINCRONIZAR', 'Es posible que no tenga conexion a internet, favor revisar la conexion en los ajustes del telefono.');
-        }
-    }
-
-    //THIS FUNCTION IS TO SYNCRO THE BOXES THAT ARE PART OF THE FACTURAS;
-    const syncroBoxes = async () => {
-        try {
-            let props_cajas_facturas: FacturaProps[] = [];
-
-            if (facturas.length > 0) {
-                if (facturas.length > 0) {
-
-                    for (let i = 0; i < facturas.length; i++) {
-                        const element: Facturas = facturas[i];
-                        let val = {
-                            id_fact: element.factura_id,
-                            fact: element.factura
-                        }
-                        props_cajas_facturas.push(val);
-                    }
-                }
-            }
-            console.log('esto va como param ::: ', props_cajas_facturas);
-            const response = await axios.post(db_dir + '/facturas/app/getCajasOneFact', props_cajas_facturas);
-            const valores: box_to_check[] = response.data.data;
-            fetchData_(valores);
-        } catch (err) {
-            console.log('Error fetching data:', err);
-        }
-    };
 
     const openModal = () => {
         setModalVisible(true);
@@ -188,90 +97,50 @@ function EntregadorListView() {
         } else if (item.state_name === 'ENTREGADO') {
             return '#FFFF33';
         } else {
-            return '#FF0000';
+            return '0';
         }
     }
 
     return (
-        <View style={{ backgroundColor: '#0f0f0f', height: '100%' }}>{
-            data.length > 0 ? (
-                <View style={{ height: '100%' }}>
-                    <LoadingModal visible={loading} message="ESPERANDO FACTURAS" />
-                    <DataTable>
-                        <DataTable.Header
-                            style={
+        <View style={{ backgroundColor: 'white' }}>
+            {
+                data.length > 0 && (
+                    <View style={{ height: '100%' }}>
+                        <DataTable>
+                            <DataTable.Header style={styles.tableHeader}>
+                                <DataTable.Title><Text style={{ color: 'white', fontSize: widthScreen * 0.02 }}>CLIENTE</Text></DataTable.Title>
+                                <DataTable.Title><Text style={{ color: 'white', fontSize: widthScreen * 0.02 }}>FACTURA</Text></DataTable.Title>
+                                <DataTable.Title><Text style={{ color: 'white', fontSize: widthScreen * 0.02 }}>EMPAQUE</Text></DataTable.Title>
+                                <DataTable.Title><Text style={{ color: 'white', fontSize: widthScreen * 0.02 }}>CAJAS</Text></DataTable.Title>
+                                <DataTable.Title><Text style={{ color: 'white', fontSize: widthScreen * 0.02 }}>UNIDADES</Text></DataTable.Title>
+                                <DataTable.Title><Text style={{ color: 'white', fontSize: widthScreen * 0.02 }}>ESTADO</Text></DataTable.Title>
+                            </DataTable.Header>
+                            <ScrollView>
                                 {
-                                    width: '100%',
-                                    backgroundColor: "black",
-                                    marginBottom: 10,
-                                    marginTop: 10,
-                                    borderWidth: 2,
-                                    borderColor: 'white',
-                                    borderRadius: 10
+                                    data.map((item: Facturas) => {
+                                        let valor = color_choose(item);
+                                        return (
+                                            <DataTable.Row  key={item.factura_id} onPress={() => { setfact(item); BoxOrSing(item); }} 
+                                            style={[ styles.tableRow , { borderRightWidth : 4, borderRightColor : valor }]}>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', width : '95%' , margin: '5%'}}>{item.clientenombre}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black',}}>{item.factura}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.lista_empaque}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.cant_cajas}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.cant_unidades}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: 'bold', color: 'black' }}>{item.state_name === undefined ? 'PENDIENTE' : item.state_name}</Text></DataTable.Cell>
+                                            </DataTable.Row>
+                                        )
+                                    })
                                 }
-                            }>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>CLIENTE</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>FACTURA</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>EMPAQUE</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>CAJAS</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>UNIDADES</Text>
-                            </DataTable.Title>
-                            <DataTable.Title>
-                                <Text style={{ color: 'white' }}>ESTADO</Text>
-                            </DataTable.Title>
-                        </DataTable.Header>
-                        <ScrollView style={{ height: '78%' }}>
-                            {
-                                data.map((item: Facturas) => {
-                                    let valor = color_choose(item);
-                                    return (
-                                        <DataTable.Row
-                                            key={item.factura_id} onPress={() => { setfact(item); BoxOrSing(item); }}
-                                            style={{
-                                                backgroundColor: "#1a1a1a",//valor, 
-                                                borderWidth: 1,
-                                                borderColor: valor,
-                                                borderRadius: 7,
-                                                marginBottom: 10,
-                                                padding: 9,
-                                            }}>
-                                            <DataTable.Cell><Text style={{ fontSize: 10, fontWeight: '600', color: 'white' , margin : '5%' }}>{item.clientenombre}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: '400', color: 'white' }}>{item.factura}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: '400', color: 'white' , margin : '5%'}}>{item.lista_empaque}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: '400', color: 'white' , margin : '5%'}}>{item.cant_cajas}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: '400', color: 'white' , margin : '5%'}}>{item.cant_unidades}</Text></DataTable.Cell>
-                                            <DataTable.Cell><Text style={{ fontSize: 13, fontWeight: 'bold', color: 'white'}}>{item.state_name === undefined ? 'PENDIENTE' : item.state_name}</Text></DataTable.Cell>
-                                        </DataTable.Row>
-                                    )
-                                })
-                            }
-                        </ScrollView>
-                    </DataTable>
+                            </ScrollView>
+                        </DataTable>
 
 
-                    <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
-                    <BoxChecker_ent visible={see} close={close} tipe={1} fact={fact_} />
+                        <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
+                        <BoxChecker_ent visible={see} close={close} tipe={1} fact={fact_} />
 
-                </View >)
-                :
-                (
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={() => { getEnTransitoFacts(); }}>
-                            <IconButton icon={"refresh"} size={40} iconColor="black" />
-                            <Text style={styles.buttonText}>SINCRONIZAR FACTURAS</Text>
-                        </TouchableOpacity>
-                    </View>
-                )
-        }</View>
+                    </View >)
+            }</View>
     );
 
 }

@@ -14,41 +14,38 @@ interface box_checker {
 const boxChequerStorage : any = create<box_checker>((set)=>({
     data : [],
 
-    fetchData_ : ( newData_ : box_to_check[]) => {
-        set(() => {
-          
-            let newData: box_to_check[] = [];
-            let newFilteredData: box_to_check[] = []
-            const { data } = boxChequerStorage.getState();
-            const data_ : box_to_check[] = data;
-
-            if (data_.length > 0) {
-      
-              for (let i = 0; i < data_.length; i++) {
-                for (let j = 0; j < newData_.length; j++) {
-                  if (data_[i].caja !== newData_[j].caja) {
-                    newData.push(newData_[j]);
-                  }
-                }
-              }
-              
-              newFilteredData = [...data, ...newData];
+    fetchData_ : (newData_: box_to_check[]) => {
+      set(() => {
+        const { data } = boxChequerStorage.getState();
+        const data_: box_to_check[] = data;
     
-              AsyncStorage.setItem('boxData', JSON.stringify(newFilteredData)).catch((error) => {
-                console.error('Error saving data:', error);
-              });
-
-            } else {
-              //if not exist fill the Async Storage with all data
-              AsyncStorage.setItem('boxData', JSON.stringify(newData_)).catch((error) => {
-                console.error('Error saving data:', error);
-              });
-              //console.log('syncro from bk : ' ,AsyncStorage.getItem('boxData'))
-      
-            }
-            return { data: newData_ };
+        let newFilteredData: box_to_check[];
+    
+        if (data_.length > 0) {
+          // Crear un Set para almacenar las cajas existentes
+          const existingCajas = new Set(data_.map((box) => box.caja));
+    
+          // Filtrar las nuevas cajas que no existen en el Set
+          const filteredNewData = newData_.filter((newBox) => !existingCajas.has(newBox.caja));
+    
+          // Combinar los datos existentes con las nuevas cajas filtradas
+          newFilteredData = [...data_, ...filteredNewData];
+    
+          AsyncStorage.setItem('boxData', JSON.stringify(newFilteredData)).catch((error) => {
+            console.error('Error saving data:', error);
           });
-
+          console.log(' SE GUARDO LA DATA DE CAJAS DE FORMA LOCAL');
+    
+        } else {
+          // Si no hay datos existentes, guardar todas las nuevas cajas
+          AsyncStorage.setItem('boxData', JSON.stringify(newData_)).catch((error) => {
+            console.error('Error saving data:', error);
+          });
+          newFilteredData = newData_;
+        }
+    
+        return { data: newFilteredData };
+      });
     },
 
     validateBox : async (caja : string)=>{

@@ -8,12 +8,13 @@ import { RootStackParamList } from '../..';
 import { RootStackGuardList } from "../../pages/guardia/guard_navigate";
 
 const HomeGuardView = () => {
-    const { data , closeSession } = UserStorage();
+    const { data , closeSession} = UserStorage();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const BarNav = useNavigation<StackNavigationProp<RootStackGuardList>>();
 
     const ClossingSession = async () => {
-        await closeSession() ? navigation.navigate('Home') : Alert.alert('Cierre de Sesion', 'No se pudo realizar el cierre de sesion')   
+        const closed = await closeSession()
+        closed ? navigation.navigate('Home') : console.log('NO SE PUDO CERRAR LA SESSION'); 
     }
 
     return (

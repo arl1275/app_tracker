@@ -5,12 +5,13 @@ import axios from "axios";
 import db_dir from "../../config/db";
 import LoadingModal from "../../components/Activity/activity.component";
 import { IconButton } from "react-native-paper";
-import ListComponentModal from "../../components/listComponents/list.component.modal";  
+import ListComponentModal from "../../components/listComponents/list.component.modal";
 import { Picker } from "@react-native-picker/picker";
 import { EnterPage } from "../../components/Activity/enter.component";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../..";
+import { ScrollView } from "react-native-gesture-handler";
 const image = require('../../assets/images/Select-pana.png');
 
 interface dec_envio {
@@ -24,17 +25,13 @@ interface Props {
     setpage: (value: number) => void;
 }
 
-export function MainGuardView(){
-    const [ data, setData] = useState<dec_envio[]>([]);                                          // data to show in list
-    const [ selectedValue, setSelectedValue] = useState<string>('1');                             // THIS IS NOT WORKING
-    const [ selectedDecla, setSelectDeclar] = useState<number>(0);                               // this is to get the declaration in specific
-    const [ showResumenChecked_List, setShowResumenChecked_List] = useState<boolean>(false);     // data to show the checked list
-    const [ loading, setLoading] = useState(false);                                              // this is to update facturas data|
+export function MainGuardView() {
+    const [data, setData] = useState<dec_envio[]>([]);                                          // data to show in list
+    const [selectedDecla, setSelectDeclar] = useState<number>(0);                               // this is to get the declaration in specific
+    const [loading, setLoading] = useState(false);                                              // this is to update facturas data|
     const { closeSession, getUser } = UserStorage();
-    const [ openl, setOpenl] = useState<boolean>(false);
-    const [ user, setUser ] = useState<any>();
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-    const [ fastCheck_activate, setFastCheck_activate ] = useState<boolean>(false);
+    const [openl, setOpenl] = useState<boolean>(false);
+    const [user, setUser] = useState<any>();
 
     useEffect(() => {
         get_data();
@@ -42,7 +39,7 @@ export function MainGuardView(){
 
     const get_data = async () => {
         setLoading(true);
-        let nombre =  await getUser();
+        let nombre = await getUser();
         setUser(nombre);
         try {
             const valores = await axios.get(db_dir + '/decEnv/app/getDec_env');
@@ -53,87 +50,73 @@ export function MainGuardView(){
         setLoading(false);
     }
 
-    const to_Close = () => {
-        setShowResumenChecked_List(false);
-    }
-
-    const to_Open = () => {
-        to_Close();
-        setSelectDeclar(0);
-        setShowResumenChecked_List(true);
-    }
-
-
-
     return (
-        <View style={{ flex: 1 }}>
-            <LoadingModal visible={loading} message="ACTUALIZANDO FACTURAS" />
+        <View style={{ backgroundColor: '#ECEFF1', height: '100%' }}>
+            <View>
+                <LoadingModal visible={loading} message="ACTUALIZANDO FACTURAS" />
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={openl}
+                    onRequestClose={() => { }}>
+                    <EnterPage />
+                </Modal>
+                <View>
+                    <View style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        backgroundColor: 'white',
+                        margin: 10,
+                        borderRadius: 7,
+                        borderWidth: 1,
+                        borderColor: 'white',
+                        elevation: 20
+                    }}>
 
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={openl}
-                onRequestClose={() => { }}>
-                <EnterPage />
-            </Modal>
+                        <TouchableOpacity
+                            style={
+                                {
+                                    backgroundColor: 'white',
+                                    left: 15,
+                                    marginRight: 10,
+                                    alignItems: 'center'
 
+                                }}
+                            onPress={() => { get_data() }} >
+                            <IconButton icon={'update'} size={25} iconColor="#00FF66" />
+                        </TouchableOpacity>
 
-            <View style={{ backgroundColor: '#F0F3F4', height: '100%' }}>
-                {
-                    selectedValue == '1' &&
-                    <View>
-                        <View style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            backgroundColor: 'white',
-                            margin: 10,
-                            borderRadius: 7,
-                            borderWidth: 1,
-                            borderColor: 'white',
-                            elevation : 10
-                        }}>
-
-                            <TouchableOpacity
-                                style={
+                        <View style={styles.containePickerr}>
+                            <View style={styles.pickerContainer}>
+                                <Picker
+                                    selectedValue={selectedDecla}
+                                    style={styles.picker}
+                                    onValueChange={(itemValue) => { setSelectDeclar(itemValue); }} >
+                                    <Picker.Item label="PRESIONE PARA SELECCIONAR DECLARACION DE ENVIO" value="0"
+                                        style={
+                                            {
+                                                fontSize: 12,
+                                                backgroundColor: '#F2F3F4',
+                                                color: 'black'
+                                            }}
+                                    />
                                     {
-                                        backgroundColor: 'white',
-                                        left: 15,
-                                        marginRight: 10,
-                                        alignItems: 'center'
-
-                                    }}
-                                onPress={() => { get_data() }} >
-                                <IconButton icon={'update'} size={25} iconColor="#00FF66" />
-                            </TouchableOpacity>
-
-                            <View style={styles.containePickerr}>
-                                <View style={styles.pickerContainer}>
-                                    <Picker
-                                        selectedValue={selectedDecla}
-                                        style={styles.picker}
-                                        onValueChange={(itemValue) => { setSelectDeclar(itemValue); to_Close(); }} >
-                                        <Picker.Item label="PRESIONE PARA SELECCIONAR DECLARACION DE ENVIO" value="0"
-                                            style={
-                                                {
-                                                    fontSize: 12,
-                                                    backgroundColor: '#F2F3F4',
-                                                    color: 'black'
-                                                }} />
-                                        {
-                                            data.map((item) => (
-                                                <Picker.Item
-                                                    key={item.id}
-                                                    label={`DECLARACION     ${item.declaracion_env}`}
-                                                    value={item.id}
-                                                    style={{ fontSize: 15, backgroundColor: 'white', color: 'black' }}
-                                                />
-                                            ))}
-                                    </Picker>
-                                </View>
+                                        data.map((item) => (
+                                            <Picker.Item
+                                                key={item.id}
+                                                label={`DECLARACION     ${item.declaracion_env}`}
+                                                value={item.id}
+                                                style={{ fontSize: 15, backgroundColor: 'white', color: 'black' }}
+                                            />
+                                        ))}
+                                </Picker>
                             </View>
                         </View>
 
+                    </View>
+
+                    <View>
                         {
                             selectedDecla == 0 ?
                                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -147,10 +130,9 @@ export function MainGuardView(){
                                     <ListComponentModal dec_envio={selectedDecla} />
                                 </View>
                         }
-
                     </View>
-                }
 
+                </View>
             </View>
 
         </View>

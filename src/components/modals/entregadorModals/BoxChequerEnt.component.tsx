@@ -87,8 +87,7 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
     const getBoxes = async () => {
         try {
-            const x1 = await getcajasFacts(fact?.factura, fact?.factura_id);
-            setBoxes(x1);
+            setBoxes(await getcajasFacts(fact?.factura, fact?.factura_id));
         } catch (err) {
             console.log('NO SE PUDO OBTENER LAS CAJAS : ', err)
         }
@@ -106,10 +105,11 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                         animationType="fade"
                         transparent={true}
                         visible={visible}
-                        onRequestClose={() => { close }}>
+                        onRequestClose={() => { close }}
+                    >
                         <View style={styles.modalOverlay}>
                             <View style={styles.centeredView}>
-                                <Card style={{ backgroundColor: '#1B2631', borderRadius: 0, borderTopColor: '#FF0099', borderTopWidth: 7, width: '95%' }}>
+                                <Card style={{ backgroundColor: 'white', borderRadius: 15, width: '95%' }}>
 
                                     <View style={{ margin: 3 }}>
                                         <IconButton
@@ -120,14 +120,14 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                     </View>
 
                                     <View style={{ position: 'absolute', right: 10, top: 5 }}>
-                                        <IconButton icon={'eye'} iconColor={"white"} size={25} onPress={() => OpenDetail()} />
+                                        <IconButton icon={'eye'} iconColor={"black"} size={25} onPress={() => OpenDetail()} />
                                     </View>
 
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
 
                                         <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column' }}>
 
-                                            <Card style={{ margin: 7, alignSelf: 'center', backgroundColor: '#263238', width: '95%' }}>
+                                            <Card style={{ margin: 7, alignSelf: 'center', backgroundColor: '#EBEDEF', width: '95%' }}>
 
                                                 <View style={{ margin: 10 }}>
                                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -140,12 +140,13 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                                     </View>
                                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                                         <Text style={[styles.title, { textAlign: 'right' }]}>CLIENTE :</Text>
-                                                        <Text style={styles.title}>{fact?.clientenombre}</Text>
+                                                        <Text style={[styles.title, { textAlign: 'right', width: '80%' }]}>{fact?.clientenombre}</Text>
                                                     </View>
                                                 </View>
 
                                             </Card>
                                         </View>
+
                                     </View>
 
                                     <View style={{
@@ -154,9 +155,9 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                     }}>
                                         <View>
                                             <View style={{ display: 'flex', flexDirection: 'row', alignSelf: 'center' }}>
-                                                <IconButton icon={'inbox'} size={120} iconColor={'white'} />
+                                                <IconButton icon={'inbox'} size={120} iconColor={'grey'} />
                                                 <View>
-                                                    <Text style={{ color: 'white', fontSize: 70 }}> {counter}/{fact?.cant_cajas} </Text>
+                                                    <Text style={{ color: 'black', fontSize: 70 }}> {counter}/{fact?.cant_cajas} </Text>
                                                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                                                         <TextInput
                                                             ref={inputRef}
@@ -164,7 +165,7 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                                             value={Value_}
                                                             onChangeText={(text) => setValue_(text)}
                                                             onSubmitEditing={handleBarcodeScan}
-                                                            placeholderTextColor={'black'}
+                                                            placeholderTextColor={'grey'}
                                                             placeholder="BARCODE"
                                                             autoFocus
                                                             onBlur={() => inputRef.current?.focus()}
@@ -177,20 +178,36 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                         <Card>
                                             {
                                                 see2 === true &&
-                                                <View style={{ backgroundColor: '#1B2631' }}>
-                                                    <Card style={{ alignSelf: 'center', width: '90%', margin: 10, height: 100, backgroundColor: '#1B2631' }}>
+                                                <View style={{ backgroundColor: '#EAEDED', borderBottomLeftRadius : 15 , borderBottomRightRadius : 15 }}>
+                                                    <View style={{ alignSelf: 'center', width: '90%', margin: 10, height: 100 , borderWidth : 0, }}>
                                                         <ScrollView>
                                                             {
                                                                 Array.isArray(Boxes) ?
-                                                                    Boxes.map((item) => {
-                                                                        let ischeck = item.is_check === true ? '#00FFFF' : '#FF9900';
+                                                                    Boxes.map((item)  => {
+                                                                        let ischeck = item.is_check === true ? '#E91E63' : 'black';
                                                                         return (
-                                                                            <Text style={{ backgroundColor: ischeck, color: 'black' }} key={item.albaran}>{item.caja}</Text>
+                                                                            <View style={
+                                                                                {
+                                                                                    marginTop: 10,
+                                                                                    marginLeft: '3%',
+                                                                                    marginRight: '3%',
+                                                                                    marginBottom: 5,
+                                                                                    borderRadius: 15,
+                                                                                    backgroundColor: ischeck,
+                                                                                    display: 'flex',
+                                                                                    flexDirection: 'row',
+                                                                                    justifyContent: 'space-around',
+                                                                                    padding: 5
+                                                                                }
+                                                                            }>
+                                                                                <Text style={{ backgroundColor: ischeck, color: 'white' }} key={item.albaran}>{item.caja}</Text>
+                                                                                <Text style={{ backgroundColor: ischeck, color: 'white' }} key={item.albaran}>{item.numerocaja}</Text>
+                                                                            </View>
                                                                         )
                                                                     }) : <Text style={{ color: 'black' }}>SIN DATA</Text>
                                                             }
                                                         </ScrollView>
-                                                    </Card>
+                                                    </View>
                                                 </View>
                                             }
                                         </Card>
@@ -232,7 +249,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         width: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
+        backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent black
     },
     modalContent: {
         zIndex: 1, // Ensure the content is above the overlay
@@ -267,7 +284,8 @@ const styles = StyleSheet.create({
     title: {
         margin: 2,
         fontSize: 15,
-        color: 'white'
+        color: 'black',
+        fontWeight: 'bold'
     },
     textbody: {
         color: "#858585",

@@ -55,6 +55,7 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
         AsyncStorage.setItem('facturaData', JSON.stringify(facturas)).catch((error) => {
           console.error('Error saving data:', error);
         });
+        console.log('SE GUARDO DE FORMA LOCAL LAS FACTURAS')
         return { data: facturas };
       }
 
@@ -69,27 +70,27 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
         });
         //console.log('filtered_data : ', newFilteredData);
         return { data: newFilteredData };
+
       } else {
-        console.log('No new data to insert.');
+        console.log('No new data to insert LOCAL FACTURAS.');
         return { data };
       }
     });
   },
-
-
 
   // return all the data of one specific fact
   getFacturaById: (id: number) => {
     const { data } = useFacturaStore.getState();
     const factura = data.find((factura: Facturas) => factura.factura_id === id);
 
-    if (factura) {
-      console.log('INFO DE LA FACTURA:', factura);
+    if (factura.length > 0) {
+      return factura;
     } else {
       console.log('Factura not found with ID:', id);
+      return null
     }
 
-    return factura;
+    
   },
 
   //works for update the element if the fact has sing or not
@@ -182,37 +183,43 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
   getStorageEntregado: async () => {
     try {
       const storage = await AsyncStorage.getItem('facturaData');
-
       if (storage !== null) {
         let data: Facturas[] = JSON.parse(storage);
         const factData: Facturas[] = data.filter((factura) => factura.state_name === 'FIRMADO' && factura.hasSing === true);
-        if (factData) {
+        if (factData.length > 0) {
           return factData;
         } else {
-          console.log('factData is void')
+          console.log('factData is void');
+          return 'No hay facturas firmadas.';
         }
       } else {
         console.log('Esto nunca deberia de pasar');
-        return 'SIN ENTREGAS REALIZADAS';
+        return 'No se genero correctamente las facturas firmadas';
       }
 
     } catch (error) {
       console.log('NO SE PUDO OBTENER LOS DATOS: ', error);
+      return 'Hubo un Error general al traer las facturas.';
     }
   },
 
   getAllNOTsynchroFacts: async () => {
-    const val = await AsyncStorage.getItem('facturaData');
-    if (val !== null) {
-      let data: Facturas[] = JSON.parse(val);
-      const factData: Facturas[] = data.filter((factura) => factura.hasSing === true && factura.state_name === 'FIRMADO' && factura.is_Sinchro !== true);
-      if (factData) {
-        //console.log('data from app : ', factData);
-        return factData;
-      } else {
-        console.log('factData is void')
+    try{
+      const val = await AsyncStorage.getItem('facturaData');
+      if (val !== null) {
+        let data: Facturas[] = JSON.parse(val);
+        const factData: Facturas[] = data.filter((factura) => factura.hasSing === true && factura.state_name === 'FIRMADO' && factura.is_Sinchro !== true);
+        if (factData) {
+          return factData;
+        } else {
+          console.log('factData is void')
+          return undefined;
+        }
       }
+    }catch(err){
+      return undefined;
     }
+   
   },
 
   updateIsCheck: async (id) => {

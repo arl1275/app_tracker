@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Text, View, TextInput, StyleSheet, ScrollView, Modal, Alert, Dimensions } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
-import { Card } from 'react-native-paper';
+import { Card, IconButton } from 'react-native-paper';
 import { play_sound } from "../../Activity/sound.component";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from "react-native-paper";
 import useGuardList from "../../../storage/gaurdMemory";
 import db_dir from "../../../config/db";
 import axios from "axios";
@@ -22,7 +22,8 @@ interface boxes {
     caja: string,
     unidades: number,
     cajas: string,
-    check: boolean
+    check: boolean,
+    numerocaja: string
 }
 
 const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
@@ -100,8 +101,8 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
     const getBoxes = async () => {
         try {
-            let valores = await axios.get(db_dir + '/facturas/getCajas', { params: { factura: fact?.factura } });
-            //console.log('dat cajas : ', valores)
+            let valores = await axios.get(db_dir + '/facturas/getCajas_Guardia', { params: { factura: fact?.factura_id } });
+            console.log('dat cajas : ', valores)
             setBoxes(valores.data.data);
         } catch (err) {
             console.log('NO SE PUDO OBTENER LAS CAJAS : ', err)
@@ -117,32 +118,28 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
             <View style={styles.modalOverlay}>
                 <View style={styles.centeredView}>
-                    <View style={{ width: '90%', height: 'auto'}}>
+                    <View style={{ width: '90%', height: 'auto' }}>
 
-                        <View style={{ backgroundColor: 'white', width: '100%' , borderRadius : 15}}>
+                        <View style={{ backgroundColor: 'white', width: '100%', borderRadius: 15 }}>
 
-                            <View style={{ marginBottom : 7, flexDirection : 'row', justifyContent : 'space-between'}}>
+                            <View style={{ marginBottom: 7, flexDirection: 'row', justifyContent: 'space-between' }}>
 
-                                <View style={{ marginLeft : 10, marginTop : 5 }}>
-                                    <Icon name={'eye'} color={"black"} size={25} onPress={() => OpenDetail()} />
+                                <View style={{ marginLeft: 10, marginTop: 5 }}>
+                                    <IconButton icon={'eye'} iconColor="black" size={25} onPress={() => OpenDetail()} />
                                 </View>
 
-                                <View style={{ marginRight : 10, marginTop : 5}}>
-                                    <Icon
-                                        name={'close'}
-                                        onPress={() => { setSee2(false); setCounter(0); setData([]); close(); }} // this cleal all my variables with the close button
-                                        color="red" size={25}
-                                    />
+                                <View style={{ marginRight: 10, marginTop: 5 }}>
+                                    <IconButton icon={'close'} iconColor="red" size={25} onPress={() => { setSee2(false); setCounter(0); setData([]); close(); }} />
                                 </View>
                             </View>
 
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
 
-                                <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column' }}>
+                                <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column', margin: 10 }}>
 
-                                    <Card style={{ margin: 10, alignSelf: 'center', backgroundColor : 'white' , borderWidth : 1 , borderColor : 'black', width: '95%', elevation : 80 }}>
+                                    <Card style={{ marginBottom: 20, alignSelf: 'center', backgroundColor: '#ECEFF1', width: '95%', elevation: 10 }}>
 
-                                        <View style={{ margin: 10 , paddingLeft : 20 , paddingRight : 20}}>
+                                        <View style={{ margin: 10, paddingLeft: 20, paddingRight: 20 }}>
 
                                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                                 <Text style={[styles.title, { textAlign: 'right' }]}>FACTURA :</Text>
@@ -152,16 +149,16 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                                 <Text style={[styles.title, { textAlign: 'right' }]}>RUTA :</Text>
                                                 <Text style={styles.title}>{fact?.lista_empaque}</Text>
                                             </View>
-                                            <View style={{ display: 'flex' , flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={[styles.title , { textAlign: 'right' }]}>CLIENTE :</Text>
-                                                <Text style={[styles.title , { textAlign: 'right' , width : '70%'}]}>{fact?.clientenombre}</Text>
+                                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                <Text style={[styles.title, { textAlign: 'right' }]}>CLIENTE :</Text>
+                                                <Text style={[styles.title, { textAlign: 'right', width: '70%' }]}>{fact?.clientenombre}</Text>
                                             </View>
 
                                         </View>
 
                                     </Card>
 
-                                    <Card style={{ backgroundColor: 'white', marginBottom: 10, borderRadius: 7, alignSelf: 'center', borderColor : 'black', borderWidth : 1 , width: '95%', elevation : 15 }}>
+                                    <Card style={{ backgroundColor: '#ECEFF1', marginBottom: 10, borderRadius: 7, alignSelf: 'center', width: '95%', elevation: 15 }}>
                                         <View style={{ margin: 4, display: 'flex', flexDirection: 'column', alignSelf: 'center' }}>
                                             <Text style={{ color: 'black', fontSize: 60, fontFamily: 'system-ui', alignSelf: 'center' }}> {counter}/{fact?.cant_cajas} </Text>
                                             <TextInput
@@ -184,15 +181,32 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
                             {
                                 see2 === true &&
-                                <View style={{ height: 'auto' }}>
-                                    <Card style={{ alignSelf: 'center', width: '90%', height: 100, margin: 10, backgroundColor: 'white' }}>
+                                <View style={{ height: '40%' }}>
+                                    <Card style={{ alignSelf: 'center', width: '90%', margin: 10, backgroundColor: 'white', elevation: 10 }}>
                                         <ScrollView>
                                             {
                                                 Array.isArray(Boxes) ?
+
                                                     Boxes.map((item) => {
-                                                        let ischeck = item.check === true ? '#00FFFF' : '#FF9900';
+                                                        let ischeck = item.check === true ? '#E91E63' : 'black';
                                                         return (
-                                                            <Text style={{ backgroundColor: ischeck, color: 'black' }}>{item.caja}</Text>
+                                                            <View style={
+                                                                {
+                                                                    marginTop: 10,
+                                                                    marginLeft: '3%',
+                                                                    marginRight: '3%',
+                                                                    marginBottom: 5,
+                                                                    borderRadius: 15,
+                                                                    backgroundColor: ischeck,
+                                                                    display: 'flex',
+                                                                    flexDirection: 'row',
+                                                                    justifyContent: 'space-around',
+                                                                    padding: 5
+                                                                }}>
+                                                                <Text style={{ color: 'white' }}>{item?.numerocaja}</Text>
+                                                                <Text style={{ color: 'white' }}>{item.caja}</Text>
+                                                            </View>
+
                                                         )
                                                     }) : <Text style={{ color: 'black' }}>SIN DATA</Text>
                                             }

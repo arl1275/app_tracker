@@ -14,7 +14,7 @@ const back = require('../../assets/images/forest.jpg');
 
 
 function LoginPage() {
-    const { setUser, getType } = UserStorage();
+    const { data, setUser, getType } = UserStorage();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [openl, setOpenl] = useState(false);
     const [Data, setData] = useState({
@@ -23,7 +23,7 @@ function LoginPage() {
     });
 
     const SessionIsOpen = async () => {
-        const UL: number = await getType();
+        const UL: number = data.type_;
         if (UL == 3) {
             navigation.navigate('Entregador')
         } else if (UL == 2) {
@@ -63,6 +63,7 @@ function LoginPage() {
 
                 if (result.status === 200) {
                     const user: UserInterface = result.data.data;
+                    console.log('usuario desde api ::: ', user);
                     await setUser(user);
 
                     let UL: number = await getType();
@@ -85,70 +86,61 @@ function LoginPage() {
             Alert.alert('ERROR', 'ingrese El usuario correcto');
             setOpenl(false);
         } finally {
-            setData({ user : '', _Password : ''});
+            setData({ user: '', _Password: '' });
         }
     };
 
 
     return (
+
         <View style={styles.container}>
-            {/* Modal */}
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={openl}
-                onRequestClose={() => { /* Handle close modal */ }}
-            >
-                <EnterPage />
-            </Modal>
+            <ImageBackground source={back} style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
 
-            {/* Contenido principal */}
-            <View style={styles.contentContainer}>
-                {/* Título */}
-                <Text style={styles.title}>[ KELLER ]</Text>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={openl}
+                    onRequestClose={() => { /* Handle close modal */ }}
+                >
+                    <EnterPage />
+                </Modal>
 
-                {/* Bienvenida */}
-                <View style={styles.welcomeContainer}>
-                    <Text style={styles.welcomeText}>Bienvenido!!</Text>
-                    <Text style={styles.instructionsText}>Favor ingresa los datos de su usuario, para continuar.</Text>
-                </View>
-
-                {/* Campos de entrada */}
-                <View style={styles.inputContainer}>
-                    {/* Usuario */}
-                    <View style={styles.inputWrapper}>
-                        <Icon source="account" size={30} color="black" />
-                        <TextInput
-                            placeholder="USUARIO"
-                            onChangeText={handleUserChange}
-                            value={Data.user}
-                            placeholderTextColor="grey"
-                            style={styles.input}
-                        />
+                <View style={styles.contentContainer}>
+                    <Text style={styles.title}>[ KELLER ]</Text>
+                    <View style={styles.welcomeContainer}>
+                        <Text style={styles.welcomeText}>Bienvenido!!</Text>
+                        <Text style={styles.instructionsText}>Favor ingresa los datos de su usuario, para continuar.</Text>
                     </View>
 
-                    {/* Contraseña */}
-                    <View style={styles.inputWrapper}>
-                        <Icon source="lock" size={30} color="black" />
-                        <TextInput
-                            placeholder="CONTRASEÑA"
-                            onChangeText={handlePasswordChange}
-                            value={Data._Password}
-                            secureTextEntry
-                            placeholderTextColor="grey"
-                            style={styles.input}
-                        />
+                    <View style={styles.inputContainer}>
+                        <View style={styles.inputWrapper}>
+                            <Icon source="account" size={30} color="black" />
+                            <TextInput
+                                placeholder="USUARIO"
+                                onChangeText={handleUserChange}
+                                value={Data.user}
+                                placeholderTextColor="grey"
+                                style={styles.input}
+                            />
+                        </View>
+                        <View style={styles.inputWrapper}>
+                            <Icon source="lock" size={30} color="black" />
+                            <TextInput
+                                placeholder="CONTRASEÑA"
+                                onChangeText={handlePasswordChange}
+                                value={Data._Password}
+                                secureTextEntry
+                                placeholderTextColor="grey"
+                                style={styles.input}
+                            />
+                        </View>
                     </View>
+                    <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+                        <Text style={styles.buttonText}>INGRESAR</Text>
+                    </TouchableOpacity>
                 </View>
-
-                {/* Botón de ingresar */}
-                <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-                    <Text style={styles.buttonText}>INGRESAR</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Versión */}
-            <Text style={styles.versionText}>V.0.0.13</Text>
+                <Text style={styles.versionText}>V.0.2.1</Text>
+            </ImageBackground>
         </View>
     );
 };
@@ -156,23 +148,24 @@ function LoginPage() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F4F6F7',
+        backgroundColor: 'white',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     contentContainer: {
         width: '90%',
-        height: '90%',
+        height: '95%',
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius : 20
+        //borderRadius: 20,
+    
     },
     title: {
         fontSize: 60,
         fontWeight: '700',
-        marginTop: 0,
-        marginBottom: '15%',
+        //marginTop: 0,
+        marginBottom: '20%',
         textAlign: 'center',
         color: 'black',
     },
@@ -226,7 +219,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 10,
         right: 10,
-        color: 'black',
+        color: 'grey',
         fontSize: 10,
     },
 });

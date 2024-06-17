@@ -27,12 +27,12 @@ const CameraScreen: React.FC<props> = ({fact, setIsPic}) => {
 
   return (
     <View style={{ marginBottom: 10, marginTop: 10 }}>
-      <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5, color : 'white' }}>Fotografia</Text>
+      <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5, color : 'grey' }}>Fotografia</Text>
       <View style={{ height: height * 0.2, width: 'auto', borderColor: '#ccc', borderWidth: 1, borderRadius: 3 }}>
         {!tempUri ? (
           <TouchableOpacity onPress={tomarFotografia} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <IconButton icon="camera" size={30} onPress={() => {}} />
-            <Text style={{ fontWeight: 'bold', color : 'white'}}>Tomar fotografia</Text>
+            <Text style={{ fontWeight: 'bold', color : 'grey'}}>Tomar fotografia</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={tomarFotografia}>

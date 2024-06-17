@@ -5,5 +5,6 @@ export interface box_to_check{
     caja : string,
     cantidad : string,
     is_check : boolean,
-    is_synchro : boolean
+    is_synchro : boolean,
+    numerocaja : string
 }

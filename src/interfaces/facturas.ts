@@ -1,6 +1,6 @@
 export interface Facturas{
     id_dec_env : number,
-    declaracionenvio : number,
+    declaracion_envio : number,
     factura_id : number,
     factura: string,
     clientenombre: string,

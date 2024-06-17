@@ -1,4 +1,4 @@
-import { View, Text, Button, Alert, ScrollView, Image, TouchableOpacity } from "react-native";
+import { View, Text, Dimensions, Alert, ScrollView, Image, TouchableOpacity, StyleSheet, Modal, Button } from "react-native";
 import { useState, useEffect } from 'react';
 import useFacturaStore from "../../storage/storage";
 import { Facturas } from "../../interfaces/facturas";
@@ -6,13 +6,15 @@ import { DataTable, Icon, IconButton } from "react-native-paper";
 import db_dir from "../../config/db";
 import axios from "axios";
 import LoadingModal from "../Activity/activity.component";
-const box = require('../../assets/images/team_work.png')
+const box = require('../../assets/images/team_work.png');
+const screenwidth = Dimensions.get('screen').width
+
 
 export function VistadeSync() {
     const { getStorageEntregado, updateSynchro, getAllNOTsynchroFacts } = useFacturaStore();
-    const [dataEntregas, setDataEntregas] = useState<Facturas[]>([]);
-    const [loadinglist, setLoadingList] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [ dataEntregas , setDataEntregas ] = useState<Facturas[]>([]);
+    const [ loading , setLoading ] = useState(false);
+    const [ label , setLabel ] = useState<String>('');
 
     useEffect(() => {
         getData();
@@ -20,7 +22,6 @@ export function VistadeSync() {
 
     const setSynchro = async (arreglo: Facturas[]) => {
         for (let i = 0; i < arreglo.length; i++) {
-            //console.log('facturas a sincronizar : ', arreglo[i].factura_id)
             await updateSynchro(arreglo[i].factura_id);
         }
     }
@@ -60,42 +61,37 @@ export function VistadeSync() {
 
     const getData = async () => {
         setLoading(true);
-        if (await getStorageEntregado()) {
-            const data = await getAllNOTsynchroFacts();
-            if (Array.isArray(data)) {
-                if (data.length > 0) {
+        try {
+            const Data: Facturas[] | string = await getStorageEntregado();
+            if (Array.isArray(Data) && typeof Data !== 'string') {
+                const data: Facturas[] | undefined = await getAllNOTsynchroFacts();
+                if (Array.isArray(data) && data.length > 0) {
                     setDataEntregas(data);
-                    setLoading(false);
+                } else {
+                    setLabel('No se encontraron facturas con firmas.');
                 }
+            } else {;
+                setLabel(Data);
             }
 
-        } else {
+        } catch (error) {
+            console.error('Error obteniendo datos:', error);
+            Alert.alert('ERROR', 'Hubo un problema al obtener los datos');
+
+        } finally {
             setLoading(false);
-            Alert.alert('ERROR DE LOCAL', 'no se pudo obtener los datos de forma local');
         }
-    }
+    };
 
     return (
-        <View style={{ backgroundColor: 'black', height: '100%' }}>{
+        <View style={{ backgroundColor: 'white', height: '100%' }}>{
             dataEntregas.length > 0 ?
                 (<View >
                     <View >
-
                         <TouchableOpacity onPress={() => { SentToValidate(); }}
-                            style={{
-                                height: 80,
-                                backgroundColor: '#00FFFF',
-                                justifyContent: 'space-around',
-                                alignItems: 'flex-end',
-                                borderRadius: 10,
-                                width: 500,
-                                display: 'flex',
-                                flexDirection: 'row',
-                                margin: 10,
-                                alignSelf: 'center'
-                            }}>
-                            <Text style={{ color: 'black', alignSelf: 'center', fontWeight: 'bold', fontSize: 20 }}>SINCRONIZAR FACTURAS</Text>
-                            {/* <IconButton icon={'upload'} size={25} iconColor="black"/> */}
+                            style={styles.buttonSynchro}>
+                            <Text style={{ color: 'white', alignSelf: 'center', fontWeight: 'bold', fontSize: 15 }}>SINCRONIZAR FACTURAS</Text>
+                            <IconButton icon={'cloud-upload'} size={30} iconColor="white" style={{ alignSelf: 'center' }} />
                         </TouchableOpacity>
 
                         <ScrollView style={{ height: '80%' }}>
@@ -120,20 +116,12 @@ export function VistadeSync() {
                                 {
                                     dataEntregas.map((item: Facturas) => {
                                         return (
-                                            <DataTable.Row key={item.factura_id}
-                                                style={{
-                                                    width: '95%',
-                                                    alignSelf: 'center',
-                                                    backgroundColor : 'grey',
-                                                    borderRadius : 10,
-                                                    marginTop : 5
-                                                }
-                                                }>
-                                                <DataTable.Cell><Text style={{ color: 'white' }}>{item.clientenombre}</Text></DataTable.Cell>
-                                                <DataTable.Cell><Text style={{ color: 'white' }}>{item.factura}</Text></DataTable.Cell>
-                                                <DataTable.Cell><Text style={{ color: 'white' }}>{item.lista_empaque}</Text></DataTable.Cell>
-                                                <DataTable.Cell><Text style={{ color: 'white' }}>{item.cant_cajas}</Text></DataTable.Cell>
-                                                <DataTable.Cell><Text style={{ color: 'white' }}>{item.cant_unidades}</Text></DataTable.Cell>
+                                            <DataTable.Row key={item.factura_id} style={styles.StyleRow}>
+                                                <DataTable.Cell><Text style={{ color: 'black', fontSize: screenwidth * 0.02, width: '80%' }}>{item.clientenombre}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ color: 'black' }}>{item.factura}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ color: 'black' }}>{item.lista_empaque}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ color: 'black' }}>{item.cant_cajas}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ color: 'black' }}>{item.cant_unidades}</Text></DataTable.Cell>
                                             </DataTable.Row>
                                         )
                                     })
@@ -144,10 +132,12 @@ export function VistadeSync() {
                     </View >
 
                     <LoadingModal visible={loading} message="SINCRONIZANDO FACTURAS" />
+
                 </View>
                 ) : (
                     <View style={{ alignSelf: 'center', top: 150 }}>
-                        <Text style={{ alignSelf: 'center', color: 'white' }}>SIN FACTURAS FIRMADAS</Text>
+                        <Text style={{ alignSelf: 'center', color: 'grey' }}>SIN FACTURAS FIRMADAS</Text>
+                        <Text style={{ alignSelf: 'center', color: 'black' }}>{label}</Text>
                         <Image source={box} style={{ width: 300, height: 300 }} />
                     </View>
                 )
@@ -155,3 +145,53 @@ export function VistadeSync() {
     )
 
 }
+
+const styles = StyleSheet.create({
+    buttonSynchro: {
+        height: 80,
+        backgroundColor: 'black',
+        justifyContent: 'space-around',
+        alignContent: 'center',
+        borderRadius: 10,
+        width: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        margin: 10,
+        alignSelf: 'center'
+    },
+    StyleRow: {
+        width: '95%',
+        alignSelf: 'center',
+        backgroundColor: 'white',
+        //borderRadius: 10,
+        //elevation: 10,
+        //marginTop: 5,
+        padding: 5
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        zIndex: 1,
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+})

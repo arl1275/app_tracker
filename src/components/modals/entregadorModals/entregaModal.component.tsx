@@ -71,7 +71,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
 
                                                 <View style={styles.row}>
                                                     <Text style={styles.header}>CLIENTE :</Text>
-                                                    <Text style={styles.value}>{fact?.clientenombre}</Text>
+                                                    <Text style={[styles.value, { width : '60%'}]}>{fact?.clientenombre}</Text>
                                                 </View>
                                                 <View style={styles.row}>
                                                     <Text style={styles.header}>ENTREGADOR :</Text>
@@ -125,7 +125,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
 
                                                 <View style={styles.row}>
                                                     <Text style={styles.header}>CLIENTE :</Text>
-                                                    <Text style={styles.value}>{fact?.clientenombre}</Text>
+                                                    <Text style={[styles.value, { width : '60%', textAlign : 'right'}]}>{fact?.clientenombre}</Text>
                                                 </View>
 
                                                 <View style={styles.row}>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     button: {
         padding: 10,
         borderRadius: 3,
-        backgroundColor: '#2E4053',
+        backgroundColor: 'black',
         width: 'auto'
     },
     buttonText: {
@@ -207,24 +207,21 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         width: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black
+        backgroundColor: 'rgba(0, 0, 0, 0.9)', // Semi-transparent black
     },
     modalContent: {
         zIndex: 1, // Ensure the content is above the overlay
         padding: 20,
-        backgroundColor: '#1C2833',
-        borderRadius: 5,
-        elevation: 5, // For Android shadow77
-        width: '100%',
-        borderTopColor : '#33FFFF',
-        borderTopWidth : 7
+        backgroundColor: 'white',
+        borderRadius: 10,
+        width: '100%'
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between', // Adjust as needed
         marginVertical: 0,
         width: "auto",
-        backgroundColor: '#2E4053',
+        backgroundColor: 'black',
     },
     container: {
         backgroundColor: 'white',
@@ -236,7 +233,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
         alignSelf: 'center',
-        color: 'white',
+        color: 'black',
     },
     resumen: {
         fontSize: 15,
@@ -245,11 +242,11 @@ const styles = StyleSheet.create({
     },
     table: {
         borderWidth: 0,
-        borderColor: '#000',
         borderRadius: 5,
         padding: 10,
         margin: 10,
-        backgroundColor: '#2E4053'
+        backgroundColor: 'white',
+        elevation : 10
     },
     row: {
         flexDirection: 'row',
@@ -265,11 +262,11 @@ const styles = StyleSheet.create({
 
     header: {
         fontWeight: 'bold',
-        color: 'white'
+        color: 'grey'
     },
     value: {
         marginLeft: 10,
-        color: 'white'
+        color: 'black'
     },
 
 });

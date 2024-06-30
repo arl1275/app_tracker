@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import {  Text, View, StyleSheet, Modal, Alert, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, Modal, Alert, TouchableOpacity } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
 //test-imports
 import RNSignatureExample from '../../sing/Sing.component';
@@ -61,61 +61,59 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalContent}>
-                            {validateStep === 'sing' ?
+                            {validateStep === 'sing' &&
                                 <View>
-                                    
-                                        <Text style={styles.title}>FIRMA DE ENTREGA</Text>
 
-                                        <View style={{ margin: 1 }} >
-                                            <View style={styles.table}>
+                                    <Text style={styles.title}>FIRMA DE ENTREGA</Text>
 
-                                                <View style={styles.row}>
-                                                    <Text style={styles.header}>CLIENTE :</Text>
-                                                    <Text style={[styles.value, { width : '60%'}]}>{fact?.clientenombre}</Text>
-                                                </View>
-                                                <View style={styles.row}>
-                                                    <Text style={styles.header}>ENTREGADOR :</Text>
-                                                    <Text style={styles.value}>{fact?.nombre}</Text>
-                                                </View>
+                                    <View style={{ margin: 1 }} >
+                                        <View style={styles.table}>
 
-                                                <View style={styles.row}>
-                                                    <Text style={styles.header}>FACTURA :</Text>
-                                                    <Text style={styles.value}>{fact?.factura}</Text>
-                                                </View>
+                                            <View style={styles.row}>
+                                                <Text style={styles.header}>CLIENTE :</Text>
+                                                <Text style={[styles.value, { width: '60%' }]}>{fact?.clientenombre}</Text>
+                                            </View>
+                                            <View style={styles.row}>
+                                                <Text style={styles.header}>ENTREGADOR :</Text>
+                                                <Text style={styles.value}>{fact?.nombre}</Text>
+                                            </View>
 
-                                                <View style={styles.row}>
-                                                    <Text style={styles.header}>CANT. CAJAS:</Text>
-                                                    <Text style={styles.value}>{fact?.cant_cajas}</Text>
-                                                </View>
+                                            <View style={styles.row}>
+                                                <Text style={styles.header}>FACTURA :</Text>
+                                                <Text style={styles.value}>{fact?.factura}</Text>
+                                            </View>
 
-                                                <View style={styles.row}>
-                                                    <Text style={styles.header}>CANT. UNIDADES:</Text>
-                                                    <Text style={styles.value}>{fact?.cant_unidades}</Text>
-                                                </View>
+                                            <View style={styles.row}>
+                                                <Text style={styles.header}>CANT. CAJAS:</Text>
+                                                <Text style={styles.value}>{fact?.cant_cajas}</Text>
+                                            </View>
+
+                                            <View style={styles.row}>
+                                                <Text style={styles.header}>CANT. UNIDADES:</Text>
+                                                <Text style={styles.value}>{fact?.cant_unidades}</Text>
                                             </View>
                                         </View>
+                                    </View>
 
-                                         
-                                        <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.factura_id} isnext={setSaveSing} />
-                                         
-                                     <View>
-                                        <TouchableOpacity style={styles.button } onPress={() => { ValSing() }}>
+
+                                    <RNSignatureExample setIsEmpty={setIsEmpty} id={fact?.factura_id} isnext={setSaveSing} />
+
+                                    <View>
+                                        <TouchableOpacity style={styles.button} onPress={() => { ValSing() }}>
                                             <View >
-                                                <Text style={styles.buttonText}>FINALIZAR</Text>
+                                                <Text style={styles.buttonText}>FINALIZAR ENTREGA</Text>
                                             </View>
                                         </TouchableOpacity>
-                                    </View>  
+                                    </View>
 
                                 </View>
-                                : 
-                                null
-                                }
-                            {validateStep === 'pic' ?
+                            }
+                            {validateStep === 'pic' &&
                                 <View>
-                                    <Text style={styles.title}>REGISTRO</Text>
+                                    <Text style={styles.title}>REGISTRO DE ENTREGA</Text>
                                     <View style={{ borderColor: 'black' }}>
 
-                                        <View style={{ margin: 1, width : '100%' }}>
+                                        <View style={{ width: '100%' }}>
                                             <View style={styles.table}>
 
                                                 <View style={styles.row}>
@@ -125,7 +123,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
 
                                                 <View style={styles.row}>
                                                     <Text style={styles.header}>CLIENTE :</Text>
-                                                    <Text style={[styles.value, { width : '60%', textAlign : 'right'}]}>{fact?.clientenombre}</Text>
+                                                    <Text style={[styles.value, { width: '60%', textAlign: 'right' }]}>{fact?.clientenombre}</Text>
                                                 </View>
 
                                                 <View style={styles.row}>
@@ -162,8 +160,6 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                     </View>
 
                                 </View>
-                                :
-                                null
                             }
                         </View>
 
@@ -183,12 +179,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: '90%',
-        height : 'auto'
+        height: 'auto'
     },
-    registroCard : {
-        backgroundColor : '#212F3D',
-        borderTopColor : '#0099FF',
-        borderTopWidth : 7
+    registroCard: {
+        backgroundColor: '#212F3D',
+        borderTopColor: '#0099FF',
+        borderTopWidth: 7
     },
     button: {
         padding: 10,
@@ -213,7 +209,7 @@ const styles = StyleSheet.create({
         zIndex: 1, // Ensure the content is above the overlay
         padding: 20,
         backgroundColor: 'white',
-        borderRadius: 10,
+        borderRadius: 0,
         width: '100%'
     },
     buttonContainer: {
@@ -242,11 +238,10 @@ const styles = StyleSheet.create({
     },
     table: {
         borderWidth: 0,
-        borderRadius: 5,
+        borderRadius: 0,
         padding: 10,
-        margin: 10,
-        backgroundColor: 'white',
-        elevation : 10
+        backgroundColor: 'black',
+        elevation: 10
     },
     row: {
         flexDirection: 'row',
@@ -262,11 +257,11 @@ const styles = StyleSheet.create({
 
     header: {
         fontWeight: 'bold',
-        color: 'grey'
+        color: 'white'
     },
     value: {
         marginLeft: 10,
-        color: 'black'
+        color: 'white'
     },
 
 });

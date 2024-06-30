@@ -16,10 +16,12 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
   const signatureRef = useRef<any>(null);
   //const signatureRef = useRef<SignatureCapture>(null);
   const defRoute = '/storage/emulated/0/Android/data/com.keller/files/saved_signature/'; // route where files will be saved.
-  const { data, fetchData, updateFactura, getFacturaById, updateSing } = useFacturaStore();
+  const { getFacturaById, updateSing } = useFacturaStore();
 
-  const saveNameFileSing = () => {
-    const dataFact : Facturas | null = getFacturaById(id);
+  const saveNameFileSing = async () => {
+    //let id_ : number | undefined = typeof id === 'number' ? parseInt(id) : 0;
+    const dataFact : Facturas | null = await getFacturaById(id);
+    //console.log(' valores desde atras ', dataFact, 'factura id :: ', id);
     if(dataFact != null){
       return defRoute + dataFact.factura_id.toString() + '.png';
     }else{
@@ -44,9 +46,10 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
     try {
       // set the name of the file
       const oldPath = result.pathName;
-      const newPath = saveNameFileSing();
+      const newPath  = await saveNameFileSing();
 
       if(newPath == null){
+          console.log('ERORR AQUI, ', oldPath, newPath)
           throw Error;
       }
 
@@ -60,7 +63,7 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
 
     } catch (err) {
       console.log('Error renaming image:', err);
-      Alert.alert('error' , 'error al generar nombre de foto')
+      Alert.alert('PROBLEMAS PARA GUARDAR FACTURA')
     }
   };
 

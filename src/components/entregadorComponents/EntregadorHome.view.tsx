@@ -77,6 +77,7 @@ const EntregadorHomeView = () => {
                     await updateFactura(facturas);
                     await syncroBoxes();
                     setLoading(false);
+                    //console.log('api facturas :: ', facturas_api)
                 }
             } else {
                 console.log('sin valores adsjfkdajs')

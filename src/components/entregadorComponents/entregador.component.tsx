@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { IconButton } from 'react-native-paper';
-import { Text, View, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Alert,  ScrollView } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import { Facturas } from "../../interfaces/facturas";
-import db_dir from "../../config/db";
-import axios from "axios";
 import { EntregaModal } from "../modals/entregadorModals/entregaModal.component";
 import useFacturaStore from "../../storage/storage";
-import LoadingModal from "../Activity/activity.component";
-import boxChequerStorage from "../../storage/checkBoxes";
-import { box_to_check } from "../../interfaces/box";
 import BoxChecker_ent from "../modals/entregadorModals/BoxChequerEnt.component";
 import { Dimensions } from "react-native";
 const widthScreen = Dimensions.get('window').width;
-import UserStorage from "../../storage/user";
 
 const styles = StyleSheet.create({
     tableHeader: {
@@ -37,12 +30,11 @@ const styles = StyleSheet.create({
 
 
 function EntregadorListView() {
-    const [facturas, setFacturas] = useState<Facturas[]>([]);
-    const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);                                    //
+    const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);   
     const [modalVisible, setModalVisible] = useState(false);
     const [see, setSee] = useState(false);
     const [fact_, setfact] = useState<Facturas>();
-    const { data, fetchData, updateFactura } = useFacturaStore();
+    const { data, fetchData} = useFacturaStore();
 
     useEffect(() => {
         const fetchDataInterval = setInterval(() => {
@@ -117,13 +109,16 @@ function EntregadorListView() {
                             </DataTable.Header>
                             <ScrollView>
                                 {
-                                    data.map((item: Facturas) => {
+                                    data.map(( item : Facturas) => {
                                         let valor = color_choose(item);
                                         return (
-                                            <DataTable.Row  key={item.factura_id} onPress={() => { setfact(item); BoxOrSing(item); }} 
-                                            style={[ styles.tableRow , { borderRightWidth : 4, borderRightColor : valor }]}>
-                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', width : '95%' , margin: '5%'}}>{item.clientenombre}</Text></DataTable.Cell>
-                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black',}}>{item.factura}</Text></DataTable.Cell>
+                                            <DataTable.Row  
+                                            key={item.factura_id} 
+                                            onPress={() => { setfact(item); BoxOrSing(item); }} 
+                                            style={[ styles.tableRow , { borderRightWidth : 4, borderRightColor : valor, marginTop : 1 }]}
+                                            >
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.015, fontWeight: '400', color: 'black', width : '90%' , margin: '5%'}}>{item.clientenombre}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: 'bold', color: 'black',}}>{item.factura}</Text></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.lista_empaque}</Text></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.cant_cajas}</Text></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.cant_unidades}</Text></DataTable.Cell>
@@ -137,7 +132,7 @@ function EntregadorListView() {
 
 
                         <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
-                        <BoxChecker_ent visible={see} close={close} tipe={1} fact={fact_} />
+                        <BoxChecker_ent visible={see} close={close} fact={fact_} />
 
                     </View >)
             }</View>

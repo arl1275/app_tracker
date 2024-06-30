@@ -6,7 +6,7 @@ interface FacturaState {
   data: Facturas[];
   fetchData: () => Promise<void>;
   updateFactura: (updatedFactura: Facturas[]) => void;                                                      // guarda los datos si no hay facturas 
-  getFacturaById: (id: number) => Facturas | undefined;                                                     // Selector function
+  getFacturaById: (id: number) => Promise<Facturas | null>;
   updateStateAndHasSing: (idToUpdate: number, newState: string, pathPic: string) => void;                   // set the sing in a Local_file related to one Factura
   updateSing: (idToUpdate: number, singPath: string) => void;                                              // solo marca la factura como que tiene firma.
   updateSynchro: (id: number) => void;                                                                      // solo verifica que una factura ya fue sincronizada
@@ -78,19 +78,15 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
     });
   },
 
-  // return all the data of one specific fact
-  getFacturaById: (id: number) => {
-    const { data } = useFacturaStore.getState();
+  getFacturaById : async (id: number): Promise<Facturas | null> => {
+    const { data } = await useFacturaStore.getState();
     const factura = data.find((factura: Facturas) => factura.factura_id === id);
-
-    if (factura.length > 0) {
+    if (factura) {
       return factura;
     } else {
       console.log('Factura not found with ID:', id);
-      return null
+      return null;
     }
-
-    
   },
 
   //works for update the element if the fact has sing or not
@@ -204,7 +200,7 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
   },
 
   getAllNOTsynchroFacts: async () => {
-    try{
+    try {
       const val = await AsyncStorage.getItem('facturaData');
       if (val !== null) {
         let data: Facturas[] = JSON.parse(val);
@@ -216,10 +212,10 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
           return undefined;
         }
       }
-    }catch(err){
+    } catch (err) {
       return undefined;
     }
-   
+
   },
 
   updateIsCheck: async (id) => {
@@ -264,9 +260,9 @@ const useFacturaStore: any = create<FacturaState>((set) => ({
           const hasSyncedFacturaWithSignature = facturaData.some((factura: Facturas) => factura.hasSing == true && factura.is_Sinchro !== true);
           console.log(' valor  :==::> ', hasSyncedFacturaWithSignature);
 
-          if(hasSyncedFacturaWithSignature){
+          if (hasSyncedFacturaWithSignature) {
             return false;
-          }else{
+          } else {
             await AsyncStorage.removeItem('facturaData');
             set({ data: [] });
             return true;

@@ -12,7 +12,6 @@ import { EnterPage } from '../../components/Activity/enter.component';
 import { Icon } from 'react-native-paper';
 const back = require('../../assets/images/forest.jpg');
 
-
 function LoginPage() {
     const { data, setUser, getType } = UserStorage();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -139,7 +138,7 @@ function LoginPage() {
                         <Text style={styles.buttonText}>INGRESAR</Text>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.versionText}>V.0.2.1</Text>
+                <Text style={styles.versionText}>V.0.2.2</Text>
             </ImageBackground>
         </View>
     );
@@ -158,8 +157,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
-        //borderRadius: 20,
-    
     },
     title: {
         fontSize: 60,

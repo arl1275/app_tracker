@@ -107,27 +107,22 @@ const boxChequerStorage : any = create<box_checker>((set)=>({
       }
     },
 
-    getcajasFacts : async (factura : string, id : number) => {
-      
+    getcajasFacts : async (factura: string, id: number): Promise<box_to_check[]> => {
       try {
-    
         const storedData = await AsyncStorage.getItem('boxData');
-
+    
         if (storedData !== null) {
-
           let data: box_to_check[] = JSON.parse(storedData);
-
-          return data.filter( ( item ) => item.factura == factura && item.id_factura === id);
-
-        }else{
-          return 'ERROR'
+          return data.filter((item) => item.factura === factura && item.id_factura === id);
+        } else {
+          return [];
         }
       } catch (err) {
-        console.log('error al obtener cajas : ', err);
-        return 'ERROR';
+        console.error('Error al obtener cajas:', err);
+        return [];
       }
-      
-    },
+    }
+    ,
 
     closeBoxes : async () => {
       try {

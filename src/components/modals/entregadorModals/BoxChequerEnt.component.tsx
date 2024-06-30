@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, TextInput, StyleSheet, ScrollView, Modal, Alert, Keyboard } from "react-native";
+import { Text, View, TextInput, StyleSheet, ScrollView, Modal, Alert, TouchableOpacity } from "react-native";
 import { play_sound } from "../../Activity/sound.component";
 import { Facturas } from "../../../interfaces/facturas";
 import { Card } from 'react-native-paper';
@@ -13,54 +13,56 @@ interface props {
     fact: Facturas | undefined;
     visible: boolean;
     close: () => void;
-    tipe: number; // 0 for Guard, 1 for Deliver
 }
 
-const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
-    const [counter, setCounter] = useState<number>(0);      // this is to count how many fact has been scanned by the Guard.
+const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
+    const [counter, setCounter] = useState<number>(0);              // this is to count how many fact has been scanned by the Guard.
     const [see2, setSee2] = useState(false);
-    const inputRef = useRef<TextInput>(null);               // ref para el input text of the scanner
-    const { updateIsCheck } = useFacturaStore();             // to save the info fact in the memory        
-    const [scanned, setScanned] = useState<string[]>([]);         // to access the data save in momery
+    const inputRef = useRef<TextInput>(null);                       // ref para el input text of the scanner
+    const { updateIsCheck } = useFacturaStore();                    // to save the info fact in the memory        
+    const [scanned, setScanned] = useState<string[]>([]);           // to access the data save in momery
     const [Value_, setValue_] = useState('');
-    const [Boxes, setBoxes] = useState<box_to_check[]>([]);        // is to check the boxes in memory
-    const { getcajasFacts, validateBox } = boxChequerStorage()
+    const [Boxes, setBoxes] = useState<box_to_check[]>([]);         // is to check the boxes in memory
+    const { getcajasFacts } = boxChequerStorage();
 
+    const CloseBoxChequer = () => {
+        setSee2(false);
+        setCounter(0);
+        setBoxes([]);
+        close();
+    }
 
     useEffect(() => {
-        if (typeof fact?.cant_cajas === 'string') {
+        if ( typeof fact?.cant_cajas === 'string' ){
             let dat = 0;
-            dat = parseInt(fact.cant_cajas);
-            if (dat === counter && dat != 0) {
-                updateIsCheck(fact?.factura_id);
+            dat = parseInt( fact.cant_cajas );
+            if ( dat === counter && dat != 0 ) {
+                updateIsCheck( fact?.factura_id );
                 Alert.alert('FINALIZADO');
                 CloseBarcode();
                 setCounter(0);
                 close();
             }
         }
-    }, [counter]);
+    }, [ counter ]);
 
     useEffect(() => {
-        getBoxes(); // to sync the boxes
-    }, [visible])
-
+        const cajas = async () => { await getBoxes(); }
+        cajas();
+    }, [visible]);
 
     const CounterBoxes = (num: number) => {
-        setCounter(prevCounter => prevCounter + num);
+        setCounter( prevCounter => prevCounter + num );
         return counter;
     }
 
-    const CloseBarcode = () => {
-        setSee2(false);
-    }
+    const CloseBarcode = () => { setSee2(false); }
 
     const handleBarcodeScan = () => {
-        let t = Value_;
+        let t = Value_.trim();
         if (t.length > 0) {
             if (t.length === 13) {                                      // that 13 means the lengt of the barcode
                 if (scanned?.includes(t)) {
-                    //Alert.alert("CAJA YA ESCANEADA");
                     play_sound(false);
                     setValue_('');
                 } else {
@@ -100,34 +102,30 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
     return (
         <>
             {visible === true &&
-                (Boxes ?
-                    <Modal
-                        animationType="fade"
-                        transparent={true}
-                        visible={visible}
-                        onRequestClose={() => { close }}
-                    >
+                (
+                    Boxes &&
+                    <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={() => { close }}>
                         <View style={styles.modalOverlay}>
                             <View style={styles.centeredView}>
-                                <Card style={{ backgroundColor: 'white', borderRadius: 15, width: '95%' }}>
+                                <Card style={{ backgroundColor: 'white', borderRadius: 0, width: '95%' }}>
 
                                     <View style={{ margin: 3 }}>
                                         <IconButton
                                             icon={'close-box'}
-                                            onPress={() => { setSee2(false); setCounter(0); close(); }} // this cleal all my variables with the close button
+                                            onPress={() => { CloseBoxChequer() }} // this cleal all my variables with the close button
                                             iconColor="red" size={30}
                                         />
                                     </View>
 
                                     <View style={{ position: 'absolute', right: 10, top: 5 }}>
-                                        <IconButton icon={'eye'} iconColor={"black"} size={25} onPress={() => OpenDetail()} />
+                                        <IconButton icon={'eye'} iconColor={'black'} size={25} onPress={() => OpenDetail()} />
                                     </View>
 
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
 
                                         <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column' }}>
 
-                                            <Card style={{ margin: 7, alignSelf: 'center', backgroundColor: '#EBEDEF', width: '95%' }}>
+                                            <Card style={{ margin: 7, alignSelf: 'center', backgroundColor: 'black', width: '95%', borderRadius: 0 }}>
 
                                                 <View style={{ margin: 10 }}>
                                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -149,24 +147,24 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
 
                                     </View>
 
-                                    <View style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                    }}>
+                                    <View style={{ display: 'flex', flexDirection: 'column' }}>
                                         <View>
                                             <View style={{ display: 'flex', flexDirection: 'row', alignSelf: 'center' }}>
-                                                <IconButton icon={'inbox'} size={120} iconColor={'grey'} />
+                                                <IconButton
+                                                    icon={Boxes.length > 0 ? 'inbox-multiple' : 'inbox-remove'}
+                                                    size={120}
+                                                    iconColor={Boxes.length > 0 ? 'black' : 'red'} />
                                                 <View>
-                                                    <Text style={{ color: 'black', fontSize: 70 }}> {counter}/{fact?.cant_cajas} </Text>
+                                                    <Text style={{ color: 'black', fontSize: 75 }}> {counter}/{fact?.cant_cajas} </Text>
                                                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                                                         <TextInput
                                                             ref={inputRef}
-                                                            style={{ color: 'black', borderColor: 'grey' }}
+                                                            style={{ color: 'black', borderColor: 'grey', fontSize: 10, alignSelf: 'center' }}
                                                             value={Value_}
                                                             onChangeText={(text) => setValue_(text)}
                                                             onSubmitEditing={handleBarcodeScan}
                                                             placeholderTextColor={'grey'}
-                                                            placeholder="BARCODE"
+                                                            placeholder="CODIGO DE BARRAS"
                                                             autoFocus
                                                             onBlur={() => inputRef.current?.focus()}
                                                         />
@@ -178,12 +176,12 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                         <Card>
                                             {
                                                 see2 === true &&
-                                                <View style={{ backgroundColor: '#EAEDED', borderBottomLeftRadius : 15 , borderBottomRightRadius : 15 }}>
-                                                    <View style={{ alignSelf: 'center', width: '90%', margin: 10, height: 100 , borderWidth : 0, }}>
+                                                <View style={{ backgroundColor: '#D0D3D4' }}>
+                                                    <View style={{ alignSelf: 'center', width: '95%', margin: 10, height: 100, borderWidth: 0, }}>
                                                         <ScrollView>
                                                             {
-                                                                Array.isArray(Boxes) ?
-                                                                    Boxes.map((item)  => {
+                                                                Array.isArray(Boxes) && Boxes.length > 0 ?
+                                                                    Boxes.map((item) => {
                                                                         let ischeck = item.is_check === true ? '#E91E63' : 'black';
                                                                         return (
                                                                             <View style={
@@ -204,7 +202,20 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                                                                 <Text style={{ backgroundColor: ischeck, color: 'white' }} key={item.albaran}>{item.numerocaja}</Text>
                                                                             </View>
                                                                         )
-                                                                    }) : <Text style={{ color: 'black' }}>SIN DATA</Text>
+                                                                    }) :
+                                                                    <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
+                                                                        <TouchableOpacity
+                                                                            onPress={async () => { await getBoxes() }}
+                                                                            style={{
+                                                                                backgroundColor: 'black',
+                                                                                margin: 10,
+                                                                                borderRadius: 50,
+                                                                                padding: 20
+                                                                            }}
+                                                                        >
+                                                                            <Text style={{ color: 'white' }}>PRESIONE PARA OBTENER LAS CAJAS NUEVAMENTE</Text>
+                                                                        </TouchableOpacity>
+                                                                    </View>
                                                             }
                                                         </ScrollView>
                                                     </View>
@@ -217,7 +228,7 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                 </Card>
                             </View>
                         </View>
-                    </Modal> : null
+                    </Modal>
                 )
 
             }
@@ -284,7 +295,7 @@ const styles = StyleSheet.create({
     title: {
         margin: 2,
         fontSize: 15,
-        color: 'black',
+        color: 'white',
         fontWeight: 'bold'
     },
     textbody: {

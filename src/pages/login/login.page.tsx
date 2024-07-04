@@ -138,7 +138,7 @@ function LoginPage() {
                         <Text style={styles.buttonText}>INGRESAR</Text>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.versionText}>V.0.2.2</Text>
+                <Text style={styles.versionText}>V.0.2.3</Text>
             </ImageBackground>
         </View>
     );

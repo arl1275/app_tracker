@@ -6,6 +6,7 @@ import { EntregaModal } from "../modals/entregadorModals/entregaModal.component"
 import useFacturaStore from "../../storage/storage";
 import BoxChecker_ent from "../modals/entregadorModals/BoxChequerEnt.component";
 import { Dimensions } from "react-native";
+import { RegisterView } from "../modals/entregadorModals/RegisterView.component";
 const widthScreen = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
@@ -35,17 +36,21 @@ function EntregadorListView() {
     const [see, setSee] = useState(false);
     const [fact_, setfact] = useState<Facturas>();
     const { data, fetchData} = useFacturaStore();
+    const [ openRegister, setOpenRegister ] = useState(false);
 
     useEffect(() => {
         const fetchDataInterval = setInterval(() => {
             fetchData();
-        }, 3000);
+        }, 1500);
 
         return () => {
             clearInterval(fetchDataInterval);
         };
     }, []);
 
+    const OpenRegister_func = (value : boolean) =>{
+        setOpenRegister(value);
+    }
 
     const openModal = () => {
         setModalVisible(true);
@@ -65,9 +70,10 @@ function EntregadorListView() {
             setSee(true);
         } else {
             if (item.hasSing === true) {
-                Alert.alert('FACTURA YA FIRMADA');
-
+                //Alert.alert('FACTURA YA FIRMADA');
+                OpenRegister_func(true);
             } else if (item.is_Sinchro) {
+                //setOpenRegister(true);
                 Alert.alert('FACTURA YA SINCRONIZADA');
             } else {
                 dataToSend(item);
@@ -133,8 +139,9 @@ function EntregadorListView() {
 
                         <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
                         <BoxChecker_ent visible={see} close={close} fact={fact_} />
-
-                    </View >)
+                        <RegisterView item={fact_} open={OpenRegister_func} Isopen={openRegister}/>
+                    </View >
+                    )
             }</View>
     );
 

@@ -171,15 +171,17 @@ const style = StyleSheet.create({
         justifyContent: 'space-around',
         borderRadius: 5,
         borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0'
+        borderBottomColor: '#E0E0E0',
+        marginLeft : 5,
+        marginRight : 5,
+        marginBottom : 1
     },
     factHead: {
-        padding: 5,
         paddingTop: 0,
         alignSelf: 'center',
         margin: 5,
-        // borderBottomWidth: 0.5,
-        // borderBottomColor: 'black',
+        borderWidth: 0.5,
+        borderColor: 'black',
         backgroundColor: 'white',
         width: '95%',
         //elevation: 5,
@@ -203,7 +205,6 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        borderRadius: 5,
         paddingLeft: '3%',
         justifyContent: 'space-between'
     }

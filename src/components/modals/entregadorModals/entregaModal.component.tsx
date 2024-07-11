@@ -66,23 +66,22 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
 
                                     <Text style={styles.title}>FIRMA DE ENTREGA</Text>
 
-                                    <View style={{ margin: 1 }} >
+                                    <View style={{ margin: 1, marginBottom : 6 }} >
                                         <View style={styles.table}>
-
+                                        <View style={styles.row}>
+                                                <Text style={styles.header}>FACTURA :</Text>
+                                                <Text style={styles.value}>{fact?.factura}</Text>
+                                            </View>
                                             <View style={styles.row}>
                                                 <Text style={styles.header}>CLIENTE :</Text>
                                                 <Text style={[styles.value, { width: '60%' }]}>{fact?.clientenombre}</Text>
                                             </View>
+                                            <View style={{ borderWidth : 0.5, borderColor : 'white', height : 1}}/>
                                             <View style={styles.row}>
                                                 <Text style={styles.header}>ENTREGADOR :</Text>
                                                 <Text style={styles.value}>{fact?.nombre}</Text>
                                             </View>
-
-                                            <View style={styles.row}>
-                                                <Text style={styles.header}>FACTURA :</Text>
-                                                <Text style={styles.value}>{fact?.factura}</Text>
-                                            </View>
-
+                                            
                                             <View style={styles.row}>
                                                 <Text style={styles.header}>CANT. CAJAS:</Text>
                                                 <Text style={styles.value}>{fact?.cant_cajas}</Text>
@@ -125,7 +124,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                                     <Text style={styles.header}>CLIENTE :</Text>
                                                     <Text style={[styles.value, { width: '60%', textAlign: 'right' }]}>{fact?.clientenombre}</Text>
                                                 </View>
-
+                                                <View style={{ borderWidth : 0.5, borderColor : 'white', height : 1}}/>
                                                 <View style={styles.row}>
                                                     <Text style={styles.header}>CAJAS:</Text>
                                                     <Text style={styles.value}>{fact?.cant_cajas}</Text>
@@ -209,7 +208,7 @@ const styles = StyleSheet.create({
         zIndex: 1, // Ensure the content is above the overlay
         padding: 20,
         backgroundColor: 'white',
-        borderRadius: 0,
+        borderRadius: 4,
         width: '100%'
     },
     buttonContainer: {
@@ -218,6 +217,7 @@ const styles = StyleSheet.create({
         marginVertical: 0,
         width: "auto",
         backgroundColor: 'black',
+        borderRadius : 5
     },
     container: {
         backgroundColor: 'white',
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     },
     table: {
         borderWidth: 0,
-        borderRadius: 0,
+        borderRadius: 7,
         padding: 10,
         backgroundColor: 'black',
         elevation: 10
@@ -254,14 +254,15 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         backgroundColor: '#5DADE2'
     },
-
     header: {
         fontWeight: 'bold',
-        color: 'white'
+        color: 'white',
+        fontSize : 12
     },
     value: {
         marginLeft: 10,
-        color: 'white'
+        color: 'white',
+        fontSize : 12
     },
 
 });

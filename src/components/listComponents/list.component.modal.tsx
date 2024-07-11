@@ -6,7 +6,7 @@ import useGuardList from "../../storage/gaurdMemory";
 import BoxChecker from "../modals/guardiaModals/BoxChecker.component";
 import db_dir from "../../config/db";
 import axios from "axios";
-import { SafeAreaView } from "react-native-safe-area-context";
+//import { SafeAreaView } from "react-native-safe-area-context";
 const windowWithd = Dimensions.get('window').width;
 
 interface props {
@@ -33,7 +33,7 @@ const ListComponentModal: React.FC<props> = (props) => {
 
     const updateList = async () => {
         try {
-            console.log('data como props : ', props.dec_envio)
+            //console.log('data como props : ', props.dec_envio)
             let valores_ = await axios.get(db_dir + '/decEnv/FactsDecEnv', { params: { dec_envio: props.dec_envio } });
             let valores: Facturas[] = valores_.data.data;
             setFilterArr(valores);
@@ -88,12 +88,12 @@ const ListComponentModal: React.FC<props> = (props) => {
     }
 
     return (
-        <View style={{ maxHeight : 'auto', marginBottom : '40%'}}>
+        <View style={{ maxHeight: 'auto', marginBottom: '40%' }}>
             {
                 openLog === false && FilterArr.length > 0 ?
 
                     <View>
-                        <View style={{ height : '100%'}}>
+                        <View style={{ height: '100%' }}>
                             <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
                             <Card style={styles.card}>
                                 <View style={{
@@ -105,10 +105,10 @@ const ListComponentModal: React.FC<props> = (props) => {
                                     //width: '100%' 
                                 }}>
 
-                                    <Text style={{ color: 'white' }}>Facturas : {TotalFacturas}</Text>
+                                    <Text style={{ color: 'black' }}>Facturas : {TotalFacturas}</Text>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={styles.text_head}>CAJAS :</Text>
-                                        <Text style={[styles.text_head, { color: 'white', fontWeight: 'bold' }]}>{get_total_cajas()}</Text>
+                                        <Text style={[styles.text_head, { color: 'black', fontWeight: 'bold' }]}>{get_total_cajas()}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={styles.text_head}>UNIDADES :</Text>
@@ -120,34 +120,38 @@ const ListComponentModal: React.FC<props> = (props) => {
                                 {
                                     data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
                                         let valor = item.is_check != true ? '#FFB42A' : item.is_Sinchro === true ? '#A5D6A7' : '#239B56';
-                                        let head_valor = item.is_check != true ? '#616161' : item.is_Sinchro === true ? '#00FFFF' : '#00FF66';
+                                        let head_valor = item.is_check != true ? '#85929E' : item.is_Sinchro === true ? '#00FFFF' : '#7DCEA0';
                                         return (
-                                            <View style={{ alignSelf: "center", width: '95%', marginBottom: 10 }} key={item.factura_id}>
+                                            <View style={{ alignSelf: "center", width: '95%', marginBottom: 0 }} key={item.factura_id}>
 
                                                 <Card
                                                     style={{
-                                                        borderRadius: 15,
+                                                        borderRadius: 0,
                                                         backgroundColor: 'white',
                                                         height: 'auto',
                                                         alignItems: 'center', // Centra los elementos en el eje principal (horizontal)
                                                         justifyContent: 'center', // Centra los elementos en el eje secundario (vertical)
                                                         borderColor: head_valor,
-                                                        borderWidth: 1.2,
+                                                        borderWidth: 1.4,
                                                         marginBottom: 5,
                                                         elevation: 15,
-                                                        paddingTop: 10,
-                                                        paddingBottom: 10
+                                                        paddingTop: 5,
+                                                        paddingBottom: 5
                                                     }}
                                                     onPress={() => { checkIsCheck(item) }}
                                                     key={item.factura_id}
                                                 >
 
                                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%' }}>
-                                                        <Text style={[styles.sp_text, { width: '20%' }]}>{item.factura}</Text>
-                                                        <Text style={[styles.sp_text, { width: '20%' }]}>{item.lista_empaque}</Text>
-                                                        <Text style={[styles.sp_text, { width: '30%' }]}>{item.clientenombre}</Text>
-                                                        <Text style={[styles.sp_text, { width: '20%' }]}>{item.cant_cajas}</Text>
-                                                        <Text style={[styles.sp_text, { width: '7%' }]}>{item.cant_unidades}</Text>
+                                                        <Text style={[styles.sp_text, { width: '20%', textAlignVertical : 'center' }]}>{item.factura}</Text>
+                                                        <Text style={[styles.sp_text, { width: '20%', textAlignVertical : 'center'}]}>
+                                                        {item.lista_empaque.split(',').map((albaran, index) => (
+                                                            <View key={index}><Text style={[styles.sp_text]}>{albaran.trim()}</Text></View>
+                                                        ))}
+                                                        </Text>
+                                                        <Text style={[styles.sp_text, { width: '30%', textAlignVertical : 'center' }]}>{item.clientenombre}</Text>
+                                                        <Text style={[styles.sp_text, { width: '20%', textAlignVertical : 'center', textAlign : 'center' }]}>{item.cant_cajas}</Text>
+                                                        <Text style={[styles.sp_text, { width: '07%', textAlignVertical : 'center', textAlign : 'center' }]}>{item.cant_unidades}</Text>
                                                     </View>
 
                                                 </Card>
@@ -191,7 +195,7 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     text_head: {
-        color: 'white',
+        color: 'black',
         fontSize: windowWithd * 0.025,
         fontFamily: 'system-ui',
         marginLeft: 10
@@ -248,12 +252,12 @@ const styles = StyleSheet.create({
     //---------------------------------------------------------------------
 
     card: {
-        borderRadius: 50,
-        backgroundColor: 'black',
+        borderRadius: 0,
+        backgroundColor: 'white',
         height: 30, // Ajusta la altura según tu necesidad
-        marginTop: 5,
+        marginTop: 0,
         marginLeft: 10,
         marginRight: 10,
-        elevation: 40,
+        elevation: -40,
     },
 });

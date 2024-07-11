@@ -33,18 +33,18 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
     }
 
     useEffect(() => {
-        if ( typeof fact?.cant_cajas === 'string' ){
+        if (typeof fact?.cant_cajas === 'string') {
             let dat = 0;
-            dat = parseInt( fact.cant_cajas );
-            if ( dat === counter && dat != 0 ) {
-                updateIsCheck( fact?.factura_id );
+            dat = parseInt(fact.cant_cajas);
+            if (dat === counter && dat != 0) {
+                updateIsCheck(fact?.factura_id);
                 Alert.alert('FINALIZADO');
                 CloseBarcode();
                 setCounter(0);
                 close();
             }
         }
-    }, [ counter ]);
+    }, [counter]);
 
     useEffect(() => {
         const cajas = async () => { await getBoxes(); }
@@ -52,7 +52,7 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
     }, [visible]);
 
     const CounterBoxes = (num: number) => {
-        setCounter( prevCounter => prevCounter + num );
+        setCounter(prevCounter => prevCounter + num);
         return counter;
     }
 
@@ -107,7 +107,7 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                     <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={() => { close }}>
                         <View style={styles.modalOverlay}>
                             <View style={styles.centeredView}>
-                                <Card style={{ backgroundColor: 'white', borderRadius: 0, width: '95%' }}>
+                                <Card style={{ backgroundColor: 'white', borderRadius: 5, width: '95%' }}>
 
                                     <View style={{ margin: 3 }}>
                                         <IconButton
@@ -133,12 +133,27 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                                                         <Text style={styles.title}>{fact?.factura}</Text>
                                                     </View>
                                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                        <Text style={[styles.title, { textAlign: 'right' }]}>RUTA :</Text>
-                                                        <Text style={styles.title}>{fact?.lista_empaque}</Text>
-                                                    </View>
-                                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                                         <Text style={[styles.title, { textAlign: 'right' }]}>CLIENTE :</Text>
                                                         <Text style={[styles.title, { textAlign: 'right', width: '80%' }]}>{fact?.clientenombre}</Text>
+                                                    </View>
+                                                    <View style={{
+                                                        display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+                                                        borderTopWidth: 1, borderTopColor: 'white'
+                                                    }}>
+                                                        <Text style={[styles.title, { textAlign: 'right' }]}>RUTA :</Text>
+                                                        <View style={styles.title}>{fact?.lista_empaque.split(',').map((item, index) => (
+                                                            <Text
+                                                                key={index}
+                                                                style={{
+                                                                    textAlign: 'left',
+                                                                    textAlignVertical: 'center',
+                                                                    color: 'white',
+                                                                    fontSize: 12
+                                                                }}
+                                                            >
+                                                                {item.trim()}
+                                                            </Text>
+                                                        ))}</View>
                                                     </View>
                                                 </View>
 
@@ -147,19 +162,20 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
 
                                     </View>
 
-                                    <View style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <View>
-                                            <View style={{ display: 'flex', flexDirection: 'row', alignSelf: 'center' }}>
+                                    <View style={{  }}>
+                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+
+                                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '40%' }}>
                                                 <IconButton
                                                     icon={Boxes.length > 0 ? 'inbox-multiple' : 'inbox-remove'}
                                                     size={120}
                                                     iconColor={Boxes.length > 0 ? 'black' : 'red'} />
                                                 <View>
-                                                    <Text style={{ color: 'black', fontSize: 75 }}> {counter}/{fact?.cant_cajas} </Text>
+                                                    <Text style={{ color: 'black', fontSize: 30 }}> {counter}/{fact?.cant_cajas} </Text>
                                                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                                                         <TextInput
                                                             ref={inputRef}
-                                                            style={{ color: 'black', borderColor: 'grey', fontSize: 10, alignSelf: 'center' }}
+                                                            style={{ color: 'black', borderBottomWidth : 1, borderBottomColor : 'black', fontSize: 10, alignSelf: 'center' }}
                                                             value={Value_}
                                                             onChangeText={(text) => setValue_(text)}
                                                             onSubmitEditing={handleBarcodeScan}
@@ -171,6 +187,23 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                                                     </View>
                                                 </View>
                                             </View>
+
+                                            <View style={{
+                                                display: 'flex', flexDirection: 'row', width: '50%', flexWrap: 'wrap',
+                                                backgroundColor: '#ECF0F1', padding: 5, borderRadius: 5, margin: 5
+                                            }}>
+                                                {Boxes.map((item) => {
+                                                    let ischeck = item.is_check === true ? '#E91E63' : 'black';
+                                                    return (
+                                                        <View style={{ margin: 2, borderRadius : 3, height: 25, width: 25, backgroundColor: ischeck }}>
+                                                            <Text style={{ backgroundColor: ischeck, color: 'white', fontSize : 12 , textAlignVertical : 'center', textAlign : 'center'}} key={item.albaran}>{item.numerocaja}</Text>
+                                                        </View>
+                                                    )
+                                                })
+                                                }
+                                            </View>
+
+
                                         </View>
 
                                         <Card>
@@ -294,7 +327,7 @@ const styles = StyleSheet.create({
     },
     title: {
         margin: 2,
-        fontSize: 15,
+        fontSize: 12,
         color: 'white',
         fontWeight: 'bold'
     },

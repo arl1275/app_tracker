@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Image, Alert, Modal } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image, Modal } from 'react-native';
 import UserStorage from "../../storage/user";
 import axios from "axios";
 import db_dir from "../../config/db";
@@ -8,10 +8,10 @@ import { IconButton } from "react-native-paper";
 import ListComponentModal from "../../components/listComponents/list.component.modal";
 import { Picker } from "@react-native-picker/picker";
 import { EnterPage } from "../../components/Activity/enter.component";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../..";
-import { ScrollView } from "react-native-gesture-handler";
+// import { useNavigation } from "@react-navigation/native";
+// import { StackNavigationProp } from "@react-navigation/stack";
+// import { RootStackParamList } from "../..";
+// import { ScrollView } from "react-native-gesture-handler";
 const image = require('../../assets/images/Select-pana.png');
 
 interface dec_envio {
@@ -94,13 +94,7 @@ export function MainGuardView() {
                                     style={styles.picker}
                                     onValueChange={(itemValue) => { setSelectDeclar(itemValue); }} >
                                     <Picker.Item label="PRESIONE PARA SELECCIONAR DECLARACION DE ENVIO" value="0"
-                                        style={
-                                            {
-                                                fontSize: 12,
-                                                backgroundColor: '#F2F3F4',
-                                                color: 'black'
-                                            }}
-                                    />
+                                        style={{fontSize: 12, backgroundColor: '#F2F3F4', color: 'black'}} />
                                     {
                                         data.map((item) => (
                                             <Picker.Item

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Alert,  ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Alert, ScrollView } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import { Facturas } from "../../interfaces/facturas";
 import { EntregaModal } from "../modals/entregadorModals/entregaModal.component";
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         elevation: 10,
         alignSelf: 'center',
-        height: '7%'
+        height: 'auto'
     },
     tableRow: {
         backgroundColor: "white",
@@ -31,12 +31,12 @@ const styles = StyleSheet.create({
 
 
 function EntregadorListView() {
-    const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);   
+    const [EntregarFact, serEntregarFact] = useState<Facturas | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [see, setSee] = useState(false);
     const [fact_, setfact] = useState<Facturas>();
-    const { data, fetchData} = useFacturaStore();
-    const [ openRegister, setOpenRegister ] = useState(false);
+    const { data, fetchData } = useFacturaStore();
+    const [openRegister, setOpenRegister] = useState(false);
 
     useEffect(() => {
         const fetchDataInterval = setInterval(() => {
@@ -48,7 +48,7 @@ function EntregadorListView() {
         };
     }, []);
 
-    const OpenRegister_func = (value : boolean) =>{
+    const OpenRegister_func = (value: boolean) => {
         setOpenRegister(value);
     }
 
@@ -91,9 +91,9 @@ function EntregadorListView() {
         if (item.state_name === 'FIRMADO') {
             return '#33CCFF';
         } else if (item.state_name === 'SINCRONIZADO') {
-            return '#00FFFF';
+            return '#82E0AA';
         } else if (item.state_name === 'ENTREGADO') {
-            return '#FFFF33';
+            return '#F9E79F';
         } else {
             return '0';
         }
@@ -115,17 +115,31 @@ function EntregadorListView() {
                             </DataTable.Header>
                             <ScrollView>
                                 {
-                                    data.map(( item : Facturas) => {
+                                    data.map((item: Facturas) => {
                                         let valor = color_choose(item);
                                         return (
-                                            <DataTable.Row  
-                                            key={item.factura_id} 
-                                            onPress={() => { setfact(item); BoxOrSing(item); }} 
-                                            style={[ styles.tableRow , { borderRightWidth : 4, borderRightColor : valor, marginTop : 1 }]}
+                                            <DataTable.Row
+                                                key={item.factura_id}
+                                                onPress={() => { setfact(item); BoxOrSing(item); }}
+                                                style={[styles.tableRow, { backgroundColor : valor, marginTop: 1 }]}
                                             >
-                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.015, fontWeight: '400', color: 'black', width : '90%' , margin: '5%'}}>{item.clientenombre}</Text></DataTable.Cell>
-                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: 'bold', color: 'black',}}>{item.factura}</Text></DataTable.Cell>
-                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.lista_empaque}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.015, fontWeight: '400', color: 'black', width: '90%', margin: '5%' }}>{item.clientenombre}</Text></DataTable.Cell>
+                                                <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: 'bold', color: 'black', }}>{item.factura}</Text></DataTable.Cell>
+                                                <DataTable.Cell><View style={{ }}>
+                                                    {item.lista_empaque.split(',').map((item, index) => (
+                                                        <Text
+                                                            key={index}
+                                                            style={{
+                                                                textAlign: 'left',
+                                                                textAlignVertical: 'center',
+                                                                color: '#2C2C2C',
+                                                                fontSize: widthScreen * 0.022,
+                                                                margin: '1%'
+                                                            }}
+                                                        >
+                                                            {item.trim()}
+                                                        </Text>
+                                                    ))}</View></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.cant_cajas}</Text></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.cant_unidades}</Text></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: 'bold', color: 'black' }}>{item.state_name === undefined ? 'PENDIENTE' : item.state_name}</Text></DataTable.Cell>
@@ -139,9 +153,9 @@ function EntregadorListView() {
 
                         <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
                         <BoxChecker_ent visible={see} close={close} fact={fact_} />
-                        <RegisterView item={fact_} open={OpenRegister_func} Isopen={openRegister}/>
+                        <RegisterView item={fact_} open={OpenRegister_func} Isopen={openRegister} />
                     </View >
-                    )
+                )
             }</View>
     );
 

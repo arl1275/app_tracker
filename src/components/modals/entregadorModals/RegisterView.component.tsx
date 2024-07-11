@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
+import { Icon } from "react-native-paper";
 
 interface Props {
     item?: Facturas | undefined; // item puede ser undefined
-    open: ( value : boolean )=> void;
-    Isopen : boolean
+    open: (value: boolean) => void;
+    Isopen: boolean
 }
 
-export const RegisterView: React.FC<Props> = ({ item, open, Isopen})=> {
-    // Estado para controlar la visibilidad del modal
+export const RegisterView: React.FC<Props> = ({ item, open, Isopen }) => {
+    const [PhotoSing, setPhotoSing] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         setModalVisible(Isopen);
     }, [Isopen])
 
-    // Función para abrir el modal
-    // const openModal = () => {
-    //     setModalVisible(open);
-    // };
-
-    // Función para cerrar el modal
     const closeModal = () => {
         open(false);
         setModalVisible(false);
@@ -29,8 +24,6 @@ export const RegisterView: React.FC<Props> = ({ item, open, Isopen})=> {
 
     return (
         <View style={styles.container}>
-
-            {/* Modal que muestra la imagen */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -39,20 +32,31 @@ export const RegisterView: React.FC<Props> = ({ item, open, Isopen})=> {
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalView}>
-                        {/* Título del modal */}
-                        <Text style={styles.modalTitle}>REGISTROS DE ENTREGA</Text>
-                        {/* Imagen en base64 */}
-                        <Image
-                            style={styles.image}
-                            source={{ uri: `data:image/png;base64,${item?.nameSing}` }}
-                        />
-                        <Image
-                            style={styles.image}
-                            source={{ uri: `data:image/png;base64,${item?.namePic}` }}
-                        />
-                        {/* Botón para cerrar el modal */}
+                        <View 
+                        style={{ display : 'flex', flexDirection : 'row', justifyContent : 'space-around',
+                         width : '100%', backgroundColor : 'black', borderRadius : 5, alignItems : 'center', padding : 5, marginBottom : 20}}>
+                            <Text style={styles.modalTitle}>REGISTROS DE ENTREGA</Text>
+
+                            <TouchableOpacity 
+                            onPress={()=> setPhotoSing('photo')}
+                            style={{ justifyContent : 'center', alignItems : 'center', borderRadius : 100, backgroundColor : PhotoSing === "photo" ? '#FF00CC' : 'grey', padding : 10}}>
+                                <Icon color="white" source={'camera'} size={20}/>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity 
+                            onPress={()=> setPhotoSing('sing')}
+                            style={{ justifyContent : 'center', alignItems : 'center', borderRadius : 100, backgroundColor : PhotoSing === "sing" ? '#FF00CC' : 'grey', padding : 10}}>
+                                <Icon color="white" source={'file-sign'} size={20}/>
+                            </TouchableOpacity>
+                        </View>
+
+                        { PhotoSing === 'photo' ? <Image style={styles.image} source={{ uri: `data:image/png;base64,${item?.namePic}` }} /> :
+                        PhotoSing === 'sing' ? <Image style={styles.image} source={{ uri: `data:image/png;base64,${item?.nameSing}` }} /> : null
+                        }
+                        
+                        
                         <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                            <Text style={styles.buttonText}>Cerrar</Text>
+                            <Text style={styles.buttonText}>CERRAR</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -86,10 +90,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalView: {
-        width: 300,
+        width: '90%',
         padding: 20,
         backgroundColor: 'white',
-        borderRadius: 20,
+        borderRadius: 5,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
@@ -104,6 +108,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+        color: 'white'
     },
     image: {
         width: 250,
@@ -111,8 +116,9 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     closeButton: {
-        backgroundColor: '#2196f3',
+        backgroundColor: 'black',
         padding: 10,
         borderRadius: 10,
+        width: '85%'
     },
 });

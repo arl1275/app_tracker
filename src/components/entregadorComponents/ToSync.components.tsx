@@ -33,9 +33,7 @@ export function VistadeSync() {
                 const data = await getAllNOTsynchroFacts();
                 //console.log('fact to validate: ', data);
                 if (data.length > 0) {
-
                     const response = await axios.put(db_dir + '/facturas/SubirFotosFact', data);
-
                     if (response.status === 200) {
                         setSynchro(data);
                         setLoading(false);

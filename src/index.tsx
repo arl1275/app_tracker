@@ -17,13 +17,13 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-function AuthHandler() {
+ function AuthHandler() {
   const { getType } = UserStorage();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const checkUserType = async () => {
     const tipo  :  number = await getType();
-    //console.log('valor ::: ' , tipo)
+    console.log('valor ::: ' , tipo)
     if (tipo === 2) {
       navigation.navigate('Guardia');
     } else if (tipo === 3) {
@@ -44,15 +44,16 @@ function AuthHandler() {
   return null;
 }
 
+
 function IndexPage() {
   return (
     <NavigationContainer>
+      <AuthHandler /> 
       <Stack.Navigator>
         <Stack.Screen name="Home" component={LoginPage} options={{ headerShown: false }} />
         <Stack.Screen name="Entregador" component={EntregadorRoutes} options={{ headerShown: false }} />
         <Stack.Screen name="Guardia" component={GuardiaRoutes} options={{ headerShown: false }} />
       </Stack.Navigator>
-      <AuthHandler />
     </NavigationContainer>
   );
 }

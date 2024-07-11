@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Text, Alert, StyleSheet, Image } from "react-native";
+import { View, TouchableOpacity, Text, Alert, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Syncronazir from "../modals/entregadorModals/syncroniziyer_.component";
@@ -15,6 +15,7 @@ import axios from "axios";
 import db_dir from "../../config/db";
 import { Facturas } from "../../interfaces/facturas";
 import { box_to_check } from "../../interfaces/box";
+import { UserInterface } from "../../interfaces/user";
 const withScreen = Dimensions.get('screen').width;
 
 interface FacturaProps {
@@ -23,19 +24,21 @@ interface FacturaProps {
 }
 
 const EntregadorHomeView = () => {
-    const { data, closeSession, getUser } = UserStorage();
+    const { closeSession, getUser } = UserStorage();
     const { deleteAllfacts, updateFactura } = useFacturaStore();
     const { closeBoxes, fetchData_ } = boxChequerStorage();
-    const [isConn, setIsConn] = useState<boolean>(false);
-    const [facturas, setFacturas] = useState<Facturas[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [divisable_up, setDivisableUp] = useState<boolean>(false);
+    const [ isConn, setIsConn] = useState<boolean>(false);
+    const [ facturas, setFacturas] = useState<Facturas[]>([]);
+    const [ loading, setLoading] = useState(false);
+    const [ divisable_up, setDivisableUp] = useState<boolean>(false);
+    const [ user, setUser] = useState<UserInterface | null>()
     const navigation = useNavigation<StackNavigationProp<RootStacEntregadorList>>();
     const navigation2 = useNavigation<StackNavigationProp<RootStackParamList>>();
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        const intervalId = setInterval(async () => {
             IsOnline();
+            setUser(await getUser())
         }, 1000);
         return () => clearInterval(intervalId);
     }, [])
@@ -67,8 +70,8 @@ const EntregadorHomeView = () => {
 
     const getEnTransitoFacts = async () => {
         try {
-            const id_user = await getUser();
-            const data2 = await axios.get(db_dir + '/facturas/getEnTransFact', { params: { id: id_user.id_user } });
+            const id_user : UserInterface | null = await getUser();
+            const data2 = await axios.get(db_dir + '/facturas/getEnTransFact', { params: { id: id_user?.id_user } });
             const facturas_api = data2.data.data
 
             if (facturas_api.length > 0) {
@@ -123,22 +126,20 @@ const EntregadorHomeView = () => {
         <>
             <View style={{ backgroundColor: 'white', flex: 1, height: '100%', width: '100%' }}>
                 <View style={style.headHome}>
-                    <View style={style.NameLabel}>
+                    <View style={[style.NameLabel, { alignItems : 'center'}]}>
                         <Text 
                         style={{ 
-                            marginLeft: '10%', 
                             color: 'black', 
                             fontSize: withScreen * 0.03, 
                             fontWeight: 'bold', 
                             marginTop: 5, 
                             alignSelf : 'center',
                             textAlignVertical : 'center'
-                            }}>{data.nombre}</Text>
+                            }}>{user?.nombre}</Text>
                     </View>
 
 
                     <View style={{ height: 'auto', width: '30%', display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
-
                         <TouchableOpacity onPress={() => { navigation.navigate('Barcode') }} style={{ backgroundColor: 'white', borderRadius: 50, padding: 3 }}>
                             <Icon source={'barcode'} color="black" size={25} />
                         </TouchableOpacity>
@@ -194,6 +195,6 @@ const style = StyleSheet.create({
 
 export default EntregadorHomeView;
 
-function getUser() {
-    throw new Error("Function not implemented.");
-}
+// function getUser() {
+//     throw new Error("Function not implemented.");
+// }

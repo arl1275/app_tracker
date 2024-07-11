@@ -7,14 +7,14 @@ import isConnectedToInternet from '../utils/network_conn';
 interface UserProps {
     data: UserInterface;
     fetchData: () => Promise<void>;
-    setUser: (user_: UserInterface) => void;
-    getUser: () => void;
-    closeSession: () => void;
-    getType : () => void;
+    setUser: (user_: UserInterface) => Promise<void>;
+    getUser: () => Promise<UserInterface | null>;
+    closeSession: () => Promise<boolean>;
+    getType: () => Promise<number>;
 }
 
-const UserStorage: any = create<UserProps>((set) => ({
-    data : {
+const UserStorage = create<UserProps>((set, get) => ({
+    data: {
         id_user: 0,
         nombre: '',
         active: false,
@@ -30,29 +30,32 @@ const UserStorage: any = create<UserProps>((set) => ({
             if (storedData !== null) {
                 set({ data: JSON.parse(storedData) });
             }
-
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     },
 
-    setUser: async (users_: UserInterface) => {
+    setUser: async (user_: UserInterface) => {
         try {
-            await AsyncStorage.setItem('user', JSON.stringify(users_));
-            set({ data: users_ });
-            //console.log('usuario GUARDADO : ', UserStorage.getState().data);
+            await AsyncStorage.setItem('user', JSON.stringify(user_));
+            set({ data: user_ });
+            console.log('Usuario GUARDADO : ', get().data);
         } catch (error) {
             console.error('Error saving user data:', error);
-            Alert.alert('NO SE PUDO GUARDAR EL USUARIO')
+            Alert.alert('NO SE PUDO GUARDAR EL USUARIO');
         }
     },
 
     getUser: async () => {
         try {
-            const { data } = await UserStorage.getState('user');
-            return data;
+            const storedData = await AsyncStorage.getItem('user');
+            if (storedData !== null) {
+                return JSON.parse(storedData);
+            }
+            return null;
         } catch (error) {
             console.log('ERROR PARA OBTENER EL USUARIO');
+            return null;
         }
     },
 
@@ -84,17 +87,18 @@ const UserStorage: any = create<UserProps>((set) => ({
         }
     },
 
-    getType : async () => {
+    getType: async () => {
         try {
-            const { data } = await UserStorage.getState('user');
-            //console.log('valores :: : ::: ', data)
-            return data.type_;
+            const user = await get().getUser();
+            if (user) {
+                return user.type_;
+            }
+            return 0;
         } catch (error) {
             console.log('ERROR PARA OBTENER EL USUARIO');
             return 0;
         }
     }
-
 }));
 
 export default UserStorage;

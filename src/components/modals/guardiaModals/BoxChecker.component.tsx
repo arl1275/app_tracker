@@ -7,6 +7,7 @@ import Icon from "react-native-paper";
 import useGuardList from "../../../storage/gaurdMemory";
 import db_dir from "../../../config/db";
 import axios from "axios";
+import { box_to_check } from "../../../interfaces/box";
 const windowWithd = Dimensions.get('window').width;                                 // this is the camera itself
 
 interface props {
@@ -120,25 +121,22 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                 <View style={styles.centeredView}>
                     <View style={{ width: '90%', height: 'auto' }}>
 
-                        <View style={{ backgroundColor: 'white', width: '100%', borderRadius: 15 }}>
+                        <View style={{ backgroundColor: '#F4F6F6', width: '100%', borderRadius: 10 }}>
 
-                            <View style={{ marginBottom: 7, flexDirection: 'row', justifyContent: 'space-between' }}>
-
-                                <View style={{ marginLeft: 10, marginTop: 5 }}>
+                            <View style={{ padding: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <View style={{ marginLeft: 10 }}>
                                     <IconButton icon={'eye'} iconColor="black" size={25} onPress={() => OpenDetail()} />
                                 </View>
-
-                                <View style={{ marginRight: 10, marginTop: 5 }}>
+                                <View style={{ marginRight: 10 }}>
                                     <IconButton icon={'close'} iconColor="red" size={25} onPress={() => { setSee2(false); setCounter(0); setData([]); close(); }} />
                                 </View>
                             </View>
 
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center' }}>
 
-                                <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column', margin: 10 }}>
+                                <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column', margin: 0 }}>
 
-                                    <Card style={{ marginBottom: 20, alignSelf: 'center', backgroundColor: '#ECEFF1', width: '95%', elevation: 10 }}>
-
+                                    <Card style={{ marginBottom: 0, alignSelf: 'center', backgroundColor: 'white', width: '95%', elevation: 10 }}>
                                         <View style={{ margin: 10, paddingLeft: 20, paddingRight: 20 }}>
 
                                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -146,33 +144,58 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                                 <Text style={styles.title}>{fact?.factura}</Text>
                                             </View>
                                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={[styles.title, { textAlign: 'right' }]}>RUTA :</Text>
-                                                <Text style={styles.title}>{fact?.lista_empaque}</Text>
-                                            </View>
-                                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                                 <Text style={[styles.title, { textAlign: 'right' }]}>CLIENTE :</Text>
                                                 <Text style={[styles.title, { textAlign: 'right', width: '70%' }]}>{fact?.clientenombre}</Text>
                                             </View>
-
+                                            <View style={{
+                                                display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+                                                borderTopWidth: 1, borderTopColor: 'black', marginTop: 4
+                                            }}>
+                                                <Text style={[styles.title, { textAlign: 'right' }]}>RUTA(S) :</Text>
+                                                <View style={[styles.title]}>
+                                                    {fact?.lista_empaque.split(',').map((albaran, index) => (
+                                                        <View key={index}><Text style={[styles.title, { textAlign: 'center' }]}>{albaran.trim()}</Text></View>
+                                                    ))}
+                                                </View>
+                                            </View>
                                         </View>
 
                                     </Card>
 
-                                    <Card style={{ backgroundColor: '#ECEFF1', marginBottom: 10, borderRadius: 7, alignSelf: 'center', width: '95%', elevation: 15 }}>
-                                        <View style={{ margin: 4, display: 'flex', flexDirection: 'column', alignSelf: 'center' }}>
-                                            <Text style={{ color: 'black', fontSize: 60, fontFamily: 'system-ui', alignSelf: 'center' }}> {counter}/{fact?.cant_cajas} </Text>
-                                            <TextInput
-                                                ref={inputRef}
-                                                style={{}}
-                                                value={Value_}
-                                                onChangeText={(text) => setValue_(text)}
-                                                onSubmitEditing={handleBarcodeScan}
-                                                placeholderTextColor={'black'}
-                                                placeholder="BARCODE"
-                                                autoFocus
-                                                onBlur={() => inputRef.current?.focus()}
-                                            />
+                                    <Card style={{ margin: 10, backgroundColor: 'white', padding: 10 }}>
+                                        <View style={{ display: 'flex', flexDirection: 'row' }}>
+
+                                            <View style={{ display: 'flex', flexDirection: 'row', width: '60%', flexWrap: 'wrap', 
+                                                backgroundColor : '#ECF0F1', padding : 5, borderRadius : 5 , minHeight : 100, maxHeight : 400}}>
+                                                {Boxes.map((item) => {
+                                                    let ischeck = item.check === true ? '#E91E63' : 'black';
+                                                    return (
+                                                        <Card style={{ height: 30, width: 30, borderRadius: 7, margin: 1, backgroundColor: ischeck, justifyContent : 'center', alignItems : 'center' }}>
+                                                            <Text style={{textAlignVertical : 'center', color : 'white'}}>{item.numerocaja}</Text>
+                                                        </Card>
+                                                    )
+                                                }
+                                                )}
+                                            </View>
+
+                                            <View style={{ margin: 4, display: 'flex', flexDirection: 'column', alignSelf: 'auto', justifyContent : 'center', alignItems : 'center' }}>
+                                                <Text style={{ color: 'black', fontSize: 60, fontFamily: 'system-ui', textAlign: 'left' }}> {counter}/{fact?.cant_cajas} </Text>
+                                                <TextInput
+                                                    ref={inputRef}
+                                                    style={{ borderBottomWidth : 1, borderBottomColor : 'grey', width : '80%'}}
+                                                    value={Value_}
+                                                    onChangeText={(text) => setValue_(text)}
+                                                    onSubmitEditing={handleBarcodeScan}
+                                                    placeholderTextColor={'black'}
+                                                    placeholder="BARCODE"
+                                                    autoFocus
+                                                    onBlur={() => inputRef.current?.focus()}
+                                                />
+                                            </View>
+
                                         </View>
+
+
                                     </Card>
 
                                 </View>

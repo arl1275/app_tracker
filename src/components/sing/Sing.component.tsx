@@ -73,10 +73,10 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
   };
 
   return (
-    <View style={{ backgroundColor : 'white' }}>
-      <View style={{ borderWidth : 1 , borderColor : 'grey', elevation : 10}}>
+    <View style={{ marginBottom : 10 , borderWidth : 1, borderColor : '#A6ACAF', elevation : 10, borderRadius : 7, padding : 5, backgroundColor : '#A6ACAF'}}>
+      <View style={{ borderRadius : 5, borderWidth : 1, borderColor : 'white',padding : 1, backgroundColor : 'white'}}>
         <SignatureCapture
-          style={{ height: 300 }} // Ajusta la altura según sea necesario
+          style={{ height: 350}} // Ajusta la altura según sea necesario
           ref={signatureRef}
           onSaveEvent={_onSaveEvent}
           onDragEvent={_onDragEvent}
@@ -84,6 +84,8 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
           showTitleLabel={false}
           viewMode="portrait"
           showNativeButtons={true}
+          backgroundColor={'white'}
+          strokeColor='#1B2631'
         />
       </View>
 

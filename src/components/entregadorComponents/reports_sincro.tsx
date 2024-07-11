@@ -43,16 +43,16 @@ const ReportLocalSincro = () => {
         <View style={{ height: '100%' }}>
             <View style={style.head_list}>
 
-                <View style={{ flexDirection: 'row', display: 'flex', backgroundColor: '#242424', borderRadius : 10 , width : '55%'}}>
+                <View style={{ flexDirection: 'row', display: 'flex', backgroundColor: '#242424', borderRadius: 10, width: '55%' }}>
 
-                    <View style={{ width: '30%', borderRadius: 10, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', margin : '1%' }}>
+                    <View style={{ width: '30%', borderRadius: 10, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', margin: '1%' }}>
                         <Text style={{ color: 'black', textAlign: 'left', fontSize: widthScreen * 0.025, fontWeight: 'bold' }}>DETALLES</Text>
                     </View>
 
-                    <View style={{ width: '70%' , alignItems : 'center'  }}>
+                    <View style={{ width: '70%', alignItems: 'center' }}>
 
                         <View style={style.head_row}>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems : 'center' }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Icon source={'file-document'} size={widthScreen * 0.02} color="white" />
                                 <Text style={{ color: 'white', textAlign: 'left', fontSize: widthScreen * 0.02 }}>Facturas</Text>
                             </View>
@@ -61,7 +61,7 @@ const ReportLocalSincro = () => {
                         </View>
 
                         <View style={style.head_row}>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' , alignItems : 'center' }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Icon source={'cube-scan'} size={widthScreen * 0.02} color="white" />
                                 <Text style={{ color: 'white', textAlign: 'left', fontSize: widthScreen * 0.02 }}>Cajas</Text>
                             </View>
@@ -69,7 +69,7 @@ const ReportLocalSincro = () => {
                         </View>
 
                         <View style={style.head_row}>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems : 'center' }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Icon source={'tshirt-crew'} size={widthScreen * 0.02} color="white" />
                                 <Text style={{ color: 'white', textAlign: 'left', fontSize: widthScreen * 0.02 }}>Unidades</Text>
                             </View>
@@ -80,11 +80,11 @@ const ReportLocalSincro = () => {
 
                 </View>
 
-                <View style={{ width : 'auto', position : 'static' , alignItems : 'flex-end'}}>
-                    <TouchableOpacity 
-                    style={[style.seeBoxes, { backgroundColor: seeboxes ? '#FF0066' : 'white' }]} 
-                    onPress={() => { setSeeboxes(!seeboxes) }}>
-                        <Icon source={'folder-eye'} size={widthScreen * 0.05} color={seeboxes ? 'white' : 'black'} />
+                <View style={{ width: 'auto', position: 'static', alignItems: 'flex-end' }}>
+                    <TouchableOpacity
+                        style={[style.seeBoxes, { backgroundColor: seeboxes ? '#FF0066' : 'white' }]}
+                        onPress={() => { setSeeboxes(!seeboxes) }}>
+                        <Icon source={'text-box-search'} size={widthScreen * 0.05} color={seeboxes ? 'white' : 'black'} />
                     </TouchableOpacity>
                 </View>
 
@@ -110,21 +110,32 @@ const ReportLocalSincro = () => {
                         {
                             facturas.filter((item_: Facturas) => item_?.declaracion_envio === item)
                                 .map((filteredItem: Facturas) => (
-                                    <View key={filteredItem.factura_id} style={[style.reportFactname, { backgroundColor : filteredItem.state_name ? '#F0F0F0' : 'white'}]}>
+                                    <View key={filteredItem.factura_id} style={[style.reportFactname, { backgroundColor: filteredItem.state_name ? '#F0F0F0' : 'white' }]}>
                                         <View style={{ display: 'flex', flexDirection: 'row' }}>
-                                            <Text style={{ textAlign: 'left', width: '20%' , color : '#2C2C2C' , fontSize: widthScreen * 0.022 }}>{filteredItem.factura}</Text>
-                                            <Text style={{ textAlign: 'left', width: '20%' , color : '#2C2C2C' , fontSize: widthScreen * 0.022 }}>{filteredItem.lista_empaque}</Text>
-                                            <Text style={{ textAlign: 'left', width: '10%' , color : '#2C2C2C' , fontSize: widthScreen * 0.022 }}>{filteredItem.cant_cajas}</Text>
-                                            <Text style={{ textAlign: 'left', width: '10%' , color : '#2C2C2C' , fontSize: widthScreen * 0.022 }}>{filteredItem.cant_unidades}</Text>
-                                            <Text style={{ textAlign: 'left', width: '30%' , color : '#2C2C2C' , fontSize: widthScreen * 0.021 }}>{filteredItem.clientenombre}</Text>
+                                            <Text style={{ textAlign: 'center', textAlignVertical: 'center', width: '20%', color: '#2C2C2C', fontSize: widthScreen * 0.022 }}>{filteredItem.factura}</Text>
+                                            <View style={{  width: '20%', justifyContent : 'center' }}>
+                                                {filteredItem.lista_empaque.split(',').map((item, index) => (
+                                                    <Text key={index}
+                                                        style={{
+                                                            textAlign: 'left',
+                                                            textAlignVertical: 'center',
+                                                            color: '#2C2C2C',
+                                                            fontSize: widthScreen * 0.022
+                                                        }}
+                                                    >{item.trim()}</Text>
+                                                ))}
+                                            </View>
+                                            <Text style={{ textAlign: 'left', textAlignVertical: 'center', width: '10%', color: '#2C2C2C', fontSize: widthScreen * 0.022 }}>{filteredItem.cant_cajas}</Text>
+                                            <Text style={{ textAlign: 'left', textAlignVertical: 'center', width: '10%', color: '#2C2C2C', fontSize: widthScreen * 0.022 }}>{filteredItem.cant_unidades}</Text>
+                                            <Text style={{ textAlign: 'left', textAlignVertical: 'center', width: '30%', color: '#2C2C2C', fontSize: widthScreen * 0.021 }}>{filteredItem.clientenombre}</Text>
                                         </View>
 
                                         {seeboxes &&
                                             <ScrollView style={{ borderTopColor: 'white', maxHeight: 100, backgroundColor: '#F2F3F4' }}>
                                                 {boxes.filter((box: any) => box.id_factura === filteredItem.factura_id).map((caja: any) => (
-                                                    <View key={caja.caja} style={[style.head_row , { marginLeft : '10%'}]}>
-                                                        <Text style={{ color: 'grey' , fontSize: widthScreen * 0.021 }}>{caja.numerocaja}</Text>
-                                                        <Text style={{ color: 'grey' , fontSize: widthScreen * 0.021 }}>{caja.caja}</Text>
+                                                    <View key={caja.caja} style={[style.head_row, { marginLeft: '10%' }]}>
+                                                        <Text style={{ color: 'grey', fontSize: widthScreen * 0.021 }}>{caja.numerocaja}</Text>
+                                                        <Text style={{ color: 'grey', fontSize: widthScreen * 0.021 }}>{caja.caja}</Text>
                                                     </View>
                                                 ))}
                                             </ScrollView>
@@ -172,9 +183,9 @@ const style = StyleSheet.create({
         borderRadius: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#E0E0E0',
-        marginLeft : 5,
-        marginRight : 5,
-        marginBottom : 1
+        marginLeft: 5,
+        marginRight: 5,
+        marginBottom: 1
     },
     factHead: {
         paddingTop: 0,
@@ -194,7 +205,7 @@ const style = StyleSheet.create({
     },
     seeBoxes: {
         height: 'auto',
-        width : '40%',
+        width: '40%',
         borderRadius: 100,
         justifyContent: 'center',
         alignContent: 'center',

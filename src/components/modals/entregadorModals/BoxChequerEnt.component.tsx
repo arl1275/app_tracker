@@ -162,16 +162,17 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
 
                                     </View>
 
-                                    <View style={{  }}>
-                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <View>
+                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderWidth : 1, borderColor : 'black', margin : 15, borderRadius : 4}}>
 
                                             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '40%' }}>
                                                 <IconButton
                                                     icon={Boxes.length > 0 ? 'inbox-multiple' : 'inbox-remove'}
-                                                    size={120}
-                                                    iconColor={Boxes.length > 0 ? 'black' : 'red'} />
+                                                    size={100}
+                                                    iconColor={Boxes.length > 0 ? 'black' : 'red'}
+                                                    style={{margin : 0}} />
                                                 <View>
-                                                    <Text style={{ color: 'black', fontSize: 30 }}> {counter}/{fact?.cant_cajas} </Text>
+                                                    <Text style={{ color: 'black', fontSize: 30, margin : 0, padding : 0 }}> {counter}/{fact?.cant_cajas} </Text>
                                                     <View style={{ display: 'flex', flexDirection: 'row' }}>
                                                         <TextInput
                                                             ref={inputRef}
@@ -192,11 +193,11 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                                                 display: 'flex', flexDirection: 'row', width: '50%', flexWrap: 'wrap',
                                                 backgroundColor: '#ECF0F1', padding: 5, borderRadius: 5, margin: 5
                                             }}>
-                                                {Boxes.map((item) => {
+                                                {Boxes.map((item : box_to_check) => {
                                                     let ischeck = item.is_check === true ? '#E91E63' : 'black';
                                                     return (
                                                         <View style={{ margin: 2, borderRadius : 3, height: 25, width: 25, backgroundColor: ischeck }}>
-                                                            <Text style={{ backgroundColor: ischeck, color: 'white', fontSize : 12 , textAlignVertical : 'center', textAlign : 'center'}} key={item.albaran}>{item.numerocaja}</Text>
+                                                            <Text style={{ backgroundColor: ischeck, color: 'white', fontSize : 12 , textAlignVertical : 'center', textAlign : 'center'}} key={item.caja}>{item.numerocaja}</Text>
                                                         </View>
                                                     )
                                                 })
@@ -214,7 +215,7 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                                                         <ScrollView>
                                                             {
                                                                 Array.isArray(Boxes) && Boxes.length > 0 ?
-                                                                    Boxes.map((item) => {
+                                                                    Boxes.map((item : box_to_check) => {
                                                                         let ischeck = item.is_check === true ? '#E91E63' : 'black';
                                                                         return (
                                                                             <View style={
@@ -230,9 +231,9 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                                                                                     justifyContent: 'space-around',
                                                                                     padding: 5
                                                                                 }
-                                                                            }>
-                                                                                <Text style={{ backgroundColor: ischeck, color: 'white' }} key={item.albaran}>{item.caja}</Text>
-                                                                                <Text style={{ backgroundColor: ischeck, color: 'white' }} key={item.albaran}>{item.numerocaja}</Text>
+                                                                            } key={item.caja}>
+                                                                                <Text style={{ backgroundColor: ischeck, color: 'white' }}>{item.caja}</Text>
+                                                                                <Text style={{ backgroundColor: ischeck, color: 'white' }}>{item.numerocaja}</Text>
                                                                             </View>
                                                                         )
                                                                     }) :

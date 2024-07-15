@@ -3,10 +3,12 @@ import { Text, View, TextInput, Dimensions, StyleSheet, Alert, TouchableOpacity,
 import { Facturas } from "../../interfaces/facturas";
 import axios from "axios";
 import db_dir from "../../config/db";
+import UserStorage from "../../storage/user";
 import { DataTable, Icon } from 'react-native-paper';
 import useGuardList from "../../storage/gaurdMemory";
 import { play_sound } from "../Activity/sound.component";
 import LoadingModal from "../Activity/activity.component";
+import { UserInterface } from "../../interfaces/user";
 const windowWithd = Dimensions.get('window').width;
 const processing = require('../../assets/images/Processing-bro.png');
 
@@ -21,6 +23,7 @@ const ListToTransito = () => {
     const [encabezado, setEncabezado] = useState<any>();                   // this got the header of one declaracion de envio7
     const [openModal, setOpenl] = useState<boolean>(false);                // this si to open the modal of chargin   
     const [dibisable, setDibisable] = useState<boolean>(true);             // this allows or deny to press the button
+    const { getUser } = UserStorage();
 
     const SetData = async () => {
         await setListFact(await GetIsCheckedFacts());
@@ -56,9 +59,10 @@ const ListToTransito = () => {
                 Alert.alert('ERROR DATOS',
                     'Favor escanee tanto el camion como el Entregador para validar la salida de la factura.');
             } else {
-
+                let user : UserInterface | null =  await getUser()
                 let body: number[] = listFact.map((item) => item.factura_id);
-                const response = await axios.put(db_dir + '/facturas/toTransito', body);
+                console.log('valores de usuaroip ::: ', `Detalle transito : por ${user?.nombre}` )
+                const response = await axios.put(db_dir + '/facturas/toTransito', body, { params : { message : `Detalle transito : por ${user?.nombre}`}});
 
                 if (response.status === 200) {
                     listFact.forEach((factura) => {

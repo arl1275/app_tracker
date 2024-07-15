@@ -23,7 +23,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
   const checkUserType = async () => {
     const tipo  :  number = await getType();
-    console.log('valor ::: ' , tipo)
+    //console.log('valor ::: ' , tipo)
     if (tipo === 2) {
       navigation.navigate('Guardia');
     } else if (tipo === 3) {

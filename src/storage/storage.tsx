@@ -15,6 +15,7 @@ interface FacturaState {
   getAllNOTsynchroFacts: () => Promise<Facturas[] | undefined>;
   updateIsCheck: (id: number) => Promise<void>;
   deleteAllfacts: () => Promise<boolean>;
+  SaveComment : (id_factura : number, comentario : string) => Promise<void>
 }
 
 const formatDate = () => {
@@ -241,7 +242,31 @@ const useFacturaStore: any = create<FacturaState>((set, get) => ({
       console.error('Error deleting AsyncStorage:', error);
       return false;
     }
-  }
+  },
+   
+  SaveComment : async (id_factura, comentario) =>{
+    try {
+      const storedData = await AsyncStorage.getItem('facturaData');
+      if (storedData !== null) {
+        let data: Facturas[] = JSON.parse(storedData);
+        const facturaIndex = data.findIndex((factura) => factura.factura_id === id_factura);
+
+        if (facturaIndex !== -1) {
+          data[facturaIndex] = {
+            ...data[facturaIndex],
+            Comment : 'Detalle entrega :' + comentario
+          };
+          await AsyncStorage.setItem('facturaData', JSON.stringify(data));
+          set({ data });
+        } else {
+          console.error('Factura not found with the given ID:', id_factura);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating signature:', error);
+    }
+    
+  },
 }));
 
 export default useFacturaStore;

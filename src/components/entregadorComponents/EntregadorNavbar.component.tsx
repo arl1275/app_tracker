@@ -28,7 +28,7 @@ const EntregadorNavbar = () => {
                 </View>
 
                 <View style={ page == 2 ? style.NavbarButton_active : style.NavbarButton_unactive}>
-                    <TouchableOpacity onPress={()=>{ navigation.navigate('Sincronizado'); setPage(2)}}>
+                    <TouchableOpacity onPress={async ()=>{ await navigation.navigate('Sincronizado'); setPage(2)}}>
                         <Text style={{ color : page == 2 ? 'white' : 'grey' }}>SINCRO</Text>
                     </TouchableOpacity>
                 </View>

@@ -2,11 +2,17 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import useFacturaStore from "../../../storage/storage";
 import { Dimensions } from 'react-native';
 import ReportLocalSincro from "../../entregadorComponents/reports_sincro";
+import { useEffect } from "react";
 const img_ = require('../../../assets/images/Update-pana.png')
 const withScreen = Dimensions.get('window').width
 
 const Syncronazir = () => {
-    const { data } = useFacturaStore();
+    const { data , fetchData} = useFacturaStore();
+
+    useEffect(()=>{
+        fetchData();
+    }, [data])
+
     return (
         <View style={{  height: '100%' }}>
             <View style={styles.reportSize}>

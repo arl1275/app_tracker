@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Text, View, StyleSheet, Modal, Alert, TouchableOpacity } from "react-native";
 import { Facturas } from "../../../interfaces/facturas";
+import { AddComment } from "../../entregadorComponents/addComment.component";
 //test-imports
 import RNSignatureExample from '../../sing/Sing.component';
 import CameraScreen from "../../camara/cam.component";
@@ -63,12 +64,15 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                         <View style={styles.modalContent}>
                             {validateStep === 'sing' &&
                                 <View>
+                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width : '100%', alignSelf : 'center'}}>
+                                        <Text style={styles.title}>FIRMA DE ENTREGA</Text>
+                                        { factura && <AddComment id_factura={factura.factura_id}/>}
+                                    </View>
 
-                                    <Text style={styles.title}>FIRMA DE ENTREGA</Text>
 
-                                    <View style={{ margin: 1, marginBottom : 6 }} >
+                                    <View style={{ margin: 1, marginBottom: 6 }} >
                                         <View style={styles.table}>
-                                        <View style={styles.row}>
+                                            <View style={styles.row}>
                                                 <Text style={styles.header}>FACTURA :</Text>
                                                 <Text style={styles.value}>{fact?.factura}</Text>
                                             </View>
@@ -76,12 +80,12 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                                 <Text style={styles.header}>CLIENTE :</Text>
                                                 <Text style={[styles.value, { width: '60%' }]}>{fact?.clientenombre}</Text>
                                             </View>
-                                            <View style={{ borderWidth : 0.5, borderColor : 'white', height : 1}}/>
+                                            <View style={{ borderWidth: 0.5, borderColor: 'white', height: 1 }} />
                                             <View style={styles.row}>
                                                 <Text style={styles.header}>ENTREGADOR :</Text>
                                                 <Text style={styles.value}>{fact?.nombre}</Text>
                                             </View>
-                                            
+
                                             <View style={styles.row}>
                                                 <Text style={styles.header}>CANT. CAJAS:</Text>
                                                 <Text style={styles.value}>{fact?.cant_cajas}</Text>
@@ -124,7 +128,7 @@ export const EntregaModal: React.FC<{ factura: Facturas | null, modalVisible: bo
                                                     <Text style={styles.header}>CLIENTE :</Text>
                                                     <Text style={[styles.value, { width: '60%', textAlign: 'right' }]}>{fact?.clientenombre}</Text>
                                                 </View>
-                                                <View style={{ borderWidth : 0.5, borderColor : 'white', height : 1}}/>
+                                                <View style={{ borderWidth: 0.5, borderColor: 'white', height: 1 }} />
                                                 <View style={styles.row}>
                                                     <Text style={styles.header}>CAJAS:</Text>
                                                     <Text style={styles.value}>{fact?.cant_cajas}</Text>
@@ -217,7 +221,7 @@ const styles = StyleSheet.create({
         marginVertical: 0,
         width: "auto",
         backgroundColor: 'black',
-        borderRadius : 5
+        borderRadius: 5
     },
     container: {
         backgroundColor: 'white',
@@ -257,12 +261,12 @@ const styles = StyleSheet.create({
     header: {
         fontWeight: 'bold',
         color: 'white',
-        fontSize : 12
+        fontSize: 12
     },
     value: {
         marginLeft: 10,
         color: 'white',
-        fontSize : 12
+        fontSize: 12
     },
 
 });

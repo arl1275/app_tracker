@@ -21,4 +21,5 @@ export interface Facturas{
     state : string,
     is_Sinchro : boolean,               //this is to check is fact is already synchro with the server
     is_check : boolean                  // this is for guardia things, that is for to check is the cant of boxes is full
+    Comment : string                    // this is to save the comment of one entrega...
 }

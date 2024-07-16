@@ -35,6 +35,8 @@ const EntregadorHomeView = () => {
     const navigation = useNavigation<StackNavigationProp<RootStacEntregadorList>>();
     const navigation2 = useNavigation<StackNavigationProp<RootStackParamList>>();
 
+    
+
     useEffect(() => {
         const intervalId = setInterval(async () => {
             IsOnline();

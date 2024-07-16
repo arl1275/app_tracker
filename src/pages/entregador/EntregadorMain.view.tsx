@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect} from "react";
 import { View, StyleSheet, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import useFacturaStore from "../../storage/storage";
@@ -6,13 +6,14 @@ import EntregadorListView from "../../components/entregadorComponents/entregador
 const box = require('../../assets/images/Select-pana.png')
 
 export function EntregadorIndexView() {
-    const { data } = useFacturaStore();
+    const { data , fetchData} = useFacturaStore();
+
 
     return (
         <View style={{ height : '90%'}}>
             {
                 data.length > 0 ?
-                    <View>
+                    <View> 
                         <EntregadorListView />
                     </View>
                     : 

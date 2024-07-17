@@ -42,10 +42,7 @@ function EntregadorListView() {
         const fetchDataInterval = setInterval(() => {
             fetchData();
         }, 1500);
-
-        return () => {
-            clearInterval(fetchDataInterval);
-        };
+        data.lenght ?  () => { clearInterval(fetchDataInterval); } : null;
     }, []);
 
     const OpenRegister_func = (value: boolean) => {

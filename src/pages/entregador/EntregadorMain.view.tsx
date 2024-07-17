@@ -6,7 +6,7 @@ import EntregadorListView from "../../components/entregadorComponents/entregador
 const box = require('../../assets/images/Select-pana.png')
 
 export function EntregadorIndexView() {
-    const { data , fetchData} = useFacturaStore();
+    const { data } = useFacturaStore();
 
 
     return (

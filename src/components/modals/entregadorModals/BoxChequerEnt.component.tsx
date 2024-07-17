@@ -7,6 +7,7 @@ import { box_to_check } from "../../../interfaces/box";
 import boxChequerStorage from "../../../storage/checkBoxes";
 import { IconButton } from 'react-native-paper';
 import useFacturaStore from "../../../storage/storage";
+import { HeadBoxChecker } from "../modalsComponents/headBoxChequer.component";
 
 
 interface props {
@@ -16,90 +17,51 @@ interface props {
 }
 
 const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
-    const [counter, setCounter] = useState<number>(0);              // this is to count how many fact has been scanned by the Guard.
-    const [see2, setSee2] = useState(false);
-    const inputRef = useRef<TextInput>(null);                       // ref para el input text of the scanner
-    const { updateIsCheck } = useFacturaStore();                    // to save the info fact in the memory        
-    const [scanned, setScanned] = useState<string[]>([]);           // to access the data save in momery
-    const [Value_, setValue_] = useState('');
-    const [Boxes, setBoxes] = useState<box_to_check[]>([]);         // is to check the boxes in memory
-    const { getcajasFacts } = boxChequerStorage();
+    const [Boxes, setBoxes] = useState<box_to_check[]>([]);                 // this is to save locally the boxes.
+    const inputRef = useRef<TextInput>(null);                               // this is to save the TextReference
+    const [input, setInput] = useState<string>('');                         // this is to save the Box code Temporaly.
+    const [counter, setCounter] = useState<number>(0);                      // this is to save the MountOfCountedBoxes.
+    const [ScannedBoxes, setScannedBoxes] = useState<string[]>([]);         // this is to save the Scanned Boxes.
+    const [seeDetail, setSeeDetail] = useState<boolean>(false);
+    const { getcajasFacts, validateBox } = boxChequerStorage();
 
-    const CloseBoxChequer = useCallback(() => {
-        setSee2(false);
-        setCounter(0);
-        setBoxes([]);
-        close();
-    }, []);
+    // This use Effect is to Charge the mount of Boxes
+    useEffect(()=>{
+        visible ? getBoxes() : null;
+        counter === fact?.cant_cajas ? close() : null;
+    }, [visible, counter]);
 
-    useEffect(() => {
-        if (typeof fact?.cant_cajas === 'string') {
-            let dat = 0;
-            dat = parseInt(fact.cant_cajas);
-            if (dat === counter && dat != 0) {
-                updateIsCheck(fact?.factura_id);
-                Alert.alert('FINALIZADO');
-                CloseBarcode();
-                setCounter(0);
-                close();
-            }
-        }        
-    }, [counter]);
+    const SeeDetail = ()=>{ setSeeDetail(!seeDetail)};
+    const CounterBoxes = () =>{setCounter(prevCounter => prevCounter + 1); play_sound(true)};
+    const ValidateBoxScanned = ( caja : string) =>{ return ScannedBoxes.includes(caja)};
+    const CloseModal = () => { setInput(''); setBoxes([]); setScannedBoxes([]); setSeeDetail(false); close()};
 
-    useEffect(() => {
-        const cajas = async () => { await getBoxes(); }
-        cajas();
-    }, [visible]);
-
-    const CounterBoxes = (num: number) => {
-        setCounter(prevCounter => prevCounter + num);
-        return counter;
-    }
-
-    const CloseBarcode = () => { setSee2(false); }
-
-    const handleBarcodeScan = async () => {
-        let t = Value_.trim();
-        if (t.length > 0) {
-            if (t.length === 13) {                                      // that 13 means the lengt of the barcode
-                if (scanned?.includes(t)) {
-                    play_sound(false);
-                    setValue_('');
+    const HandleBarcode = async () => {
+        let Caja: string = input;
+        if (Caja.length >= 13) {
+            if (!ValidateBoxScanned(Caja)) {
+                let BOX: box_to_check[] | undefined = Boxes.filter((item: box_to_check) => item.caja === Caja);
+                if (BOX.length) {
+                    await validateBox(BOX[0].caja);
+                    setScannedBoxes(prevScanned => [...prevScanned, BOX[0].caja]);
+                    CounterBoxes();
                 } else {
-                    for (let i = 0; i < Boxes.length; i++) {
-                        if (t === Boxes[i].caja) {
-                            Boxes[i].is_check = true;
-                            play_sound(true);
-                            CounterBoxes(1);
-                            scanned?.push(t);
-                            setValue_('');
-                            return;
-                        }
-                        setValue_('');
-                    }
                     play_sound(false);
                 }
-            } else {
-                setValue_('');
-                play_sound(false);
             }
+        } else {
+            play_sound(false);
         }
-        setValue_('');
+        setInput('');
     };
-
+    
     const getBoxes = async () => {
         try {
-            //setBoxes([]);
             setBoxes(await getcajasFacts(fact?.factura, fact?.factura_id));
-            //Boxes.some((item : box_to_check)=> item.is_check ) === true && CounterBoxes(Boxes.filter((item : box_to_check)=> item.is_check).length)
         } catch (err) {
             console.log('NO SE PUDO OBTENER LAS CAJAS : ', err)
         }
     };
-
-    const OpenDetail = useCallback(() => {
-        setSee2(prevSee2 => !prevSee2);
-    }, []);
 
     return (
         <>
@@ -112,44 +74,15 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                                 <Card style={{ backgroundColor: 'white', borderRadius: 5, width: '95%' }}>
 
                                     <View style={{ margin: 3 }}>
-                                        <IconButton icon={'close-box'} onPress={() => { CloseBoxChequer()}} // this cleal all my variables with the close button
+                                        <IconButton icon={'close-box'} onPress={() => { CloseModal()}} // this cleal all my variables with the close button
                                             iconColor="red" size={30}/>
                                     </View>
 
                                     <View style={{ position: 'absolute', right: 10, top: 5 }}>
-                                        <IconButton icon={'eye'} iconColor={'black'} size={25} onPress={() => {OpenDetail()}} />
+                                        <IconButton icon={'eye'} iconColor={'black'} size={25} onPress={() => {SeeDetail()}} />
                                     </View>
 
-                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center'}}>
-
-                                        <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column' }}>
-
-                                            <Card style={{ margin: 7, alignSelf: 'center', backgroundColor: 'black', width: '95%', borderRadius: 5 }}>
-
-                                                <View style={{ margin: 10 }}>
-                                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                        <Text style={[styles.title, { textAlign: 'right' }]}>FACTURA :</Text>
-                                                        <Text style={styles.title}>{fact?.factura}</Text>
-                                                    </View>
-                                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                        <Text style={[styles.title, { textAlign: 'right' }]}>CLIENTE :</Text>
-                                                        <Text style={[styles.title, { textAlign: 'right', width: '80%' }]}>{fact?.clientenombre}</Text>
-                                                    </View>
-                                                    <View style={{
-                                                        display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-                                                        borderTopWidth: 1, borderTopColor: 'white'
-                                                    }}>
-                                                        <Text style={[styles.title, { textAlign: 'right' }]}>RUTA(S) :</Text>
-                                                        <View style={styles.title}>{fact?.lista_empaque.split(',').map((item, index) => (
-                                                            <Text key={index} style={{ textAlign: 'left', textAlignVertical: 'center', color: 'white',fontSize: 12}}>{item.trim()}</Text>
-                                                        ))}</View>
-                                                    </View>
-                                                </View>
-
-                                            </Card>
-                                        </View>
-
-                                    </View>
+                                   <HeadBoxChecker fact={fact} />
 
                                     <View>
                                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderWidth : 1, borderColor : '#BFC9CA', margin : 15, borderRadius : 4 }}>
@@ -166,9 +99,9 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                                                         <TextInput
                                                             ref={inputRef}
                                                             style={styles.TextInputStyle}
-                                                            value={Value_}
-                                                            onChangeText={(text) => setValue_(text)}
-                                                            onSubmitEditing={handleBarcodeScan}
+                                                            value={input}
+                                                            onChangeText={(text) => setInput(text)}
+                                                            onSubmitEditing={HandleBarcode}
                                                             placeholderTextColor={'grey'}
                                                             placeholder="CODIGO DE BARRAS"
                                                             autoFocus
@@ -198,7 +131,7 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
 
                                         <Card>
                                             {
-                                                see2 === true &&
+                                                seeDetail &&
                                                 <View style={{ backgroundColor: '#E5E7E9', borderRadius : 10 }}>
                                                     <View style={{ alignSelf: 'center', width: '95%', margin: 10, height: 100, borderWidth: 0, }}>
                                                         <ScrollView>
@@ -254,7 +187,7 @@ const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
                     </Modal>
                 )
 
-            }
+            } 
         </>
 
 

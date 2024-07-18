@@ -3,11 +3,9 @@ import { Text, View, TextInput, StyleSheet, ScrollView, Modal, Alert, Dimensions
 import { Facturas } from "../../../interfaces/facturas";
 import { Card, IconButton } from 'react-native-paper';
 import { play_sound } from "../../Activity/sound.component";
-import Icon from "react-native-paper";
 import useGuardList from "../../../storage/gaurdMemory";
 import db_dir from "../../../config/db";
 import axios from "axios";
-import { box_to_check } from "../../../interfaces/box";
 const windowWithd = Dimensions.get('window').width;                                 // this is the camera itself
 
 interface props {
@@ -225,7 +223,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                                                     flexDirection: 'row',
                                                                     justifyContent: 'space-around',
                                                                     padding: 5
-                                                                }}>
+                                                                }} key={item.caja}>
                                                                 <Text style={{ color: 'white' }}>{item?.numerocaja}</Text>
                                                                 <Text style={{ color: 'white' }}>{item.caja}</Text>
                                                             </View>

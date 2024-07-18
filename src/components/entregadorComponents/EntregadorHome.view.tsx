@@ -41,13 +41,11 @@ const EntregadorHomeView = () => {
         const intervalId = setInterval(async () => {
             IsOnline();
             setUser(await getUser())
-        }, 1000);
+        }, 2000);
         return () => clearInterval(intervalId);
-    }, [])
+    },)
 
-    const IsOnline = async () => {
-        setIsConn(await isConnectedToInternet());
-    }
+    const IsOnline = async () => {  setIsConn(await isConnectedToInternet()); }
 
     const CerrarSession = async () => {
         setIsConn(await isConnectedToInternet())
@@ -57,17 +55,15 @@ const EntregadorHomeView = () => {
             if (closeF) {
                 const closeB: boolean = await closeBoxes();
                 if (closeB) {
-                    const closeU: boolean = await closeSession();
+                    const closeU : boolean = await closeSession();
                     closeU ? navigation2.navigate('Home') : Alert.alert('Cierre de Session', 'Hubo un error para cerrar su seccion.')
                 }
             } else {
                 Alert.alert('Cierre de Session', 'No puede cerrar seccion. Tienen una factura pendiente o firmada')
             }
-
         } else {
             Alert.alert('Cierre de Session', 'No puede Cerrar session, no esta en red empresarial')
         }
-
     }
 
     const getEnTransitoFacts = async () => {
@@ -80,12 +76,14 @@ const EntregadorHomeView = () => {
                 setFacturas(facturas_api);
                 if (facturas.length > 0) {
                     await updateFactura(facturas);
+                    //console.log('paso de las facturas')
                     await syncroBoxes();
+                    //console.log('paso de las cajas')
                     setLoading(false);
                     //console.log('api facturas :: ', facturas_api)
                 }
             } else {
-                console.log('sin valores adsjfkdajs')
+                console.log('sin valores')
             }
 
         } catch (err) {
@@ -96,8 +94,11 @@ const EntregadorHomeView = () => {
 
     const syncroBoxes = async () => {
         try {
+            console.log('--- entrando a syncroBoxes')
             let props_cajas_facturas: FacturaProps[] = [];
+
             if (facturas.length > 0) {
+
                 for (let i = 0; i < facturas.length; i++) {
                     const element: Facturas = facturas[i];
                     let val = {
@@ -106,9 +107,12 @@ const EntregadorHomeView = () => {
                     }
                     props_cajas_facturas.push(val);
                 }
+
                 if (props_cajas_facturas.length > 0) {
+                    //console.log('--- Entrando a halar las cajas');
                     const response = await axios.post(db_dir + '/facturas/app/getCajasOneFact_Entregador', props_cajas_facturas);
                     const valores: box_to_check[] = response.data.data;
+                    //console.log('data de cajas :: ', valores)
                     await fetchData_(valores);
                 } else {
                     console.log('error')

@@ -39,27 +39,16 @@ function EntregadorListView() {
     const [openRegister, setOpenRegister] = useState(false);
 
     useEffect(() => {
-        const fetchDataInterval = setInterval(() => {
-            fetchData();
-        }, 1500);
-        data.lenght ?  () => { clearInterval(fetchDataInterval); } : null;
+        const fetchDataInterval = setInterval(() => { fetchData();}, 1500);
+        return () => { clearInterval(fetchDataInterval);};
     }, []);
 
-    const OpenRegister_func = (value: boolean) => {
-        setOpenRegister(value);
-    }
-
-    const openModal = () => {
-        setModalVisible(true);
-    };
-
-    const closeModal = () => {
-        setModalVisible(false);
-    };
-
-    const close = () => {
-        setSee(false);
-    }
+    const OpenRegister_func = (value: boolean) => { setOpenRegister(value);}
+    const openModal = () => { setModalVisible(true);};
+    const closeModal = () => { setModalVisible(false);};
+    const close = () => { setSee(false);}
+    //THIS IS TO SAVE THE FACTURAS THAT WERE VALIDADED
+    const dataToSend = (fact: Facturas) => { serEntregarFact(fact); openModal(); }
 
     //THIS IS TO OPEN THE BOXCHER OR THE FACTURA VALIDATOR
     const BoxOrSing = (item: Facturas) => {
@@ -67,21 +56,13 @@ function EntregadorListView() {
             setSee(true);
         } else {
             if (item.hasSing === true) {
-                //Alert.alert('FACTURA YA FIRMADA');
                 OpenRegister_func(true);
             } else if (item.is_Sinchro) {
-                //setOpenRegister(true);
                 Alert.alert('FACTURA YA SINCRONIZADA');
             } else {
                 dataToSend(item);
             }
         }
-    }
-
-    //THIS IS TO SAVE THE FACTURAS THAT WERE VALIDADED
-    const dataToSend = (fact: Facturas) => {
-        serEntregarFact(fact);
-        openModal();
     }
 
     const color_choose = (item: Facturas) => {
@@ -115,27 +96,12 @@ function EntregadorListView() {
                                     data.map((item: Facturas) => {
                                         let valor = color_choose(item);
                                         return (
-                                            <DataTable.Row
-                                                key={item.factura_id}
-                                                onPress={() => { setfact(item); BoxOrSing(item); }}
-                                                style={[styles.tableRow, { backgroundColor : valor, marginTop: 1 }]}
-                                            >
+                                            <DataTable.Row key={item.factura_id} onPress={() => { setfact(item); BoxOrSing(item); }} style={[styles.tableRow, {backgroundColor:valor, marginTop:1 }]}>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.015, fontWeight: '400', color: 'black', width: '90%', margin: '5%' }}>{item.clientenombre}</Text></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: 'bold', color: 'black', }}>{item.factura}</Text></DataTable.Cell>
                                                 <DataTable.Cell><View style={{ }}>
                                                     {item.lista_empaque.split(',').map((item, index) => (
-                                                        <Text
-                                                            key={index}
-                                                            style={{
-                                                                textAlign: 'left',
-                                                                textAlignVertical: 'center',
-                                                                color: '#2C2C2C',
-                                                                fontSize: widthScreen * 0.022,
-                                                                margin: '1%'
-                                                            }}
-                                                        >
-                                                            {item.trim()}
-                                                        </Text>
+                                                        <Text key={index} style={style.itemStyle}>{item.trim()}</Text>
                                                     ))}</View></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.cant_cajas}</Text></DataTable.Cell>
                                                 <DataTable.Cell><Text style={{ fontSize: widthScreen * 0.02, fontWeight: '400', color: 'black', margin: '5%' }}>{item.cant_unidades}</Text></DataTable.Cell>
@@ -149,7 +115,7 @@ function EntregadorListView() {
 
 
                         <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
-                        <BoxChecker_ent visible={see} close={close} fact={fact_} />
+                        <BoxChecker_ent visible={see} close={close} fact={EntregarFact} />
                         <RegisterView item={fact_} open={OpenRegister_func} Isopen={openRegister} />
                     </View >
                 )
@@ -157,5 +123,14 @@ function EntregadorListView() {
     );
 
 }
-
 export default EntregadorListView;
+
+const style = StyleSheet.create({
+    itemStyle : {
+        textAlign: 'left',
+        textAlignVertical: 'center',
+        color: '#2C2C2C',
+        fontSize: widthScreen * 0.022,
+        margin: '1%'
+    }
+})

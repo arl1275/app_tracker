@@ -17,38 +17,33 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
- function AuthHandler() {
+function AuthHandler() {
   const { getType } = UserStorage();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  const checkUserType = async () => {
-    const tipo  :  number = await getType();
-    //console.log('valor ::: ' , tipo)
-    if (tipo === 2) {
-      navigation.navigate('Guardia');
-    } else if (tipo === 3) {
-      navigation.navigate('Entregador');
-    } else {
-      navigation.navigate('Home');
-    }
-  };
-
   useEffect(() => {
-     const intervalId = setInterval(() => {
-      checkUserType();
-     }, 3000);
+    const checkUserType = async () => {
+      const tipo: number = await getType();
+      // Navigate based on user type
+      if (tipo === 2) {
+        navigation.navigate('Guardia');
+      } else if (tipo === 3) {
+        navigation.navigate('Entregador');
+      } else {
+        navigation.navigate('Home');
+      }
+    };
 
-     return () => clearInterval(intervalId);
-  }, []);
+    checkUserType(); // Call the function once when component mounts
+  }, [getType]); // Dependency array to prevent unnecessary calls
 
   return null;
 }
 
-
 function IndexPage() {
   return (
     <NavigationContainer>
-      <AuthHandler /> 
+      <AuthHandler />
       <Stack.Navigator>
         <Stack.Screen name="Home" component={LoginPage} options={{ headerShown: false }} />
         <Stack.Screen name="Entregador" component={EntregadorRoutes} options={{ headerShown: false }} />

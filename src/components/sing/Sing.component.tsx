@@ -74,7 +74,7 @@ const RNSignatureExample: React.FC<Props> = ({ setIsEmpty, id, isnext }) => {
 
   return (
     <View style={{ marginBottom : 10 , borderWidth : 1, borderColor : '#A6ACAF', elevation : 10, borderRadius : 7, padding : 5, backgroundColor : '#F2F3F4'}}>
-      <View style={{ borderRadius : 5, borderWidth : 1, borderColor : 'white',padding : 1, backgroundColor : '#F2F3F4'}}>
+      <View style={{ borderRadius : 5, borderWidth : 1, borderColor : '#D7DBDD',padding : 1, backgroundColor : '#F2F3F4'}}>
         <SignatureCapture
           style={{ height: 350}} // Ajusta la altura según sea necesario
           ref={signatureRef}

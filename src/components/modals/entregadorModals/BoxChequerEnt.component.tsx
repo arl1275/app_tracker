@@ -4,14 +4,14 @@ import { Facturas } from "../../../interfaces/facturas";
 import { Card, IconButton } from 'react-native-paper';
 import { play_sound } from "../../Activity/sound.component";
 import boxChequerStorage from "../../../storage/checkBoxes";
-import db_dir from "../../../config/db";
+import useFacturaStore from "../../../storage/storage";
+import { box_to_check } from "../../../interfaces/box";
 const windowWithd = Dimensions.get('window').width;                                 // this is the camera itself
 
 interface props {
-    fact: Facturas | null;
+    fact: Facturas | undefined;
     visible: boolean;
     close: () => void;
-    tipe: number; // 0 for Guard, 1 for Deliver
 }
 
 interface boxes {
@@ -24,30 +24,23 @@ interface boxes {
     numerocaja: string
 }
 
-const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
+const BoxChecker_ent: React.FC<props> = ({ fact, visible, close }) => {
     const [counter, setCounter] = useState<number>(0);      // this is to count how many fact has been scanned by the Guard.
     const [see2, setSee2] = useState(false);
     const inputRef = useRef<TextInput>(null);               // ref para el input text of the scanner
-    const { UpdateIsChecked } = boxChequerStorage();             // to save the info fact in the memory        
+    const { getcajasFacts} = boxChequerStorage();             // to save the info fact in the memory        
     const [data, setData] = useState<string[]>([]);         // to access the data save in momery
     const [Value_, setValue_] = useState('');               // value of the textInput area
-    const [Boxes, setBoxes] = useState<boxes[]>([]);        // is to check the boxes in memory
-
+    const [Boxes, setBoxes] = useState<box_to_check[]>([]);        // is to check the boxes in memory
+    const { updateIsCheck } = useFacturaStore();
 
     useEffect(() => {
-        //console.log('<---------- se entro--------------------->')
-        if (typeof fact?.cant_cajas === 'number') {
-            let dat = 0;
-            dat = fact.cant_cajas;
-            console.log('CANTIDAD CAJAS A VALIDAR : ', dat);
-            if (dat === counter && dat != 0) {
-                setSee2(false);
-                UpdateIsChecked(fact?.factura);
-                setCounter(0);
-                setData([]);
-                close();
-                Alert.alert('FINALIZADO');
-            }
+        let value : string | undefined = fact?.cant_cajas.toString();
+        let Cant : number = typeof value === 'string' ? parseInt(value) : 0;
+        if(Cant > 0){
+            Cant === counter ? (updateIsCheck(fact?.factura_id), close()) : console.log('Aun no son iguales');
+        }else{
+            console.log('valor no valido')
         }
     }, [counter]);
 
@@ -77,7 +70,7 @@ const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
                 } else {
                     for (let i = 0; i < Boxes.length; i++) {
                         if (t === Boxes[i].caja) {
-                            Boxes[i].check = true;
+                            Boxes[i].is_check = true;
                             CounterBoxes(1);
                             data?.push(t);
                             setValue_('');
@@ -99,9 +92,8 @@ const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
 
     const getBoxes = async () => {
         try {
-            let valores = await axios.get(db_dir + '/facturas/getCajas_Guardia', { params: { factura: fact?.factura_id } });
-            console.log('dat cajas : ', valores)
-            setBoxes(valores.data.data);
+            let valores = await getcajasFacts(fact?.factura, fact?.factura_id)
+            setBoxes(valores);
         } catch (err) {
             console.log('NO SE PUDO OBTENER LAS CAJAS : ', err)
         }
@@ -118,7 +110,7 @@ const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
                 <View style={styles.centeredView}>
                     <View style={{ width: '90%', height: 'auto' }}>
 
-                        <View style={{ backgroundColor: '#F4F6F6', width: '100%', borderRadius: 10 }}>
+                        <View style={{ backgroundColor: '#F4F6F6', width: '100%', borderRadius: 5 }}>
 
                             <View style={{ padding: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <View style={{ marginLeft: 10 }}>
@@ -133,7 +125,7 @@ const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
 
                                 <View style={{ width: '100%', alignSelf: 'center', display: 'flex', flexDirection: 'column', margin: 0 }}>
 
-                                    <Card style={{ marginBottom: 0, alignSelf: 'center', backgroundColor: 'white', width: '95%', elevation: 10 }}>
+                                    <Card style={{ marginBottom: 0, alignSelf: 'center', backgroundColor: 'black', width: '95%', elevation: 10, borderRadius : 7 }}>
                                         <View style={{ margin: 10, paddingLeft: 20, paddingRight: 20 }}>
 
                                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -146,8 +138,8 @@ const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
                                             </View>
                                             <View style={{
                                                 display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-                                                borderTopWidth: 1, borderTopColor: 'black', marginTop: 4
-                                            }}>
+                                                borderTopWidth: 1, borderTopColor: 'white', marginTop: 4
+                                                }}>
                                                 <Text style={[styles.title, { textAlign: 'right' }]}>RUTA(S) :</Text>
                                                 <View style={[styles.title]}>
                                                     {fact?.lista_empaque.split(',').map((albaran, index) => (
@@ -159,16 +151,17 @@ const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
 
                                     </Card>
 
-                                    <Card style={{ margin: 10, backgroundColor: 'white', padding: 10 }}>
+                                    <Card style={{ margin: 10, backgroundColor: 'white', padding: 10 , borderWidth : 1, borderColor : '#BFC9CA', borderRadius : 5}}>
                                         <View style={{ display: 'flex', flexDirection: 'row' }}>
 
                                             <View style={{ display: 'flex', flexDirection: 'row', width: '60%', flexWrap: 'wrap', 
-                                                backgroundColor : '#ECF0F1', padding : 5, borderRadius : 5 , minHeight : 100, maxHeight : 400}}>
+                                                backgroundColor : '#ECF0F1', padding : 5, borderRadius : 5 , minHeight : 100, maxHeight : 400,}}>
                                                 {Boxes.map((item) => {
-                                                    let ischeck = item.check === true ? '#E91E63' : 'black';
+                                                    let ischeck = item.is_check === true ? '#E91E63' : 'black';
                                                     return (
-                                                        <Card style={{ height: 30, width: 30, borderRadius: 7, margin: 1, backgroundColor: ischeck, justifyContent : 'center', alignItems : 'center' }}>
-                                                            <Text style={{textAlignVertical : 'center', color : 'white'}}>{item.numerocaja}</Text>
+                                                        <Card style={{ height: 25, width: 25, borderRadius: 4, margin: 1, backgroundColor: ischeck, justifyContent : 'center', alignItems : 'center' }}
+                                                        key={item.caja}>
+                                                            <Text style={{textAlignVertical : 'center', color : 'white', fontSize : 10}}>{item.numerocaja}</Text>
                                                         </Card>
                                                     )
                                                 }
@@ -179,7 +172,7 @@ const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
                                                 <Text style={{ color: 'black', fontSize: 60, fontFamily: 'system-ui', textAlign: 'left' }}> {counter}/{fact?.cant_cajas} </Text>
                                                 <TextInput
                                                     ref={inputRef}
-                                                    style={{ borderBottomWidth : 1, borderBottomColor : 'grey', width : '80%'}}
+                                                    style={{ backgroundColor : '#F2F3F4', width : '80%', padding : 2, borderRadius : 4, fontSize : 10}}
                                                     value={Value_}
                                                     onChangeText={(text) => setValue_(text)}
                                                     onSubmitEditing={handleBarcodeScan}
@@ -201,14 +194,12 @@ const BoxCheckerEnt: React.FC<props> = ({ fact, visible, close }) => {
 
                             {
                                 see2 === true &&
-                                <View style={{ height: '40%' }}>
+                                <View style={{ height: '27%' }}>
                                     <Card style={{ alignSelf: 'center', width: '90%', margin: 10, backgroundColor: 'white', elevation: 10 }}>
                                         <ScrollView>
-                                            {
-                                                Array.isArray(Boxes) ?
-
+                                            {Array.isArray(Boxes) ?
                                                     Boxes.map((item) => {
-                                                        let ischeck = item.check === true ? '#E91E63' : 'black';
+                                                        let ischeck = item.is_check === true ? '#E91E63' : 'black';
                                                         return (
                                                             <View style={
                                                                 {
@@ -298,7 +289,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontFamily: 'system-ui',
         fontSize: windowWithd * 0.023,
-        color: 'black',
+        color: 'white',
         fontWeight: '700'
     },
     textbody: {
@@ -321,5 +312,9 @@ const styles = StyleSheet.create({
 });
 
 
-export default BoxChecker;
+export default BoxChecker_ent;
+
+function UpdateIsChecked(factura: string) {
+    throw new Error("Function not implemented.");
+}
 

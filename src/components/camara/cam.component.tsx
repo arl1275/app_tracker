@@ -28,11 +28,11 @@ const CameraScreen: React.FC<props> = ({fact, setIsPic}) => {
   return (
     <View style={{ marginBottom: 10, marginTop: 10 }}>
       <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5, color : 'grey', borderRadius : 7 }}>Fotografia</Text>
-      <View style={{ height: height * 0.2, width: 'auto', borderColor: '#ccc', borderWidth: 1, borderRadius: 7, backgroundColor : '#E5E7E9' }}>
+      <View style={{ height: height * 0.2, width: 'auto', borderColor: '#ccc', borderWidth: 1, borderRadius: 7, backgroundColor : 'white' }}>
         {!tempUri ? (
           <TouchableOpacity onPress={tomarFotografia} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <IconButton icon="camera" size={30} onPress={() => {}} iconColor='white'/>
-            <Text style={{ fontWeight: 'bold', color : 'white'}}>Tomar fotografia</Text>
+            <IconButton icon="camera" size={35} onPress={() => {}} iconColor='black'/>
+            <Text style={{ fontWeight: 'bold', color : 'black'}}>PRESIONE PARA TOMAR FOTOGRAFIA</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={tomarFotografia}>
@@ -42,7 +42,7 @@ const CameraScreen: React.FC<props> = ({fact, setIsPic}) => {
               resizeMode="cover"
             >
               <IconButton icon="camera" size={30} onPress={() =>{}} />
-              <Text style={{ color: 'white', fontWeight: 'bold' }}>Editar fotografia</Text>
+              <Text style={{ color: 'grey', fontWeight: 'bold' }}>Editar fotografia</Text>
             </ImageBackground>
           </TouchableOpacity>
         )}

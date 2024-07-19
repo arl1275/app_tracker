@@ -25,27 +25,28 @@ interface FacturaProps {
 
 const EntregadorHomeView = () => {
     const { closeSession, getUser } = UserStorage();
-    const { deleteAllfacts, updateFactura } = useFacturaStore();
+    const { deleteAllfacts, updateFactura, fetchData } = useFacturaStore();
     const { closeBoxes, fetchData_ } = boxChequerStorage();
-    const [ isConn, setIsConn] = useState<boolean>(false);
-    const [ facturas, setFacturas] = useState<Facturas[]>([]);
-    const [ loading, setLoading] = useState(false);
-    const [ divisable_up, setDivisableUp] = useState<boolean>(false);
-    const [ user, setUser] = useState<UserInterface | null>()
+    const [ isConn, setIsConn ] = useState<boolean>(false);
+    const [ facturas, setFacturas ] = useState<Facturas[]>([]);
+    const [ loading, setLoading ] = useState(false);
+    const [ divisable_up, setDivisableUp ] = useState<boolean>(false);
+    const [ user, setUser ] = useState<UserInterface | null>()
     const navigation = useNavigation<StackNavigationProp<RootStacEntregadorList>>();
     const navigation2 = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-    
+
 
     useEffect(() => {
         const intervalId = setInterval(async () => {
             IsOnline();
-            setUser(await getUser())
-        }, 2000);
+            await fetchData()
+            setUser(await getUser());
+        }, 3000);
         return () => clearInterval(intervalId);
     },)
 
-    const IsOnline = async () => {  setIsConn(await isConnectedToInternet()); }
+    const IsOnline = async () => { setIsConn(await isConnectedToInternet()); }
 
     const CerrarSession = async () => {
         setIsConn(await isConnectedToInternet())
@@ -55,7 +56,7 @@ const EntregadorHomeView = () => {
             if (closeF) {
                 const closeB: boolean = await closeBoxes();
                 if (closeB) {
-                    const closeU : boolean = await closeSession();
+                    const closeU: boolean = await closeSession();
                     closeU ? navigation2.navigate('Home') : Alert.alert('Cierre de Session', 'Hubo un error para cerrar su seccion.')
                 }
             } else {
@@ -68,7 +69,7 @@ const EntregadorHomeView = () => {
 
     const getEnTransitoFacts = async () => {
         try {
-            const id_user : UserInterface | null = await getUser();
+            const id_user: UserInterface | null = await getUser();
             const data2 = await axios.get(db_dir + '/facturas/getEnTransFact', { params: { id: id_user?.id_user } });
             const facturas_api = data2.data.data
 
@@ -132,16 +133,8 @@ const EntregadorHomeView = () => {
         <>
             <View style={{ backgroundColor: 'white', flex: 1, height: '100%', width: '100%' }}>
                 <View style={style.headHome}>
-                    <View style={[style.NameLabel, { alignItems : 'center'}]}>
-                        <Text 
-                        style={{ 
-                            color: 'black', 
-                            fontSize: withScreen * 0.03, 
-                            fontWeight: 'bold', 
-                            marginTop: 5, 
-                            alignSelf : 'center',
-                            textAlignVertical : 'center'
-                            }}>{user?.nombre}</Text>
+                    <View style={[style.NameLabel, { alignItems: 'center' }]}>
+                        <Text style={style.TexInput}>{user?.nombre}</Text>
                     </View>
 
 
@@ -150,7 +143,7 @@ const EntregadorHomeView = () => {
                             <Icon source={'barcode'} color="black" size={25} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             onPress={async () => { setDivisableUp(true); await getEnTransitoFacts(); setDivisableUp(false) }}
                             style={{ backgroundColor: isConn ? '#FF0066' : 'white', borderRadius: 50, padding: 3, marginRight: '10%' }}
                             disabled={!isConn}>
@@ -171,7 +164,7 @@ const EntregadorHomeView = () => {
 
                 </View>
 
-                <View style={{ width : '97%', height: '90%', marginTop : 5 , alignSelf : 'center' , justifyContent : 'center' }}>
+                <View style={{ width: '97%', height: '90%', marginTop: 5, alignSelf: 'center', justifyContent: 'center' }}>
                     <Syncronazir />
                 </View>
             </View>
@@ -196,6 +189,14 @@ const style = StyleSheet.create({
         backgroundColor: 'white',
         width: '35%',
         height: '100%',
+    },
+    TexInput: {
+        color: 'black',
+        fontSize: withScreen * 0.03,
+        fontWeight: 'bold',
+        marginTop: 5,
+        alignSelf: 'center',
+        textAlignVertical: 'center'
     }
 })
 

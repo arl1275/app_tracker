@@ -38,10 +38,10 @@ function EntregadorListView() {
     const { data, fetchData } = useFacturaStore();
     const [openRegister, setOpenRegister] = useState(false);
 
-    useEffect(() => {
-        const fetchDataInterval = setInterval(() => { fetchData();}, 1500);
-        return () => { clearInterval(fetchDataInterval);};
-    }, []);
+    // useEffect(() => {
+    //     const fetchDataInterval = setInterval(() => { fetchData();}, 1500);
+    //     return () => { clearInterval(fetchDataInterval);};
+    // }, []);
 
     const OpenRegister_func = (value: boolean) => { setOpenRegister(value);}
     const openModal = () => { setModalVisible(true);};
@@ -115,7 +115,7 @@ function EntregadorListView() {
 
 
                         <EntregaModal factura={EntregarFact} modalVisible={modalVisible} closeModal={closeModal} />
-                        <BoxChecker_ent visible={see} close={close} fact={EntregarFact} />
+                        <BoxChecker_ent visible={see} close={close} fact={fact_} />
                         <RegisterView item={fact_} open={OpenRegister_func} Isopen={openRegister} />
                     </View >
                 )

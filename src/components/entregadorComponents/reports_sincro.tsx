@@ -43,9 +43,9 @@ const ReportLocalSincro = () => {
         <View style={{ height: '100%' }}>
             <View style={style.head_list}>
 
-                <View style={{ flexDirection: 'row', display: 'flex', backgroundColor: '#242424', borderRadius: 10, width: '55%' }}>
+                <View style={{ flexDirection: 'row', display: 'flex', backgroundColor: '#242424', borderRadius: 5, width: '55%' }}>
 
-                    <View style={{ width: '30%', borderRadius: 10, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', margin: '1%' }}>
+                    <View style={{ width: '30%', borderRadius: 3, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', margin: '1%' }}>
                         <Text style={{ color: 'black', textAlign: 'left', fontSize: widthScreen * 0.025, fontWeight: 'bold' }}>DETALLES</Text>
                     </View>
 

@@ -38,7 +38,7 @@ const HomeGuardView = () => {
             </View>
 
 
-            <View style={{ position: 'relative', bottom: 0, width: '100%' }}>
+            <View style={{ position: 'relative', bottom: 0, width: 'auto' }}>
 
                 <TouchableOpacity onPress={()=>{ BarNav.navigate('Barcode')}}>
                     <LinearGradient
@@ -46,7 +46,7 @@ const HomeGuardView = () => {
                         style={{
                             justifyContent: 'center',
                             width: '40%',
-                            borderRadius: 15,
+                            borderRadius: 5,
                             alignItems: 'center',
                             marginBottom: 10,
                             marginLeft: '5%',
@@ -74,7 +74,7 @@ const HomeGuardView = () => {
                             marginRight: '5%',
                             padding: '2%',
                             marginBottom: 10,
-                            borderRadius: 50,
+                            borderRadius: 5,
                             alignItems: 'center',
                         }}
                         start={{ x: 0, y: 0 }}

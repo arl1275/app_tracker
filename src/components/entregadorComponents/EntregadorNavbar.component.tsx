@@ -42,7 +42,7 @@ export default EntregadorNavbar;
 
 const style = StyleSheet.create({
     NavbarButton_active:{
-        borderRadius :  30 , 
+        borderRadius :  5 , 
         backgroundColor :  'black', 
         padding : 5, 
         width : '30%', 
@@ -51,7 +51,7 @@ const style = StyleSheet.create({
         marginBottom : 5
     },
     NavbarButton_unactive:{
-        borderRadius :  30 , 
+        borderRadius :  5 , 
         backgroundColor : '#F4F6F7', 
         padding : 5, 
         width : '30%', 

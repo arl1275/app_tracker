@@ -173,7 +173,7 @@ const EntregadorHomeView = () => {
 
 const style = StyleSheet.create({
     headHome: {
-        borderRadius: 50,
+        borderRadius: 5,
         borderColor: 'white',
         margin: 3,
         height: '6%',
@@ -185,7 +185,7 @@ const style = StyleSheet.create({
         flexDirection: 'row'
     },
     NameLabel: {
-        borderRadius: 50,
+        borderRadius: 5,
         backgroundColor: 'white',
         width: '35%',
         height: '100%',

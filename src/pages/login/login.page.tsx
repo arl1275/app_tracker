@@ -157,6 +157,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
+        borderRadius : 5,
+        elevation : 10
     },
     title: {
         fontSize: 60,
@@ -202,7 +204,7 @@ const styles = StyleSheet.create({
         width: '70%',
         height: 40,
         backgroundColor: 'black',
-        borderRadius: 50,
+        borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -214,9 +216,9 @@ const styles = StyleSheet.create({
     },
     versionText: {
         position: 'absolute',
-        bottom: 10,
+        bottom: 5,
         right: 10,
-        color: 'grey',
+        color: 'white',
         fontSize: 10,
     },
 });

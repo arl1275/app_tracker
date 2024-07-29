@@ -36,7 +36,7 @@ const ListComponentModal: React.FC<props> = (props) => {
             //console.log('data como props : ', props.dec_envio)
             let valores_ = await axios.get(db_dir + '/decEnv/FactsDecEnv', { params: { dec_envio: props.dec_envio } });
             let valores: Facturas[] = valores_.data.data;
-            setFilterArr(valores);
+            valores.length > 0 ? setFilterArr(valores) : setFilterArr([]);
             CargaData(valores);
         } catch (err) {
             console.log('error al obtener facturas');
@@ -48,7 +48,7 @@ const ListComponentModal: React.FC<props> = (props) => {
             setOpenLog(true);
             let valores_ = await axios.get(db_dir + '/decEnv/FactsDecEnv', { params: { dec_envio: props.dec_envio } });
             let valores: Facturas[] = valores_.data.data;
-            setFilterArr(valores);
+            valores.length > 0 ? setFilterArr(valores) : setFilterArr([]);
             CargaData(valores);
             setOpenLog(false);
         } catch (err) {
@@ -68,6 +68,7 @@ const ListComponentModal: React.FC<props> = (props) => {
     }
 
     const close = () => {
+        setSelectFact(null);
         setSee(false);
     }
 
@@ -90,96 +91,98 @@ const ListComponentModal: React.FC<props> = (props) => {
     return (
         <View style={{ maxHeight: 'auto', marginBottom: '40%' }}>
             {
-                openLog === false && FilterArr.length > 0 ?
+                openLog ?
 
-                    <View>
-                        <View style={{ height: '100%' }}>
-                            <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
-                            <Card style={styles.card}>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-around',
-                                    alignContent: 'center',
-                                    display: "flex",
-                                    marginTop: 5,
-                                    //width: '100%' 
-                                }}>
-
-                                    <Text style={{ color: 'black' }}>Facturas : {TotalFacturas}</Text>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.text_head}>CAJAS :</Text>
-                                        <Text style={[styles.text_head, { color: 'black', fontWeight: 'bold' }]}>{get_total_cajas()}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.text_head}>UNIDADES :</Text>
-                                        <Text style={styles.text_head}>{get_total_unidades()}</Text>
-                                    </View>
-                                </View>
-                            </Card>
-                            <ScrollView style={{ marginTop: 5 }}>
-                                {
-                                    data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
-                                        let valor = item.is_check != true ? '#FFB42A' : item.is_Sinchro === true ? '#A5D6A7' : '#239B56';
-                                        let head_valor = item.is_check != true ? '#85929E' : item.is_Sinchro === true ? '#00FFFF' : '#7DCEA0';
-                                        return (
-                                            <View style={{ alignSelf: "center", width: '95%', marginBottom: 0 }} key={item.factura_id}>
-
-                                                <Card
-                                                    style={{
-                                                        borderRadius: 0,
-                                                        backgroundColor: 'white',
-                                                        height: 'auto',
-                                                        alignItems: 'center', // Centra los elementos en el eje principal (horizontal)
-                                                        justifyContent: 'center', // Centra los elementos en el eje secundario (vertical)
-                                                        borderColor: head_valor,
-                                                        borderWidth: 1.4,
-                                                        marginBottom: 5,
-                                                        elevation: 15,
-                                                        paddingTop: 5,
-                                                        paddingBottom: 5
-                                                    }}
-                                                    onPress={() => { checkIsCheck(item) }}
-                                                    key={item.factura_id}
-                                                >
-
-                                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%' }}>
-                                                        <Text style={[styles.sp_text, { width: '20%', textAlignVertical : 'center' }]}>{item.factura}</Text>
-                                                        <Text style={[styles.sp_text, { width: '20%', textAlignVertical : 'center'}]}>
-                                                        {item.lista_empaque.split(',').map((albaran, index) => (
-                                                            <View key={index}><Text style={[styles.sp_text]}>{albaran.trim()}</Text></View>
-                                                        ))}
-                                                        </Text>
-                                                        <Text style={[styles.sp_text, { width: '30%', textAlignVertical : 'center' }]}>{item.clientenombre}</Text>
-                                                        <Text style={[styles.sp_text, { width: '20%', textAlignVertical : 'center', textAlign : 'center' }]}>{item.cant_cajas}</Text>
-                                                        <Text style={[styles.sp_text, { width: '07%', textAlignVertical : 'center', textAlign : 'center' }]}>{item.cant_unidades}</Text>
-                                                    </View>
-
-                                                </Card>
-                                            </View>
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                        </View>
+                    <View style={{ alignSelf: 'center', alignItems: 'center', height: '100%', justifyContent : 'center' }}>
+                        <ActivityIndicator animating={openLog} size={120} color="black" />
                     </View>
-
                     :
+                    (
+                        FilterArr.length > 0 ?
 
-                    <View style={{ alignSelf: 'center', alignItems: 'center', top: 200, height: '100%' }}>
-                        <ActivityIndicator animating={openLog} size={120} color="#E91E63" />
-                    </View>
+                            <View>
+                                <View style={{ height: '100%' }}>
+                                    <BoxChecker fact={selectFact} visible={see} close={close} tipe={0} />
+                                    <Card style={styles.card}>
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-around',
+                                            alignContent: 'center',
+                                            display: "flex",
+                                            marginTop: 5,
+                                            //width: '100%' 
+                                        }}>
 
+                                            <Text style={{ color: 'black' }}>Facturas : {TotalFacturas}</Text>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.text_head}>CAJAS :</Text>
+                                                <Text style={[styles.text_head, { color: 'black', fontWeight: 'bold' }]}>{get_total_cajas()}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.text_head}>UNIDADES :</Text>
+                                                <Text style={styles.text_head}>{get_total_unidades()}</Text>
+                                            </View>
+                                        </View>
+                                    </Card>
+                                    <ScrollView style={{ marginTop: 5 }}>
+                                        {
+                                            data.filter((ite: Facturas) => ite.id_dec_env === parseIntProps).map((item: Facturas) => {
+                                                let valor = item.is_check != true ? '#FFB42A' : item.is_Sinchro === true ? '#A5D6A7' : '#239B56';
+                                                let head_valor = item.is_check != true ? '#85929E' : item.is_Sinchro === true ? '#00FFFF' : '#7DCEA0';
+                                                return (
+                                                    <View style={{ alignSelf: "center", width: '95%', marginBottom: 0 }} key={item.factura_id}>
+
+                                                        <Card
+                                                            style={{
+                                                                borderRadius: 5,
+                                                                backgroundColor: 'white',
+                                                                height: 'auto',
+                                                                alignItems: 'center', // Centra los elementos en el eje principal (horizontal)
+                                                                justifyContent: 'center', // Centra los elementos en el eje secundario (vertical)
+                                                                borderColor: head_valor,
+                                                                borderWidth: 1.4,
+                                                                marginBottom: 5,
+                                                                elevation: 15,
+                                                                paddingTop: 5,
+                                                                paddingBottom: 5
+                                                            }}
+                                                            onPress={() => { checkIsCheck(item) }}
+                                                            key={item.factura_id}
+                                                        >
+
+                                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%' }}>
+                                                                <Text style={[styles.sp_text, { width: '20%', textAlignVertical: 'center' }]}>{item.factura}</Text>
+                                                                <Text style={[styles.sp_text, { width: '20%', textAlignVertical: 'center' }]}>
+                                                                    {item.lista_empaque.split(',').map((albaran, index) => (
+                                                                        <View key={index}><Text style={[styles.sp_text]}>{albaran.trim()}</Text></View>
+                                                                    ))}
+                                                                </Text>
+                                                                <Text style={[styles.sp_text, { width: '30%', textAlignVertical: 'center' }]}>{item.clientenombre}</Text>
+                                                                <Text style={[styles.sp_text, { width: '20%', textAlignVertical: 'center', textAlign: 'center' }]}>{item.cant_cajas}</Text>
+                                                                <Text style={[styles.sp_text, { width: '07%', textAlignVertical: 'center', textAlign: 'center' }]}>{item.cant_unidades}</Text>
+                                                            </View>
+
+                                                        </Card>
+                                                    </View>
+                                                )
+                                            })
+                                        }
+                                    </ScrollView>
+                                </View>
+                            </View>
+
+                            :
+                            <View style={{ alignSelf: 'center', alignItems : 'center', justifyContent : 'center', flexDirection: 'column', width: '80%', height: '100%' }}>
+                                <Text style={{ color: 'grey', fontSize: 40 }}>Facturas En Proceso</Text>
+                                <Text style={{ color: 'grey', fontSize: 20, top: 30 }}>Detalle</Text>
+                                <Text style={{ color: 'grey', fontSize: 20, width: 'auto', marginTop: 30 }}>Las facturas de esta declaración de envio están en transito actualmente.</Text>
+                            </View>
+
+                        // <View style={{ alignSelf: 'center', alignItems: 'center', top: 200, height: '100%' }}>
+                        //     <ActivityIndicator animating={openLog} size={120} color="#E91E63" />
+                        // </View>
+                    )
             }
-            {
-                FilterArr.length === 0 && openLog === false &&
-                <View style={{ alignSelf: 'center', display: 'flex', flexDirection: 'column', width: '80%', height: '100%' }}>
-                    <Text style={{ color: 'grey', fontSize: 40 }}>Facturas En Proceso</Text>
-                    <Text style={{ color: 'grey', fontSize: 20, top: 120 }}>Detalle</Text>
-                    <Text style={{ color: 'grey', fontSize: 20, width: 'auto', marginTop: 140 }}>Las facturas de esta declaración de envio están en transito actualmente.</Text>
-                </View>
-            }
-
-
 
         </View>
     )

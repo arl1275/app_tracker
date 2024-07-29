@@ -126,7 +126,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                     <IconButton icon={'eye'} iconColor="black" size={25} onPress={() => OpenDetail()} />
                                 </View>
                                 <View style={{ marginRight: 10 }}>
-                                    <IconButton icon={'close'} iconColor="red" size={25} onPress={() => { setSee2(false); setCounter(0); setData([]); close(); }} />
+                                    <IconButton icon={'close'} iconColor="red" size={25} onPress={() => { setSee2(false); setBoxes([]); setCounter(0); setData([]); close(); }} />
                                 </View>
                             </View>
 
@@ -168,7 +168,7 @@ const BoxChecker: React.FC<props> = ({ fact, visible, close, tipe }) => {
                                                 {Boxes.map((item) => {
                                                     let ischeck = item.check === true ? '#E91E63' : 'black';
                                                     return (
-                                                        <Card style={{ height: 30, width: 30, borderRadius: 7, margin: 1, backgroundColor: ischeck, justifyContent : 'center', alignItems : 'center' }}>
+                                                        <Card  key={item.caja} style={{ height: 25, width: 25, borderRadius: 5, margin: 1, backgroundColor: ischeck, justifyContent : 'center', alignItems : 'center' }}>
                                                             <Text style={{textAlignVertical : 'center', color : 'white'}}>{item.numerocaja}</Text>
                                                         </Card>
                                                     )

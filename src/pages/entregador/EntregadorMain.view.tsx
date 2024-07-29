@@ -8,7 +8,6 @@ const box = require('../../assets/images/Select-pana.png')
 export function EntregadorIndexView() {
     const { data } = useFacturaStore();
 
-
     return (
         <View style={{ height : '90%'}}>
             {
